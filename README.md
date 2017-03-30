@@ -15,10 +15,13 @@ All animation of time development models have to follow this format for now.
 fig = plt.figure()
 ax = plt.axes()
 
+# initialization and make artists
+artist = make_artist()
+
 def update(frame):
-    # update artists of figure
+    # update and return artists of figure
     return artist,
 
-anim = animation.FuncAnimation(fig, update, interval, blit=True)
+anim = animation.FuncAnimation(fig, update, interval=200, blit=True)
 plt.show(anim)
 ```
