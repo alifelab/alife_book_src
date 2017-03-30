@@ -22,7 +22,7 @@ space[2:6,2:6] = np.array([[0,0,0,0],
 
 img = ax.imshow(space, interpolation='nearest', cmap='Greys')
 
-def update(i):
+def update(frame):
     global space
     next_space = np.empty(space.shape, dtype=np.int8)
     for i in range(space.shape[0]):

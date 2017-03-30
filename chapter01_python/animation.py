@@ -9,9 +9,9 @@ ax = plt.axes(xlim=(0, 10), ylim=(0, 10), aspect='equal')
 circle = plt.Circle((5, 5), 0.75)
 ax.add_patch(circle)
 
-def update(i):
-    x = 5 + 3*np.sin(np.radians(i))
-    y = 5 + 3*np.cos(np.radians(i))
+def update(frame):
+    x = 5 + 3*np.sin(np.radians(frame))
+    y = 5 + 3*np.cos(np.radians(frame))
     circle.center = (x, y)
     return circle,
 
