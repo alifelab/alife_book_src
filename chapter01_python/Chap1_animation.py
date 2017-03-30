@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
@@ -27,4 +29,3 @@ anim = animation.FuncAnimation(fig, animate,
                                interval = 20,
                                blit=True)
 plt.show()
-               
