@@ -10,7 +10,8 @@ ax.set_xticks([])
 ax.set_yticks([])
 ax.grid(True)
 
-# RULE is binary coding of CA rule.
+# RULE is binary coding of CA rule (Wolfram code).
+# https://en.wikipedia.org/wiki/Wolfram_code
 # https://goo.gl/VpyH4k
 RULE = 110
 
