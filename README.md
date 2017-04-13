@@ -25,3 +25,11 @@ def update(frame):
 anim = animation.FuncAnimation(fig, update, interval=200, blit=True)
 plt.show(anim)
 ```
+
+## References
+
+### Chapter3
+
+John E. Pearson (1993) "Complex Patterns in a Simple System" Science 261(5118):189-192.
+
+http://groups.csail.mit.edu/mac/projects/amorphous/GrayScott/
