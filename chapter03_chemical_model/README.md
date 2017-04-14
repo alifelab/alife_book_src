@@ -1,46 +1,10 @@
 # Gray-Scott model
 
-## 解説
+## ソースコード解説 (gray_scott.py)
 
-### 必要な関数知識
+必要な前提知識
 
-#### 行列の生成
-```python
-np.ones((x,y))
-np.zeros((x,y))
-```
-全て1/0で埋めたx行y列の行列を生成する。
-
-#### 行列のシフト
-```python
-np.roll(x, n, axis)
-```
-行列xをaxis方向にn個ずらす。
-例えば
-```python
-x = np.array([[0, 1, 2],
-              [3, 4, 5],
-              [6, 7, 8]])
-```
-とすると、
-```
-np.roll(x, 1, axis=0)
-np.roll(x, 1, axis=1)
-```
-はそれぞれ
-```python
-array([[6, 7, 8],
-       [0, 1, 2],
-       [3, 4, 5]])
-array([[2, 0, 1],
-       [5, 3, 4],
-       [8, 6, 7]])
-```
-となる。
-
-
-
-### ソースコード解説 (gray_scott.py)
+https://github.com/alifelab/alife_book_src/wiki
 
 必要なライブラリとおまじない
 ```python
