@@ -54,5 +54,5 @@ def update(frame):
     hmap.set_array(u)
     return hmap,
 
-anim = animation.FuncAnimation(fig, update, interval=1, blit=True)
+anim = animation.FuncAnimation(fig, update, interval=100, blit=True)
 plt.show(anim)
