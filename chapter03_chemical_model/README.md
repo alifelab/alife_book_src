@@ -70,6 +70,36 @@ u += dt * dudt
 v += dt * dvdt
 ```
 
+## パラメタ空間版のラプラシアン計算解説
+
+```python
+        u_pad = np.pad(u, 1, 'edge')
+        v_pad = np.pad(v, 1, 'edge')
+        laplacian_u = (np.roll(u_pad, 1, axis=0) + np.roll(u_pad, -1, axis=0) + np.roll(u_pad, 1, axis=1) + np.roll(u_pad, -1, axis=1) - 4*u_pad) / (dx*dx)
+        laplacian_v = (np.roll(v_pad, 1, axis=0) + np.roll(v_pad, -1, axis=0) + np.roll(v_pad, 1, axis=1) + np.roll(v_pad, -1, axis=1) - 4*v_pad) / (dx*dx)
+        # next, remove edge value that extended before.
+        laplacian_u = laplacian_u[1:-1,1:-1]
+        laplacian_v = laplacian_v[1:-1,1:-1]
+```
+まず、u, vはX_SIZE x Y_SIZEの行列です。
+これをそのままnp.roll()を用いて上下左右のセルをとってきてラプラシアンを計算すると、境界では反対側の値が使われます。(=周期境界）
+
+そうすると、パラメタのk,fが非連続となってしまうのでこれを消したいです。
+
+u_pad, v_padはu, vを上下左右に1サイズ拡張した行列です。（X_SIZE+2 x Y_SIZE+2）
+
+新しい境界はもともとの境界の値で埋められます
+
+np.pad()の説明
+https://github.com/alifelab/alife_book_src/wiki#%E8%A1%8C%E5%88%97%E3%81%AE%E3%82%B7%E3%83%95%E3%83%88%EF%BC%92
+
+これを用いてラプラシアンを計算すると、境界は常にその内部の値と同じ値を取るという条件になります. （=境界外からの拡散がゼロ）
+
+その後、laplacian_u[1:-1,1:-1]で、最初と最後の要素（=上で追加した境界部分）を消して、元のサイズに戻します.
+
+
+
+
 ## References
 
 John E. Pearson (1993) "Complex Patterns in a Simple System" Science 261(5118):189-192.
