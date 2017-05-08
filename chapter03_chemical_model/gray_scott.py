@@ -31,8 +31,8 @@ square_size = 20
 u[X_SIZE//2-square_size//2:X_SIZE//2+square_size//2, Y_SIZE//2-square_size//2:Y_SIZE//2+square_size//2] = 0.5
 v[X_SIZE//2-square_size//2:X_SIZE//2+square_size//2, Y_SIZE//2-square_size//2:Y_SIZE//2+square_size//2] = 0.25
 # add random noize in order to break the square symmetry
-u = u + u*np.random.rand(X_SIZE, Y_SIZE)*0.01
-v = v + u*np.random.rand(X_SIZE, Y_SIZE)*0.01
+u += np.random.rand(X_SIZE, Y_SIZE)*0.1
+v += np.random.rand(X_SIZE, Y_SIZE)*0.1
 
 # Animation setup
 fig = plt.figure()
