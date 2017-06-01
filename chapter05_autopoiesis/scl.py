@@ -333,7 +333,7 @@ def update(frame):
     #     print("# Error!! Total count of particle is changed!! {},{}".format(n_c, n_s))
 
     # update model
-    mobile = np.full(particles.shape, True)
+    mobile = np.full(particles.shape, True, dtype=bool)
     for x in range(SPACE_SIZE):
         for y in range(SPACE_SIZE):
             p = particles[x,y]
