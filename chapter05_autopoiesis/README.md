@@ -36,7 +36,45 @@ LS: Link + Substrate
 - neighborhood particle 0 => H
 - neighborhood particle 1 => L
 
+
 ### disintegration
+
+Linkが2つのSubstrateに戻る反応.
+Linkには、substrateを吸収している状態, 他のlinkと結合している状態があるので, それらを管理するために, 各linkはdisintegration flagを持つ。
+disintegration flagは初期状態（Linkが生成された時)はfalse.
+
+この反応はprimary particleに対して以下の2つを行う
+
+#### disintegration flagのセット
+1. primary particleがLもしくはLSのの場合は、確率*DISINTEGRATION_PROBABILITY*でdisintegration flagをtrueにする.
+
+#### 実際のdisintegration
+1. 1つのneighborhood particleを選択する
+1. 以下の条件を全て満たす時, 遷移を行う
+とする.
+    条件
+    - primary particleのdisintegration flagがtrue
+    - primary particleがLS
+    - neighborhood particleがH
+    遷移 [forced emission]
+    - primary particle => L
+    - neighborhood particle => H
+
+1. 新たにneighborhood particleを選択する
+1. 以下の条件を全て満たす時,遷移を行う
+    条件
+    - primary particleのdisintegration flagがtrue
+    - primary particleがL
+    - neighborhood particleがH
+    遷移
+    - primary particleのbondを全て削除する [forced decay of bond]
+    - primary particle => S
+    - neighborhood particle => S
+
+
+
+
+
 編集中
 
 ### bonding
@@ -64,7 +102,7 @@ LinkがSubstrateを放射する反応.
 これは、absorptionと合わせて、linkがsubstrateを透過する振る舞いを実現している.
 
 1. 1つのneighborhood particleを選択する
-2. 以下の条件をチェック
+2. 以下の条件を満たす時, 3に進む
 - primary particleがLSである
 - neighborhood particleがHである
 3. 確率*EMISSION_PROBABILITY*で以下の遷移
