@@ -8,6 +8,7 @@ S: Substrate
 K: Catalyst
 L: Link
 H: Hole
+LS: Link + Substrate
 
 ### プロシージャ概要
 
@@ -27,16 +28,13 @@ H: Hole
 各reactionは, まずneighborhood particleをランダムに選び、特定の条件をクリアした場合のみある確率で当該のreactionが行われるという流れ.
 
 ### Production
-最初に**隣接する**２つのneighborhood particleを選択する.
-
-条件
+1. **隣接する**２つのneighborhood particleを選択する.
+2. 以下の条件をチェックする
 - primary particleがKである
 - neighborhood particleが両方共Sである
-
-これらの条件を満たした場合、ある確率で
-- neighborhood particle 0をHに
-- neighborhood particle 1をLに
-に変更する
+3. 確率*PRODUCTION_PROBABILITY*で以下の遷移を行う
+- neighborhood particle 0 => H
+- neighborhood particle 1 => L
 
 ### disintegration
 編集中
@@ -48,10 +46,30 @@ H: Hole
 編集中
 
 ### absorption
-編集中
+
+LinkがSubstrateを吸収する反応.
+これは、emissionと合わせて、linkがsubstrateを透過する振る舞いを実現している.
+
+1. 1つのneighborhood particleを選択する
+2. 以下の条件をチェック
+- primary particleがLである
+- neighborhood particleがSである
+3. 確率*ABSORPTION_PROBABILITY*で以下の遷移
+primary particle => LS
+neighborhood particle => H
 
 ### emission
-編集中
+
+LinkがSubstrateを放射する反応.
+これは、absorptionと合わせて、linkがsubstrateを透過する振る舞いを実現している.
+
+1. 1つのneighborhood particleを選択する
+2. 以下の条件をチェック
+- primary particleがLSである
+- neighborhood particleがHである
+3. 確率*EMISSION_PROBABILITY*で以下の遷移
+primary particle => L
+neighborhood particle => S
 
 ## References
 編集中
