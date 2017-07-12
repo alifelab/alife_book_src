@@ -11,12 +11,9 @@ PREY_FORCE = 0.0001
 COHISION_FORCE = 0.01
 SEPARATIN_FORCE = 0.01
 ALIGNMENT_FORCE = 0.1
-COHISION_DISTANCE = 0.05
-SEPARATIN_DISTANCE = 0.05
-ALIGNMENT_DISTANCE = 0.05
-COHISION_ANGLE = np.pi / 2
-SEPARATIN_ANGLE = np.pi / 2
-ALIGNMENT_ANGLE = np.pi / 3
+# all interaction distance and angle take same value for simplify.
+INTERACTION_DISTANCE = 0.05
+INTERACTION_ANGLE = np.pi / 3
 MIN_VEL = 0.001
 MAX_VEL = 0.005
 
@@ -53,16 +50,15 @@ def update(frame):
         dist = np.linalg.norm(xj - xi, axis=1)
         angle = np.arccos(np.dot(vi, (xj-xi).T) / (np.linalg.norm(vi) * np.linalg.norm((xj-xi), axis=1)))
         # extract agents in interaction area.
-        coh_agents_x = xj[ (dist < COHISION_DISTANCE) & (angle < COHISION_ANGLE) ]
-        sep_agents_x = xj[ (dist < SEPARATIN_DISTANCE) & (angle < SEPARATIN_ANGLE) ]
-        ali_agents_v = vj[ (dist < ALIGNMENT_DISTANCE) & (angle < ALIGNMENT_ANGLE) ]
+        interact_agents_x = xj[ (dist < INTERACTION_DISTANCE) & (angle < INTERACTION_ANGLE) ]
+        interact_agents_v = vj[ (dist < INTERACTION_DISTANCE) & (angle < INTERACTION_ANGLE) ]
         # calculate several forces.
-        if (len(coh_agents_x) > 0):
-            dv_coh[i] = COHISION_FORCE * (np.average(coh_agents_x, axis=0) - xi)
-        if (len(sep_agents_x) > 0):
-            dv_sep[i] = SEPARATIN_FORCE * np.sum(xi - sep_agents_x, axis=0)
-        if (len(ali_agents_v) > 0):
-            dv_ali[i] = ALIGNMENT_FORCE * (np.average(ali_agents_v, axis=0) - vi)
+        if (len(interact_agents_x) > 0):
+            dv_coh[i] = COHISION_FORCE * (np.average(interact_agents_x, axis=0) - xi)
+        if (len(interact_agents_x) > 0):
+            dv_sep[i] = SEPARATIN_FORCE * np.sum(xi - interact_agents_x, axis=0)
+        if (len(interact_agents_v) > 0):
+            dv_ali[i] = ALIGNMENT_FORCE * (np.average(interact_agents_v, axis=0) - vi)
     v += dv_coh + dv_sep + dv_ali
 
     # PREY MODEL
