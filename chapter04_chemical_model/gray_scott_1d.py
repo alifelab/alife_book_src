@@ -15,13 +15,15 @@ visualization_step = 4
 Du = 2e-5
 Dv = 1e-5
 # amorphous
-f, k = 0.04, 0.06
+# f, k = 0.04, 0.06
 # spots
 # f, k = 0.035, 0.065
 # wandering bubbles
 # f, k = 0.012, 0.05
 # waves
 # f, k = 0.025, 0.05
+
+f, k = 0.018, 0.077;
 
 # Initialization
 u = np.zeros((VISUALIZATION_TIME, SPACE_SIZE))

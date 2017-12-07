@@ -52,6 +52,7 @@ def update(frame):
         u += dt * dudt
         v += dt * dvdt
     hmap.set_array(u)
+    #hmap.set_array(v)
     return hmap,
 
 anim = animation.FuncAnimation(fig, update, interval=100, blit=True)

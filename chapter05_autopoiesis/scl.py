@@ -204,15 +204,15 @@ def bonding(particles, x, y):
     # 2) thera are Catalyst particle in moore neighborhood (catInhibitBond)
     mn_list = get_moore_neighborhood(x, y)
     for x1, y1 in mn_list:
-        if particles[x1,y1]['type'] is 'CATALYST':
-            return
+        # if particles[x1,y1]['type'] is 'CATALYST':
+        #     return
         for x2, y2 in mn_list:
             if (x2, y2) in particles[x1,y1]['bonds']:
                 return
     mn_list = get_moore_neighborhood(n_x, n_y)
     for x1, y1 in mn_list:
-        if particles[x1,y1]['type'] is 'CATALYST':
-            return
+        # if particles[x1,y1]['type'] is 'CATALYST':
+        #     return
         for x2, y2 in mn_list:
             if (x2, y2) in particles[x1,y1]['bonds']:
                 return
