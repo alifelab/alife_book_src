@@ -28,7 +28,7 @@ x_map = (2*x + y) % x_size
 y_map = (x + y) % y_size
 ```
 
-変換
+変換
 ```python
 img_array = img_array[y_map, x_map]
 ```
