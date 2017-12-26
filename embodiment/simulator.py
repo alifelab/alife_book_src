@@ -3,10 +3,12 @@ import pyglet
 import pymunk
 import pymunk.pyglet_util
 from pymunk.vec2d import Vec2d
+import ipdb
 
+feed_touch_counter = {}
 
 class TwoWheelVehicleRobotSimulator(object):
-    def __init__(self, obstacle_num=5, obstacle_radius=30, feed_num=0, feed_radius=15):
+    def __init__(self, obstacle_num=5, obstacle_radius=30, feed_num=0, feed_radius=5):
         super(TwoWheelVehicleRobotSimulator, self).__init__()
         self.controll_func = None
 
@@ -21,17 +23,18 @@ class TwoWheelVehicleRobotSimulator(object):
             space.add(shape)
 
         for i in range(feed_num):
-            feed_body = pymunk.Body(1, 1)
-            #feed_body.position = DISPAY_MARGIN + np.random.rand(2) * arena_size - arena_size/2
-            feed_body.position = DISPAY_MARGIN + np.random.rand(2) * arena_size
-            feed_shape = pymunk.Circle(feed_body, feed_radius)
-            feed_shape.sensor = True
-            feed_shape.color = (255, 0, 0)
-            #sensor_l_s.collision_type = COLLISION_TYPE_LEFT_SENSOR
-            #handler_l = space.add_collision_handler(COLLISION_TYPE_LEFT_SENSOR, COLLISION_TYPE_OBJECT)
-            #handler_l.pre_solve = left_sensr_handler
-            #handler_l.separate = left_sensr_separate_handler
-            space.add(feed_body, feed_shape)
+            body = pymunk.Body(1, 1)
+            body.position = DISPAY_MARGIN + feed_radius + np.random.rand(2) * (arena_size - feed_radius*2)
+            shape = pymunk.Circle(body, feed_radius)
+            shape.sensor = True
+            shape.color = FEED_COLOR
+            shape.collision_type = COLLISION_TYPE_FEED
+            handler = space.add_collision_handler(COLLISION_TYPE_VEHICLE, COLLISION_TYPE_FEED)
+            handler.pre_solve = feed_touch_handler
+            handler.separate = feed_separate_handler
+            space.add(body, shape)
+
+            feed_touch_counter[shape] = 0
 
 
     def run(self):
@@ -53,14 +56,15 @@ class TwoWheelVehicleRobotSimulator(object):
         vehicle_b.apply_impulse_at_local_point(-lf)
         space.step(1/60)
 
-
 DISPAY_MARGIN = 10
 arena_size = 600
 vehicle_radius = 20
 
 COLLISION_TYPE_OBJECT = 1
-COLLISION_TYPE_LEFT_SENSOR = 2
-COLLISION_TYPE_RIGHT_SENSOR = 3
+COLLISION_TYPE_VEHICLE = 2
+COLLISION_TYPE_LEFT_SENSOR = 3
+COLLISION_TYPE_RIGHT_SENSOR = 4
+COLLISION_TYPE_FEED = 5
 
 SENSOR_ANGLE = np.pi * 45 / 180
 SENSOR_RANGE = 80
@@ -71,6 +75,30 @@ SENSOR_NOISE = 0
 MOTOR_NOISE = 1.0
 
 left_sensor_val = 0
+right_sensor_val = 0
+feed_sensor_val = False
+
+FEED_COLOR = (0, 0, 0)
+FEED_ACTIVE_COLOR = (255, 0, 0)
+
+FEED_EATING_TIME = 100
+
+def feed_touch_handler(arbiter, space, data):
+    feed = arbiter.shapes[1]
+    feed.color = FEED_ACTIVE_COLOR
+    feed_touch_counter[feed] += 1
+    feed_sensor_val = True
+    if (feed_touch_counter[feed] > FEED_EATING_TIME):
+        feed.body.position = DISPAY_MARGIN + feed.radius/2 + np.random.rand(2) * (arena_size - feed.radius)
+    return True
+
+def feed_separate_handler(arbiter, space, data):
+    feed = arbiter.shapes[1]
+    feed.color = FEED_COLOR
+    feed_touch_counter[feed] = 0
+    feed_sensor_val = False
+    return True
+
 def left_sensr_handler(arbiter, space, data):
     global left_sensor_val
     p = arbiter.contact_point_set.points[0]
@@ -84,7 +112,6 @@ def left_sensr_separate_handler(arbiter, space, data):
     left_sensor_val = 0
     return True
 
-right_sensor_val = 0
 def right_sensr_handler(arbiter, space, data):
     global right_sensor_val
     p = arbiter.contact_point_set.points[0]
@@ -119,6 +146,7 @@ vehicle_b = pymunk.Body(mass, pymunk.moment_for_circle(mass, 0, vehicle_radius))
 vehicle_b.position = arena_size/2+DISPAY_MARGIN, arena_size/2+DISPAY_MARGIN
 vehicle_s = pymunk.Circle(vehicle_b, vehicle_radius)
 vehicle_s.friction = 0.2
+vehicle_s.collision_type = COLLISION_TYPE_VEHICLE
 space.add(vehicle_b, vehicle_s)
 
 # left sensor
@@ -157,10 +185,3 @@ def get_lateral_velocity():
     v = vehicle_b.world_to_local(vehicle_b.velocity + vehicle_b.position)
     rn = Vec2d(0, -1)
     return v.dot(rn) * rn
-
-def vehicle_update_unc(left_sensor_val, right_sensor_val):
-    lactive = (right_sensor_val if right_sensor_val else 80) / 80
-    ractive = (left_sensor_val if left_sensor_val else 80) / 80
-    lv = 30 * lactive
-    rv = 30 * ractive
-    return lv, rv
