@@ -10,6 +10,6 @@ def controll_func(left_sensor, right_sensor):
     return left_wheel_speed, right_wheel_speed
 
 
-sim = TwoWheelVehicleRobotSimulator()
+sim = TwoWheelVehicleRobotSimulator(obstacle_num=5)
 sim.controll_func = controll_func
 sim.run()

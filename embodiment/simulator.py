@@ -6,9 +6,33 @@ from pymunk.vec2d import Vec2d
 
 
 class TwoWheelVehicleRobotSimulator(object):
-    def __init__(self):
+    def __init__(self, obstacle_num=5, obstacle_radius=30, feed_num=0, feed_radius=0):
         super(TwoWheelVehicleRobotSimulator, self).__init__()
         self.controll_func = None
+
+        # obstacles
+        OBSTACLE_RADIUS = 30
+        for a in (np.linspace(0, np.pi*2, obstacle_num, endpoint=False) + np.pi/2):
+            body = pymunk.Body(body_type=pymunk.Body.STATIC)
+            body.position = (DISPAY_MARGIN+arena_size/2+arena_size*0.3*np.cos(a), DISPAY_MARGIN+arena_size/2+arena_size*0.3*np.sin(a))
+            shape = pymunk.Circle(body, obstacle_radius)
+            shape.friction = 0.2
+            shape.collision_type = COLLISION_TYPE_OBJECT
+            space.add(shape)
+
+        for i in range(feed_num):
+            feed_body = pymunk.Body(1, 1)
+            #feed_body.position = DISPAY_MARGIN + np.random.rand(2) * arena_size - arena_size/2
+            feed_body.position = DISPAY_MARGIN + np.random.rand(2) * arena_size
+            feed_shape = pymunk.Circle(feed_body, feed_radius)
+            feed_shape.sensor = True
+            feed_shape.color = (255,0,0)
+            #sensor_l_s.collision_type = COLLISION_TYPE_LEFT_SENSOR
+            #handler_l = space.add_collision_handler(COLLISION_TYPE_LEFT_SENSOR, COLLISION_TYPE_OBJECT)
+            #handler_l.pre_solve = left_sensr_handler
+            #handler_l.separate = left_sensr_separate_handler
+            space.add(feed_body, feed_shape)
+
 
     def run(self):
         pyglet.clock.schedule_interval(self.__update, 1/60)
@@ -115,19 +139,7 @@ handler_r.pre_solve = right_sensr_handler
 handler_r.separate = right_sensr_separate_handler
 space.add(sensor_r_s)
 
-
-# obstacles
-OBSTACLE_RADIUS = 30
-for a in (np.linspace(0, np.pi*2, 3, endpoint=False) + np.pi/2):
-    body = pymunk.Body(body_type=pymunk.Body.STATIC)
-    body.position = (DISPAY_MARGIN+arena_size/2+arena_size*0.3*np.cos(a), DISPAY_MARGIN+arena_size/2+arena_size*0.3*np.sin(a))
-    shape = pymunk.Circle(body, OBSTACLE_RADIUS)
-    shape.friction = 0.2
-    shape.collision_type = COLLISION_TYPE_OBJECT
-    space.add(shape)
-
 draw_options = pymunk.pyglet_util.DrawOptions()
-
 
 @window.event
 def on_draw():
