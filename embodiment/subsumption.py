@@ -5,12 +5,10 @@ from abc import abstractmethod
 from simulator import TwoWheelVehicleRobotSimulator
 
 class SubsumptionModule(object):
-    def __init__(self, input_dim, output_dim):
+    def __init__(self):
         super(SubsumptionModule, self).__init__()
-        self.input_dim = input_dim
-        self.output_dim = output_dim
-        self.inputs = np.zeros(input_dim)
-        self.outputs = np.zeros(output_dim)
+        self.__inputs = {}
+        self.__outputs = {}
         self.child_modules = {}
         self.on_init()
 
@@ -18,9 +16,18 @@ class SubsumptionModule(object):
         self.child_modules[name] = module
 
     def set_inputs(self, inputs):
-        self.inputs = inputs
+        self.__inputs = inputs
         for m in self.child_modules.values():
             m.set_inputs(inputs)
+
+    def get_input(self, name):
+        return self.__inputs.get(name, None)
+
+    def set_output(self, name, val):
+        self.__outputs[name] = val
+
+    def get_output(self, name):
+        return self.__outputs.get(name, None)
 
     def update(self):
         for m in self.child_modules.values():
@@ -41,8 +48,8 @@ class AvoidModule(SubsumptionModule):
         pass
 
     def on_update(self):
-        self.outputs[0] = 30 * (1 - self.inputs[1])
-        self.outputs[1] = 30 * (1 - self.inputs[0])
+        self.set_output("left_wheel_speed",  30 * (1 - self.get_input("right_touch")))
+        self.set_output("right_wheel_speed", 30 * (1 - self.get_input("left_touch")))
 
 
 class WanderModule(SubsumptionModule):
@@ -50,43 +57,51 @@ class WanderModule(SubsumptionModule):
     TURN_END_STEP = 150
     def on_init(self):
         self.counter = 0
-        self.add_child_module('avoid', AvoidModule(self.input_dim, self.output_dim))
+        self.add_child_module('avoid', AvoidModule())
 
     def on_update(self):
         # count steps not senser activated
-        if np.max(self.inputs) > 0:
+        if self.get_input("right_touch") > 0 and self.get_input("left_touch") > 0:
             self.counter = 0
         else:
             self.counter = (self.counter + 1) % self.TURN_END_STEP
         if self.counter < self.TURN_START_STEP:
             # not inhibit avoid module
-            self.outputs[0] = self.child_modules['avoid'].outputs[0]
-            self.outputs[1] = self.child_modules['avoid'].outputs[1]
+            self.set_output("left_wheel_speed",  self.child_modules['avoid'].get_output("left_wheel_speed"))
+            self.set_output("right_wheel_speed", self.child_modules['avoid'].get_output("right_wheel_speed"))
         elif self.counter == self.TURN_START_STEP:
             # suppress child avoid module and start turning
             if np.random.rand() < 0.5:
-                self.outputs[0] = 20
-                self.outputs[1] = 30
+                self.set_output("left_wheel_speed",  20)
+                self.set_output("right_wheel_speed", 30)
             else:
-                self.outputs[0] = 30
-                self.outputs[1] = 20
+                self.set_output("left_wheel_speed",  30)
+                self.set_output("right_wheel_speed", 20)
         else:
             pass
+
+
+class FeedingModule(SubsumptionModule):
+    def on_update(self):
+        pass
 
 
 ######################
 # change architecture
 ######################
 
-# controller = AvoidModule(2, 2)  # same as braitenberg vehicle
-controller = WanderModule(2, 2)  # add wandering module
+#controller = AvoidModule()  # same as braitenberg vehicle (layer0)
+controller = WanderModule()  # add wandering module (layer1)
+#controller = FeedingModule() # add feeding module (layer2)
 
-def controll_func(left_sensor, right_sensor):
-    controller.set_inputs([left_sensor, right_sensor])
+#def controll_func(left_sensor, right_sensor):
+def controll_func(sensor_data):
+    controller.set_inputs(sensor_data)
     controller.update()
-    return controller.outputs
+    return controller.get_output('left_wheel_speed'), controller.get_output('right_wheel_speed')
 
 if __name__ == '__main__':
-    sim = TwoWheelVehicleRobotSimulator(obstacle_num=3, feed_num=30)
+    sim = TwoWheelVehicleRobotSimulator(obstacle_num=3)
+    #sim = TwoWheelVehicleRobotSimulator(obstacle_num=3, feed_num=30)
     sim.controll_func = controll_func
     sim.run()
