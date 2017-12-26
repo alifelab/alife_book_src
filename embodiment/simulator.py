@@ -6,7 +6,7 @@ from pymunk.vec2d import Vec2d
 
 
 class TwoWheelVehicleRobotSimulator(object):
-    def __init__(self, obstacle_num=5, obstacle_radius=30, feed_num=0, feed_radius=0):
+    def __init__(self, obstacle_num=5, obstacle_radius=30, feed_num=0, feed_radius=15):
         super(TwoWheelVehicleRobotSimulator, self).__init__()
         self.controll_func = None
 
@@ -26,7 +26,7 @@ class TwoWheelVehicleRobotSimulator(object):
             feed_body.position = DISPAY_MARGIN + np.random.rand(2) * arena_size
             feed_shape = pymunk.Circle(feed_body, feed_radius)
             feed_shape.sensor = True
-            feed_shape.color = (255,0,0)
+            feed_shape.color = (255, 0, 0)
             #sensor_l_s.collision_type = COLLISION_TYPE_LEFT_SENSOR
             #handler_l = space.add_collision_handler(COLLISION_TYPE_LEFT_SENSOR, COLLISION_TYPE_OBJECT)
             #handler_l.pre_solve = left_sensr_handler

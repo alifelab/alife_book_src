@@ -87,6 +87,6 @@ def controll_func(left_sensor, right_sensor):
     return controller.outputs
 
 if __name__ == '__main__':
-    sim = TwoWheelVehicleRobotSimulator()
+    sim = TwoWheelVehicleRobotSimulator(obstacle_num=3, feed_num=10)
     sim.controll_func = controll_func
     sim.run()
