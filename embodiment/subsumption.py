@@ -66,7 +66,8 @@ class WanderModule(SubsumptionModule):
         else:
             self.counter = (self.counter + 1) % self.TURN_END_STEP
         if self.counter < self.TURN_START_STEP:
-            # not inhibit avoid module
+            # not inhibit child(avoid) module
+            # through child module's output to output
             self.set_output("left_wheel_speed",  self.child_modules['avoid'].get_output("left_wheel_speed"))
             self.set_output("right_wheel_speed", self.child_modules['avoid'].get_output("right_wheel_speed"))
         elif self.counter == self.TURN_START_STEP:
@@ -82,8 +83,20 @@ class WanderModule(SubsumptionModule):
 
 
 class FeedingModule(SubsumptionModule):
+    def on_init(self):
+        self.counter = 0
+        self.add_child_module('wander', WanderModule())
+
     def on_update(self):
-        pass
+        if self.get_input('feed_touching'):
+            # speed down to feeding
+            self.set_output("left_wheel_speed",  5)
+            self.set_output("right_wheel_speed", 5)
+        else:
+            # not inhibit child(wander) module
+            # through child module's output to output
+            self.set_output("left_wheel_speed",  self.child_modules['wander'].get_output("left_wheel_speed"))
+            self.set_output("right_wheel_speed", self.child_modules['wander'].get_output("right_wheel_speed"))
 
 
 ######################
@@ -91,8 +104,8 @@ class FeedingModule(SubsumptionModule):
 ######################
 
 #controller = AvoidModule()  # same as braitenberg vehicle (layer0)
-controller = WanderModule()  # add wandering module (layer1)
-#controller = FeedingModule() # add feeding module (layer2)
+#controller = WanderModule()  # add wandering module (layer1)
+controller = FeedingModule() # add feeding module (layer2)
 
 #def controll_func(left_sensor, right_sensor):
 def controll_func(sensor_data):
@@ -101,7 +114,7 @@ def controll_func(sensor_data):
     return controller.get_output('left_wheel_speed'), controller.get_output('right_wheel_speed')
 
 if __name__ == '__main__':
-    sim = TwoWheelVehicleRobotSimulator(obstacle_num=3)
-    #sim = TwoWheelVehicleRobotSimulator(obstacle_num=3, feed_num=30)
+    #sim = TwoWheelVehicleRobotSimulator(obstacle_num=3)
+    sim = TwoWheelVehicleRobotSimulator(obstacle_num=3, feed_num=30)
     sim.controll_func = controll_func
     sim.run()
