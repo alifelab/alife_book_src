@@ -50,7 +50,7 @@ class TwoWheelVehicleRobotSimulator(object):
             sensor_data = {
                 "left_touch": left_sensor_val,
                 "right_touch": right_sensor_val,
-                "feed_touch": feed_sensor_val
+                "feed_touching": feed_sensor_val
             }
             #velocity_l, velocity_r = self.controll_func(left_sensor_val, right_sensor_val)
             velocity_l, velocity_r = self.controll_func(sensor_data)
@@ -90,6 +90,7 @@ FEED_ACTIVE_COLOR = (255, 0, 0)
 FEED_EATING_TIME = 100
 
 def feed_touch_handler(arbiter, space, data):
+    global feed_sensor_val
     feed = arbiter.shapes[1]
     feed.color = FEED_ACTIVE_COLOR
     feed_touch_counter[feed] += 1
@@ -99,6 +100,7 @@ def feed_touch_handler(arbiter, space, data):
     return True
 
 def feed_separate_handler(arbiter, space, data):
+    global feed_sensor_val
     feed = arbiter.shapes[1]
     feed.color = FEED_COLOR
     feed_touch_counter[feed] = 0
