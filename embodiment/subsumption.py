@@ -90,8 +90,8 @@ class FeedingModule(SubsumptionModule):
     def on_update(self):
         if self.get_input('feed_touching'):
             # speed down to feeding
-            self.set_output("left_wheel_speed",  5)
-            self.set_output("right_wheel_speed", 5)
+            self.set_output("left_wheel_speed",  3)
+            self.set_output("right_wheel_speed", 3)
         else:
             # not inhibit child(wander) module
             # through child module's output to output
@@ -115,6 +115,6 @@ def controll_func(sensor_data):
 
 if __name__ == '__main__':
     #sim = TwoWheelVehicleRobotSimulator(obstacle_num=3)
-    sim = TwoWheelVehicleRobotSimulator(obstacle_num=3, feed_num=30)
+    sim = TwoWheelVehicleRobotSimulator(obstacle_num=3, feed_num=40)
     sim.controll_func = controll_func
     sim.run()
