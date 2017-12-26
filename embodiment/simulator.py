@@ -47,7 +47,13 @@ class TwoWheelVehicleRobotSimulator(object):
         vehicle_b.velocity = (0, 0)
         vehicle_b.angular_velocity = 0
         if self.controll_func is not None:
-            velocity_l, velocity_r = self.controll_func(left_sensor_val, right_sensor_val)
+            sensor_data = {
+                "left_touch": left_sensor_val,
+                "right_touch": right_sensor_val,
+                "feed_touch": feed_sensor_val
+            }
+            #velocity_l, velocity_r = self.controll_func(left_sensor_val, right_sensor_val)
+            velocity_l, velocity_r = self.controll_func(sensor_data)
             velocity_l += MOTOR_NOISE * np.random.randn()
             velocity_r += MOTOR_NOISE * np.random.randn()
             vehicle_b.apply_impulse_at_local_point((velocity_l*vehicle_b.mass, 0), (0, vehicle_radius))
