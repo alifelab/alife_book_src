@@ -31,9 +31,9 @@ FEED_ACTIVE_COLOR = (255, 0, 0)
 FEED_EATING_TIME = 100
 
 class TwoWheelVehicleRobotSimulator(object):
-    def __init__(self, obstacle_num=5, obstacle_radius=30, feed_num=0, feed_radius=5):
+    def __init__(self, controll_func, obstacle_num=5, obstacle_radius=30, feed_num=0, feed_radius=5):
         super(TwoWheelVehicleRobotSimulator, self).__init__()
-        self.controll_func = None
+        self.controll_func = controll_func
         self.left_sensor_val = 0
         self.right_sensor_val = 0
         self.feed_sensor_val = False

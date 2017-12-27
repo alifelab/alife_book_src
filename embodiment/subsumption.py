@@ -102,19 +102,16 @@ class FeedingModule(SubsumptionModule):
 ######################
 # change architecture
 ######################
-
 #controller = AvoidModule()  # same as braitenberg vehicle (layer0)
 #controller = WanderModule()  # add wandering module (layer1)
 controller = FeedingModule() # add feeding module (layer2)
 
-#def controll_func(left_sensor, right_sensor):
 def controll_func(sensor_data):
     controller.set_inputs(sensor_data)
     controller.update()
     return controller.get_output('left_wheel_speed'), controller.get_output('right_wheel_speed')
 
 if __name__ == '__main__':
-    #sim = TwoWheelVehicleRobotSimulator(obstacle_num=3)
-    sim = TwoWheelVehicleRobotSimulator(obstacle_num=3, feed_num=40)
+    sim = TwoWheelVehicleRobotSimulator(controll_func, obstacle_num=3, feed_num=40)
     sim.controll_func = controll_func
     sim.run()
