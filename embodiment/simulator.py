@@ -30,10 +30,10 @@ class TwoWheelVehicleRobotSimulator(object):
 
     def __init__(self, controll_func, obstacle_num=5, obstacle_radius=30, feed_num=0, feed_radius=5):
         super(TwoWheelVehicleRobotSimulator, self).__init__()
-        self.controll_func = controll_func
-        self.left_sensor_val = 0
-        self.right_sensor_val = 0
-        self.feed_sensor_val = False
+        self.__controll_func = controll_func
+        self.__left_sensor_val = 0
+        self.__right_sensor_val = 0
+        self.__feed_sensor_val = False
         self.__feed_touch_counter = {}
 
 
@@ -112,14 +112,14 @@ class TwoWheelVehicleRobotSimulator(object):
             return
         self.vehicle_body.velocity = (0, 0)
         self.vehicle_body.angular_velocity = 0
-        if self.controll_func is not None:
+        if self.__controll_func is not None:
             sensor_data = {
-                "left_touch": self.left_sensor_val,
-                "right_touch": self.right_sensor_val,
-                "feed_touching": self.feed_sensor_val
+                "left_touch": self.__left_sensor_val,
+                "right_touch": self.__right_sensor_val,
+                "feed_touching": self.__feed_sensor_val
             }
-            #velocity_l, velocity_r = self.controll_func(self.left_sensor_val, self.right_sensor_val)
-            velocity_l, velocity_r = self.controll_func(sensor_data)
+            #velocity_l, velocity_r = self.__controll_func(self.__left_sensor_val, self.__right_sensor_val)
+            velocity_l, velocity_r = self.__controll_func(sensor_data)
             velocity_l += self.MOTOR_NOISE * np.random.randn()
             velocity_r += self.MOTOR_NOISE * np.random.randn()
             self.vehicle_body.apply_impulse_at_local_point((velocity_l*self.vehicle_body.mass, 0), (0, self.VEHICLE_RADIUS))
@@ -133,7 +133,7 @@ class TwoWheelVehicleRobotSimulator(object):
         feed = arbiter.shapes[1]
         feed.color = self.FEED_ACTIVE_COLOR
         self.__feed_touch_counter[feed] += 1
-        self.feed_sensor_val = True
+        self.__feed_sensor_val = True
         if (self.__feed_touch_counter[feed] > self.FEED_EATING_TIME):
             feed.body.position = DISPAY_MARGIN + feed.radius/2 + np.random.rand(2) * (ARENA_SIZE - feed.radius)
         return True
@@ -143,33 +143,33 @@ class TwoWheelVehicleRobotSimulator(object):
         feed = arbiter.shapes[1]
         feed.color = self.FEED_COLOR
         self.__feed_touch_counter[feed] = 0
-        self.feed_sensor_val = False
+        self.__feed_sensor_val = False
         return True
 
 
     def __left_sensr_handler(self, arbiter, space, data):
         p = arbiter.contact_point_set.points[0]
         distance = self.vehicle_body.world_to_local(p.point_b).get_length()
-        self.left_sensor_val = 1 - distance / self.SENSOR_RANGE
-        self.left_sensor_val += self.SENSOR_NOISE * np.random.randn()
+        self.__left_sensor_val = 1 - distance / self.SENSOR_RANGE
+        self.__left_sensor_val += self.SENSOR_NOISE * np.random.randn()
         return True
 
 
     def __left_sensr_separate_handler(self, arbiter, space, data):
-        self.left_sensor_val = 0
+        self.__left_sensor_val = 0
         return True
 
 
     def __right_sensr_handler(self, arbiter, space, data):
         p = arbiter.contact_point_set.points[0]
         distance = self.vehicle_body.world_to_local(p.point_b).get_length()
-        self.right_sensor_val = 1 - distance / self.SENSOR_RANGE
-        self.right_sensor_val += self.SENSOR_NOISE * np.random.randn()
+        self.__right_sensor_val = 1 - distance / self.SENSOR_RANGE
+        self.__right_sensor_val += self.SENSOR_NOISE * np.random.randn()
         return True
 
 
     def __right_sensr_separate_handler(self, arbiter, space, data):
-        self.right_sensor_val = 0
+        self.__right_sensor_val = 0
         return True
 
 
