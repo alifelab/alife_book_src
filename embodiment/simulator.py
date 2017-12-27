@@ -3,6 +3,7 @@ import pyglet
 import pymunk
 import pymunk.pyglet_util
 from pymunk.vec2d import Vec2d
+from enum import IntEnum
 
 
 DISPAY_MARGIN = 10
@@ -15,11 +16,7 @@ running = True
 
 
 class TwoWheelVehicleRobotSimulator(object):
-    COLLISION_TYPE_OBJECT = 1
-    COLLISION_TYPE_VEHICLE = 2
-    COLLISION_TYPE_LEFT_SENSOR = 3
-    COLLISION_TYPE_RIGHT_SENSOR = 4
-    COLLISION_TYPE_FEED = 5
+    COLLISION_TYPE = IntEnum("COLLISION_TYPE", "OBJECT VEHICLE LEFT_SENSOR RIGHT_SENSOR FEED")
 
     # simulation setting parameters
     VEHICLE_RADIUS = 20
@@ -48,7 +45,7 @@ class TwoWheelVehicleRobotSimulator(object):
                  pymunk.Segment(space.static_body, (ARENA_SIZE+DISPAY_MARGIN, ARENA_SIZE+DISPAY_MARGIN), (DISPAY_MARGIN, ARENA_SIZE+DISPAY_MARGIN), 0),
                  pymunk.Segment(space.static_body, (DISPAY_MARGIN, ARENA_SIZE+DISPAY_MARGIN), (DISPAY_MARGIN, DISPAY_MARGIN), 0)]
         for w in walls:
-            w.collision_type = self.COLLISION_TYPE_OBJECT
+            w.collision_type = self.COLLISION_TYPE.OBJECT
             w.friction = 0.2
         space.add(walls)
 
@@ -58,14 +55,14 @@ class TwoWheelVehicleRobotSimulator(object):
         self.vehicle_body.position = ARENA_SIZE/2+DISPAY_MARGIN, ARENA_SIZE/2+DISPAY_MARGIN
         vehicle_s = pymunk.Circle(self.vehicle_body, self.VEHICLE_RADIUS)
         vehicle_s.friction = 0.2
-        vehicle_s.collision_type = self.COLLISION_TYPE_VEHICLE
+        vehicle_s.collision_type = self.COLLISION_TYPE.VEHICLE
         space.add(self.vehicle_body, vehicle_s)
 
         # left sensor
         sensor_l_s = pymunk.Segment(self.vehicle_body, (0, 0), (self.SENSOR_RANGE * np.cos(self.SENSOR_ANGLE), self.SENSOR_RANGE * np.sin(self.SENSOR_ANGLE)), 0)
         sensor_l_s.sensor = True
-        sensor_l_s.collision_type = self.COLLISION_TYPE_LEFT_SENSOR
-        handler_l = space.add_collision_handler(self.COLLISION_TYPE_LEFT_SENSOR, self.COLLISION_TYPE_OBJECT)
+        sensor_l_s.collision_type = self.COLLISION_TYPE.LEFT_SENSOR
+        handler_l = space.add_collision_handler(self.COLLISION_TYPE.LEFT_SENSOR, self.COLLISION_TYPE.OBJECT)
         handler_l.pre_solve = self.__left_sensr_handler
         handler_l.separate = self.__left_sensr_separate_handler
         space.add(sensor_l_s)
@@ -73,8 +70,8 @@ class TwoWheelVehicleRobotSimulator(object):
         # right sensor
         sensor_r_s = pymunk.Segment(self.vehicle_body, (0, 0), (self.SENSOR_RANGE * np.cos(-self.SENSOR_ANGLE), self.SENSOR_RANGE * np.sin(-self.SENSOR_ANGLE)), 0)
         sensor_r_s.sensor = True
-        sensor_r_s.collision_type = self.COLLISION_TYPE_RIGHT_SENSOR
-        handler_r = space.add_collision_handler(self.COLLISION_TYPE_RIGHT_SENSOR, self.COLLISION_TYPE_OBJECT)
+        sensor_r_s.collision_type = self.COLLISION_TYPE.RIGHT_SENSOR
+        handler_r = space.add_collision_handler(self.COLLISION_TYPE.RIGHT_SENSOR, self.COLLISION_TYPE.OBJECT)
         handler_r.pre_solve = self.__right_sensr_handler
         handler_r.separate = self.__right_sensr_separate_handler
         space.add(sensor_r_s)
@@ -86,7 +83,7 @@ class TwoWheelVehicleRobotSimulator(object):
             body.position = (DISPAY_MARGIN+ARENA_SIZE/2+ARENA_SIZE*0.3*np.cos(a), DISPAY_MARGIN+ARENA_SIZE/2+ARENA_SIZE*0.3*np.sin(a))
             shape = pymunk.Circle(body, obstacle_radius)
             shape.friction = 0.2
-            shape.collision_type = self.COLLISION_TYPE_OBJECT
+            shape.collision_type = self.COLLISION_TYPE.OBJECT
             space.add(shape)
 
         for i in range(feed_num):
@@ -95,8 +92,8 @@ class TwoWheelVehicleRobotSimulator(object):
             shape = pymunk.Circle(body, feed_radius)
             shape.sensor = True
             shape.color = self.FEED_COLOR
-            shape.collision_type = self.COLLISION_TYPE_FEED
-            handler = space.add_collision_handler(self.COLLISION_TYPE_VEHICLE, self.COLLISION_TYPE_FEED)
+            shape.collision_type = self.COLLISION_TYPE.FEED
+            handler = space.add_collision_handler(self.COLLISION_TYPE.VEHICLE, self.COLLISION_TYPE.FEED)
             handler.pre_solve = self.__feed_touch_handler
             handler.separate = self.__feed_separate_handler
             space.add(body, shape)
