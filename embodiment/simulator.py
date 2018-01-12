@@ -36,7 +36,6 @@ class TwoWheelVehicleRobotSimulator(object):
         self.__feed_sensor_val = False
         self.__feed_touch_counter = {}
 
-
         space.gravity = 0, 0
 
         # arena
