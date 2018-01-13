@@ -15,6 +15,11 @@ class T3(object):
     def __iter__(self):
         return self
 
+    def set_parameters(self, omega0 = None, omega1 = None, epsilon = None):
+        self.omega0 = omega0 if omega0 is not None else self.omega0
+        self.omega1 = omega1 if omega1 is not None else self.omega1
+        self.epsilon = epsilon if epsilon is not None else self.epsilon
+
     def next(self):
         self.x, self.y = self.__circle_map(self.x, self.y, 0), self.__circle_map(self.x, self.y, 1)
         return self.x, self.y
@@ -67,8 +72,8 @@ if __name__ == '__main__':
 
     def update(frame):
         ax.clear()
-        d = np.array([t3.next() for i in range(100)])
-        ax.scatter(d[:,0], d[:,1])
+        d = np.array([t3.next() for i in range(1000)])
+        ax.scatter(d[:,0], d[:,1], s=1)
         ax.set_xlim(0, 1)
         ax.set_ylim(0, 1)
         return
