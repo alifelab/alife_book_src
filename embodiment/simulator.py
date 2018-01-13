@@ -113,8 +113,8 @@ class TwoWheelVehicleRobotSimulator(object):
         self.vehicle_body.angular_velocity = 0
         if self.__controll_func is not None:
             sensor_data = {
-                "left_touch": self.__left_sensor_val,
-                "right_touch": self.__right_sensor_val,
+                "left_distance": self.__left_sensor_val,
+                "right_distance": self.__right_sensor_val,
                 "feed_touching": self.__feed_sensor_val
             }
             #velocity_l, velocity_r = self.__controll_func(self.__left_sensor_val, self.__right_sensor_val)

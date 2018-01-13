@@ -48,8 +48,8 @@ class AvoidModule(SubsumptionModule):
         pass
 
     def on_update(self):
-        self.set_output("left_wheel_speed",  30 * (1 - self.get_input("right_touch")))
-        self.set_output("right_wheel_speed", 30 * (1 - self.get_input("left_touch")))
+        self.set_output("left_wheel_speed",  30 * (1 - self.get_input("right_distance")))
+        self.set_output("right_wheel_speed", 30 * (1 - self.get_input("left_distance")))
 
 
 class WanderModule(SubsumptionModule):
@@ -61,7 +61,7 @@ class WanderModule(SubsumptionModule):
 
     def on_update(self):
         # count steps not senser activated
-        if self.get_input("right_touch") > 0 and self.get_input("left_touch") > 0:
+        if self.get_input("right_distance") > 0 and self.get_input("left_distance") > 0:
             self.counter = 0
         else:
             self.counter = (self.counter + 1) % self.TURN_END_STEP
