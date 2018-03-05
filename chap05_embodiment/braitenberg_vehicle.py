@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import numpy as np
-from simulator import TwoWheelVehicleRobotSimulator
+from alifebook_lib.simulator import TwoWheelVehicleRobotSimulator
 
 
 def controll_func(sensor_data):

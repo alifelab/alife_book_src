@@ -2,7 +2,7 @@
 
 import numpy as np
 from abc import abstractmethod
-from simulator import TwoWheelVehicleRobotSimulator
+from alifebook_lib.simulator import TwoWheelVehicleRobotSimulator
 
 class SubsumptionModule(object):
     def __init__(self):
