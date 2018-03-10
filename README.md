@@ -7,3 +7,18 @@
 - python 3.5.1
 - numpy 1.12.1
 - matplotlib 2.0.0
+
+
+## セットアップ
+
+1. anacondaのインストール
+
+https://www.anaconda.com/download/
+
+2. 必要なライブラリのインストール
+
+```terminal
+$ conda install pyglet pymunk
+or 
+$ pip install pyglet pymunk
+```
