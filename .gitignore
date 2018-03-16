@@ -1,3 +1,6 @@
 misc
 .python-version
 */__pycache__/*.pyc
+data
+gen*_best.npy
+__pycache__

@@ -19,6 +19,6 @@ https://www.anaconda.com/download/
 
 ```terminal
 $ conda install pyglet pymunk
-or 
+or
 $ pip install pyglet pymunk
 ```
