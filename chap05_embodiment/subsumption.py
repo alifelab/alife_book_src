@@ -82,14 +82,14 @@ class WanderModule(SubsumptionModule):
             pass
 
 
-class FeedingModule(SubsumptionModule):
+class ExploreModule(SubsumptionModule):
     def on_init(self):
         self.counter = 0
         self.add_child_module('wander', WanderModule())
 
     def on_update(self):
         if self.get_input('feed_touching'):
-            # speed down to feeding
+            # speed down to explore
             self.set_output("left_wheel_speed",  3)
             self.set_output("right_wheel_speed", 3)
         else:
@@ -104,7 +104,7 @@ class FeedingModule(SubsumptionModule):
 ######################
 #controller = AvoidModule()  # same as braitenberg vehicle (layer0)
 #controller = WanderModule()  # add wandering module (layer1)
-controller = FeedingModule() # add feeding module (layer2)
+#controller = ExploreModule() # add explore module (layer2)
 
 def controll_func(sensor_data):
     controller.set_inputs(sensor_data)
