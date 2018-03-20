@@ -48,8 +48,10 @@ class AvoidModule(SubsumptionModule):
         pass
 
     def on_update(self):
-        self.set_output("left_wheel_speed",  30 * (1 - self.get_input("right_distance")))
-        self.set_output("right_wheel_speed", 30 * (1 - self.get_input("left_distance")))
+        #self.set_output("left_wheel_speed",  30 * (1 - self.get_input("right_distance")))
+        #self.set_output("right_wheel_speed", 30 * (1 - self.get_input("left_distance")))
+        self.set_output("left_wheel_speed",  20 + 20 * self.get_input("left_distance"))
+        self.set_output("right_wheel_speed", 20 + 20 * self.get_input("right_distance"))
 
 
 class WanderModule(SubsumptionModule):
