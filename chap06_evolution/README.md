@@ -85,6 +85,12 @@ context neuronの出力を保存しておく変数
 #### Code
 
 ```python
+# GA and trial parameters
+ONE_TRIAL_STEP = 5000
+POPULATION_SIZE = 50
+TORNAMENT_SIZE = 5
+
+.........
 
     # evaluate population
     for g in population:
@@ -101,7 +107,7 @@ context neuronの出力を保存しておく変数
         # get fitness of this trial
         fitness.append(sim.get_fitness()[0])
 
-    ~~~~~~~
+.........
 
     np.random.seed()
 

@@ -25,11 +25,12 @@ def decode_weights(model, gen):
         tmp = tmp[size:]
     model.set_weights(w)
 
-
+# GA and trial parameters
 ONE_TRIAL_STEP = 5000
 POPULATION_SIZE = 50
-CONTEXT_NN_NUM = 2
+TORNAMENT_SIZE = 5
 
+CONTEXT_NN_NUM = 2
 nn_model = Sequential()
 nn_model.add(InputLayer((7+CONTEXT_NN_NUM,)))
 nn_model.add(Dense(4, activation='sigmoid'))
@@ -51,6 +52,7 @@ def action(observation):
 
 gene_length = get_gene_length(nn_model)
 population = np.random.random((POPULATION_SIZE, gene_length)) * 10 - 5
+offsprings = np.empty(population.shape)
 
 sim = AntSimulator(1)
 generation = 0
@@ -89,7 +91,6 @@ while True:
     np.random.seed()
 
     # selection
-    TORNAMENT_SIZE = 5
     PARENT_NUM = POPULATION_SIZE // 2
     parents = []
     for i in range(PARENT_NUM):
@@ -99,13 +100,13 @@ while True:
         parents.append(population[winner_idx])
 
     # best population alive next gen
-    population[0] = best_pop
+    offsprings[0] = best_pop
 
     # same as parents N/3
     for i in range(1, POPULATION_SIZE//3):
         offspring_idx = np.random.randint(0, PARENT_NUM)
         offspring = parents[offspring_idx]
-        population[i] = offspring
+        offsprings[i] = offspring
 
 
     # mutation N/3
@@ -114,7 +115,7 @@ while True:
         offspring = parents[offspring_idx]
         mut_idx = np.random.randint(0, gene_length)
         offspring[mut_idx] += np.random.randn()
-        population[i] = offspring
+        offsprings[i] = offspring
 
 
     # crossover N/3
@@ -129,7 +130,8 @@ while True:
         #print(p1)
         #print(p2)
         #print(offspring)
-        population[i] = offspring
+        offsprings[i] = offspring
 
+    population = offsprings.copy()
 
     generation += 1
