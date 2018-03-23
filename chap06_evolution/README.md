@@ -150,5 +150,3 @@ TORNAMENT_SIZE = 5
         offspring = np.r_[p1[:xo_idx], p2[xo_idx:]]
         population[i] = offspring
 ```
-
-* コード上では、population変数にoffspringsを上書きしているので注意
