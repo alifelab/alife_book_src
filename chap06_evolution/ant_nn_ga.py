@@ -129,6 +129,7 @@ while True:
         #print(p1)
         #print(p2)
         #print(offspring)
+        population[i] = offspring
 
 
     generation += 1
