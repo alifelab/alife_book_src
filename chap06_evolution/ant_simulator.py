@@ -110,6 +110,15 @@ class AntSimulator(app.Canvas):
                 #ipdb.set_trace()
         return obs
 
+    def set_agent_color(self, index, color):
+        if len(color) == 4:
+            c = color
+        elif len(color) == 3:
+            c = (color[0], color[1], color[2], 1)
+        else:
+            # TODO: warning
+            c = (1, 0, 0, 1)
+        self.agents_visuals[index].border_color = c
 
     def step(self, action):
         # v_dot = action[:,0]

@@ -2,7 +2,7 @@
 varying float v_theta;
 uniform float u_radius;
 uniform float u_linewidth;
-
+varying vec2 v_color;
 
 vec2 rotate2d(vec2 v, float a) {
 	float s = sin(a);
@@ -28,5 +28,6 @@ void main(){
     // {
     //     gl_FragColor = vec4(1, 0, 0, 1);
     // }
-	gl_FragColor = vec4(1, 0, 0, 1);
+	// gl_FragColor = vec4(1, 0, 0, 1);
+	gl_FragColor = v_color;
 }
