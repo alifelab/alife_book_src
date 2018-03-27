@@ -53,12 +53,13 @@ sim = AntSimulator(N)
 
 # set agent color depends on gene
 idx = 0
-for i, n in enumerate(agent_num):
-    x = i / (len(agent_num) - 1)
-    c = gen_gradation_color(x)
-    for j in range(n):
-        sim.set_agent_color(idx, c)
-        idx += 1
+if len(agent_num) > 1:
+    for i, n in enumerate(agent_num):
+        x = i / (len(agent_num) - 1)
+        c = gen_gradation_color(x)
+        for j in range(n):
+            sim.set_agent_color(idx, c)
+            idx += 1
 
 obs = sim.reset()
 while True:
