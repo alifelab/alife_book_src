@@ -49,7 +49,7 @@ for i in range(1, len(sys.argv), 2):
 
 
 N = np.sum(agent_num)
-sim = AntSimulator(N)
+sim = AntSimulator(N, decay_rate=0.999, secretion=True)
 
 # set agent color depends on gene
 idx = 0

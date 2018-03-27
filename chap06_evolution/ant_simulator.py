@@ -15,16 +15,16 @@ DEBUG_ENV = False
 
 class AntSimulator(app.Canvas):
 
-    def __init__(self, N):
+    def __init__(self, N, decay_rate=1.0, secretion=False):
         super(AntSimulator, self).__init__(title='Title', size=(600, 600), resizable=False, position=(0, 0), keys='interactive')
 
+        # simulation settings
         self._N = N
-        self._potential = np.array(Image.open(path.join(ENV_MAP_PATH, 'envmap01.png'))).astype(np.float32) / 255.
-        self._potential_grid_size = self._potential.shape
-        if DEBUG_ENV:
-            self._potential = np.zeros((self._potential_grid_size[1], self._potential_grid_size[1])).astype(np.float32)
-            self._potential[100:, 100:] = 1
-            self._potential[:100, :100] = 0.5
+        self._potential_init = np.array(Image.open(path.join(ENV_MAP_PATH, 'envmap01.png'))).astype(np.float32) / 255.
+        self._potential_grid_size = self._potential_init.shape
+        self._potential_decay_rate = decay_rate
+        self._hormone_secretion = secretion
+
         self.reset()
 
         vert = open(path.join(GLSL_PATH, 'color_map_vert.glsl'), 'r').read()
@@ -32,7 +32,7 @@ class AntSimulator(app.Canvas):
         self.potential_render = gloo.Program(vert, frag)
         self.potential_render["a_position"] = [(-1, -1), (-1, +1), (+1, -1), (+1, +1)]
         self.potential_render["a_texcoord"] = [(0, 0), (0, 1), (1, 0), (1, 1)]
-        self.potential_render["u_texture"] = self._get_current_potential()
+        self.potential_render["u_texture"] = self._potential
         self.potential_render["u_texture"].interpolation = 'nearest'
 
         self.agents_visuals = []
@@ -59,7 +59,12 @@ class AntSimulator(app.Canvas):
 
     def reset(self, seed=1234):
         np.random.seed(seed)
-        self._potential_neg = np.zeros(self._potential.shape).astype(np.float32)
+        if DEBUG_ENV:
+            self._potential = np.zeros((self._potential_grid_size[1], self._potential_grid_size[1])).astype(np.float32)
+            self._potential[100:, 100:] = 1
+            self._potential[:100, :100] = 0.5
+        else:
+            self._potential =  self._potential_init.copy()
         self._agents_pos = np.random.random((self._N, 2)).astype(np.float32)
         self._agents_th = np.random.random(self._N).astype(np.float32) * np.pi * 2
         self._agents_vel = np.ones(self._N).astype(np.float32) * 0.001
@@ -72,12 +77,9 @@ class AntSimulator(app.Canvas):
     def on_timer(self, event):
         self.update()
 
-    def _get_current_potential(self):
-        return self._potential - self._potential_neg
-
     def on_draw(self, event):
         gloo.clear()
-        self.potential_render["u_texture"] = self._get_current_potential()
+        self.potential_render["u_texture"] = self._potential
         self.potential_render.draw('triangle_strip')
         #for v, pos, vel in zip(self.agents_visuals, self._agents_pos, self._agents_vel):
         for v, hv, pos, th in zip(self.agents_visuals, self.agents_head_visuals, self._agents_pos, self._agents_th):
@@ -106,7 +108,7 @@ class AntSimulator(app.Canvas):
                 y %= 1.0
                 xi = int(x * self._potential_grid_size[1])
                 yi = int(y * self._potential_grid_size[0])
-                obs[ai, si] = self._get_current_potential()[yi, xi]
+                obs[ai, si] = self._potential[yi, xi]
                 #ipdb.set_trace()
         return obs
 
@@ -121,13 +123,6 @@ class AntSimulator(app.Canvas):
         self.agents_visuals[index].border_color = c
 
     def step(self, action):
-        # v_dot = action[:,0]
-        # av_dot = action[:,1]
-        # self._agents_vel += v_dot
-        # self._agents_ang_vel += av_dot
-        # self._agents_pos += (self._agents_vel * [np.cos(self._agents_th), np.sin(self._agents_th)]).T
-        # self._agents_th += self._agents_ang_vel
-
         # action take 0-1 value
         v = action[:,0] * 0.0005 + 0.0005
         av = (action[:,1] - 0.5) * 2 * np.pi * 0.05
@@ -138,10 +133,16 @@ class AntSimulator(app.Canvas):
         self._agents_th %= (2.0 * np.pi)
 
         grid_idx = (self._agents_pos * self._potential_grid_size).astype(int)
-        self._agents_fitness += [self._get_current_potential()[y,x] for x,y in grid_idx]
-        for x, y in grid_idx:
-            self._potential_neg[y,x] = self._potential[y,x]
-
+        self._agents_fitness += [self._potential[y,x] for x,y in grid_idx]
+        if self._hormone_secretion:
+            for x, y in grid_idx:
+                for i in [-1, 0, 1]:
+                    for j in [-1, 0, 1]:
+                        self._potential[(y+i)%self._potential_grid_size[0],(x+j)%self._potential_grid_size[1]] = 1
+        else:
+            for x, y in grid_idx:
+                self._potential[y,x] = 0
+        self._potential *= self._potential_decay_rate
         self.update()
         self.app.process_events()
 
