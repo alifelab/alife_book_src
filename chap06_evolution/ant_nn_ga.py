@@ -2,7 +2,7 @@ import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, Activation, InputLayer
 from ant_simulator import AntSimulator
-
+from nn_ga_utils import decode_weights
 
 def get_gene_length(model):
     return len(encode_weights(model))
@@ -13,17 +13,6 @@ def encode_weights(model):
     g = np.concatenate([x.flatten() for x in w])
     return g
 
-
-def decode_weights(model, gen):
-    w_shape = [wi.shape for wi in model.get_weights()]
-    w_size = [wi.size for wi in model.get_weights()]
-
-    w = []
-    tmp = g
-    for shape, size in zip(w_shape, w_size):
-        w.append(tmp[:size].reshape(shape))
-        tmp = tmp[size:]
-    model.set_weights(w)
 
 # GA and trial parameters
 ONE_TRIAL_STEP = 5000
@@ -41,9 +30,7 @@ def action(observation):
     global context_val
     o = observation[0]  # in this script, agent num = 1
     nn_input = np.r_[o, context_val]
-    #print(nn_input)
     nn_input = nn_input.reshape(1, len(nn_input))
-    #print(nn_input)
     nn_output = nn_model.predict(nn_input)
     act = np.array([nn_output[0][:2]])
     context_val = nn_output[0][2:]
@@ -126,10 +113,6 @@ while True:
         p2 = parents[idx2]
         xo_idx = np.random.randint(1, gene_length)
         offspring = np.r_[p1[:xo_idx], p2[xo_idx:]]
-        #print(xo_idx)
-        #print(p1)
-        #print(p2)
-        #print(offspring)
         offsprings[i] = offspring
 
     population = offsprings.copy()
