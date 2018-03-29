@@ -8,24 +8,25 @@ import sys
 
 CONTEXT_NN_NUM = 2
 
-def gen_action_func(gene):
+# action function for agent NN
+def action(nn_model, observation, prev_context_val):
+    nn_input = np.r_[observation, prev_context_val]
+    nn_input = nn_input.reshape(1, len(nn_input))
+    nn_output = nn_model.predict(nn_input)
+    act = np.array([nn_output[0][:2]])
+    context_val = nn_output[0][2:]
+    return act, context_val
+
+
+# function to generate NN model and initial context values from gene
+def gen_nn_model(gene):
     nn_model = Sequential()
     nn_model.add(InputLayer((7+CONTEXT_NN_NUM,)))
     nn_model.add(Dense(4, activation='sigmoid'))
     nn_model.add(Dense(2+CONTEXT_NN_NUM, activation='sigmoid'))
     decode_weights(nn_model, gene)
-    context_val_list = [np.zeros(CONTEXT_NN_NUM)]
-
-    def action(observation):
-        o = observation
-        nn_input = np.r_[o, context_val_list[0]]
-        nn_input = nn_input.reshape(1, len(nn_input))
-        nn_output = nn_model.predict(nn_input)
-        act = np.array([nn_output[0][:2]])
-        context_val_list[0] = nn_output[0][2:]
-        return act
-
-    return action
+    context_val = np.zeros(CONTEXT_NN_NUM)
+    return nn_model, context_val
 
 
 # generage gradation color by value(0-1)
@@ -37,15 +38,19 @@ def gen_gradation_color(x):
     return (r, g, b)
 
 
-# setup agent action function by commandline argments
-agent_action_funcs = []
+# setup agents NN models and initial context values by commandline argments
 agent_num = []
+agent_nn_model_list = []
+agent_nn_context_val_list = []
+
 for i in range(1, len(sys.argv), 2):
     g = np.load(sys.argv[i])
     n = int(sys.argv[i+1])
     agent_num.append(n)
     for j in range(n):
-        agent_action_funcs.append(gen_action_func(g))
+        m, c = gen_nn_model(g)
+        agent_nn_model_list.append(m)
+        agent_nn_context_val_list.append(c)
 
 
 N = np.sum(agent_num)
@@ -61,7 +66,11 @@ if len(agent_num) > 1:
             sim.set_agent_color(idx, c)
             idx += 1
 
+act = np.empty((N, 2))  # empty matrix (Nx2) to contain action vectors
 obs = sim.reset()
 while True:
-    act = np.concatenate([af(o) for af, o in zip(agent_action_funcs, obs)])
+    for i in range(N):
+        a, c = action(agent_nn_model_list[i], obs[i], agent_nn_context_val_list[i])
+        act[i] = a
+        agent_nn_context_val_list[i] = c
     obs = sim.step(act)
