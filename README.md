@@ -18,7 +18,7 @@ https://www.anaconda.com/download/
 2. 必要なライブラリのインストール
 
 ```terminal
-$ conda install pyglet pymunk
+$ conda install pyglet pymunk vispy keras
 or
-$ pip install pyglet pymunk
+$ pip install pyglet pymunk vispy keras
 ```
