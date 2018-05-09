@@ -1,6 +1,3 @@
-misc
-.python-version
 */__pycache__/*.pyc
-data
-__pycache__
-chap06_evolution/sampledata_old
+*.pyc
+.python-version
