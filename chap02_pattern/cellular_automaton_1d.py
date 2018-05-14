@@ -1,8 +1,12 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+import sys, os
+sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
+from alifebook_lib.visualizer import BinaryMatrixVisualizer
 
 fig = plt.figure()
 ax = plt.axes()
@@ -16,13 +20,18 @@ ax.grid(True)
 RULE = 110
 
 # space is all field of CA
-# space.shape[0] is number of row = height of image = displayed time duration
-# space.shape[1] is number of col = width of image = field size of CA
+# space.shape[0] is number of row(=height) of image(=displayed time duration)
+# space.shape[1] is number of col(=width) of image(=field size of CA)
 space = np.zeros((300,300), dtype=np.int8)
 
+visualizer = BinaryMatrixVisualizer(space)
+while True:
+    space[0,0] += 1
+    visualizer.update()
+
+# Initialization
 ### random ###
 # space[0,:] = np.random.randint(2, size=len(space))
-
 ### one pixel ###
 space[0, space.shape[1]//2] = 1
 
