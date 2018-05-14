@@ -24,11 +24,6 @@ RULE = 110
 # space.shape[1] is number of col(=width) of image(=field size of CA)
 space = np.zeros((300,300), dtype=np.int8)
 
-visualizer = BinaryMatrixVisualizer(space)
-while True:
-    space[0,0] += 1
-    visualizer.update()
-
 # Initialization
 ### random ###
 # space[0,:] = np.random.randint(2, size=len(space))
