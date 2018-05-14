@@ -1,9 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import sys, os
+sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, Activation, InputLayer
-from ant_simulator import AntSimulator
-from nn_ga_utils import *
-import sys
+from alifebook_lib.simulators import AntSimulator
+from alifebook_lib.utils.nn_ga_utils import *
 
 
 CONTEXT_NN_NUM = 2

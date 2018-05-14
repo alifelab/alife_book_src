@@ -1,7 +1,10 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+import sys, os
+sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
-from alifebook_lib.simulator import TwoWheelVehicleRobotSimulator
+from alifebook_lib.simulators import TwoWheelVehicleRobotSimulator
 
 
 def controll_func(sensor_data):
