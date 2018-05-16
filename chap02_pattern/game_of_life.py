@@ -1,14 +1,9 @@
 #!/usr/bin/env python
 
+import sys, os
+sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib import animation
-
-fig = plt.figure()
-ax = plt.axes()
-ax.set_xticks([])
-ax.set_yticks([])
-ax.grid(True)
+from alifebook_lib.visualizers import BinaryMatrixVisualizer
 
 field_width = 100
 field_height = 100
@@ -39,10 +34,9 @@ glider_gun = np.array(
  [0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]])
 space[2:2+glider_gun.shape[0],2:2+glider_gun.shape[1]] = glider_gun
 
-img = ax.imshow(space, interpolation='nearest', cmap='Greys')
+visualizer = BinaryMatrixVisualizer((600, 600))
 
-def update(frame):
-    global space
+while True:
     next_space = np.empty(space.shape, dtype=np.int8)
     for i in range(space.shape[0]):
         for j in range(space.shape[1]):
@@ -64,8 +58,4 @@ def update(frame):
             else:
                 next_space[i,j] = 0
     space = next_space
-    img.set_array(space)
-    return img,
-
-anim = animation.FuncAnimation(fig, update, interval=50, blit=True)
-plt.show(anim)
+    visualizer.update(space)
