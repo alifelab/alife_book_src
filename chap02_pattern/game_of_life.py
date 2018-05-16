@@ -4,6 +4,7 @@ import sys, os
 sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
 from alifebook_lib.visualizers import BinaryMatrixVisualizer
+import game_of_life_patterns
 
 field_width = 100
 field_height = 100
@@ -11,28 +12,11 @@ field_height = 100
 ### random ###
 # space = np.random.randint(2, size=(field_height,field_width), dtype=np.int8)
 
-### glider ###
-# space = np.zeros((field_height,field_width), dtype=np.int8)
-# glider = np.array(
-# [[0,0,0,0],
-#  [0,0,1,0],
-#  [0,0,0,1],
-#  [0,1,1,1]])
-# space[2:2+glider.shape[0],2:2+glider.shape[1]] = glider
-
-### glider gun ###
+### patterns ###
 space = np.zeros((field_height,field_width), dtype=np.int8)
-glider_gun = np.array(
-[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
- [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0],
- [0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
- [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
- [1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
- [1,1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,1,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0],
- [0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
- [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
- [0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]])
-space[2:2+glider_gun.shape[0],2:2+glider_gun.shape[1]] = glider_gun
+pattern = game_of_life_patterns.glider
+#pattern = game_of_life_patterns.glider_gun
+space[2:2+pattern.shape[0], 2:2+pattern.shape[1]] = pattern
 
 visualizer = BinaryMatrixVisualizer((600, 600))
 
