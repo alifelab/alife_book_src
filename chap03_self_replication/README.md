@@ -1,6 +1,6 @@
 # Chapter3 個と自己複製
 
-## Reactio Diffusion
+## Reaction Diffusion
 反応拡散系による自己複製
 
 ### References
