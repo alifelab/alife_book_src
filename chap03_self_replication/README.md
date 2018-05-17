@@ -16,7 +16,7 @@ Virgo, Nathaniel David. Thermodynamics and the structure of living systems. Diss
 http://sro.sussex.ac.uk/6334/1/Virgo%2C_Nathaniel.pdf
 
 
-## autopoiesis (SCL model)
+## Autopoiesis (SCL model)
 
 ### プログラム解説
 
@@ -95,13 +95,13 @@ disintegration flagは初期状態（Linkが生成された時)はfalse.
 
 編集中
 
-#### bonding
+#### Bonding
 編集中
 
-#### bond_decay
+#### Bond_decay
 編集中
 
-#### absorption
+#### Absorption
 
 LinkがSubstrateを吸収する反応.
 これは、emissionと合わせて、linkがsubstrateを透過する振る舞いを実現している.
@@ -114,7 +114,7 @@ LinkがSubstrateを吸収する反応.
 primary particle => LS
 neighborhood particle => H
 
-#### emission
+#### Emission
 
 LinkがSubstrateを放射する反応.
 これは、absorptionと合わせて、linkがsubstrateを透過する振る舞いを実現している.
