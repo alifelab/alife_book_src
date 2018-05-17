@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import sys, os
 sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
@@ -14,14 +15,15 @@ space = np.zeros((HEIGHT,WIDTH), dtype=np.int8)
 
 # 初期化
 ### ランダム ###
-space = np.random.randint(2, size=(HEIGHT,WIDTH), dtype=np.int8)
+# space = np.random.randint(2, size=(HEIGHT,WIDTH), dtype=np.int8)
 ### game_of_life_patterns.pyの中の各パターンを利用 ###
-# pattern = game_of_life_patterns.GLIDER
-# space[2:2+pattern.shape[0], 2:2+pattern.shape[1]] = pattern
+pattern = game_of_life_patterns.GLIDER_GUN
+space[2:2+pattern.shape[0], 2:2+pattern.shape[1]] = pattern
 
 visualizer = MatrixVisualizer((600, 600))
 
 while True:
+    # 次の状態を一時的に保存する変数
     next_space = np.empty(space.shape, dtype=np.int8)
     for i in range(space.shape[0]):
         for j in range(space.shape[1]):

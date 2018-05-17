@@ -1,15 +1,18 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+import sys, os
+sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib import animation
+from alifebook_lib.visualizers import MatrixVisualizer
+
 
 # Simulation Parameters
-VISUALIZATION_TIME = 128  # size of visualized time duration = visualization height
+VISUALIZATION_TIME = 256  # size of visualized time duration = visualization height
 SPACE_SIZE = 256  # size of 1D space = visualization width
 dx = 0.01
 dt = 1
-visualization_step = 4
+visualization_step = 1
 
 # Model Parameters
 Du = 2e-5
@@ -38,16 +41,12 @@ v[0, SPACE_SIZE//2-init_pattern_size//2:SPACE_SIZE//2+init_pattern_size//2] = 0.
 u[0,:] += np.random.rand(SPACE_SIZE)*0.01
 v[0,:] += np.random.rand(SPACE_SIZE)*0.01
 
-# Animation setup
-fig = plt.figure()
-ax = plt.axes()
-hmap = ax.imshow(u, vmin=0, vmax=1)
-fig.colorbar(hmap)
+visualizer = MatrixVisualizer((600, 600))
 
-def update(frame):
-    global u, v
+t = 0
+while True:
     for i in range(visualization_step):
-        current_line = (frame * visualization_step + i) % VISUALIZATION_TIME
+        current_line = (t * visualization_step + i) % VISUALIZATION_TIME
         next_line = (current_line + 1) % VISUALIZATION_TIME
         current_u = u[current_line]
         current_v = v[current_line]
@@ -59,8 +58,5 @@ def update(frame):
         dvdt = Dv*laplacian_v + current_u*current_v*current_v - (f+k)*current_v
         u[next_line] = current_u + dt * dudt
         v[next_line] = current_v + dt * dvdt
-    hmap.set_array(u)
-    return hmap,
-
-anim = animation.FuncAnimation(fig, update, interval=100, blit=True)
-plt.show(anim)
+        t += 1
+    visualizer.update(u*255)

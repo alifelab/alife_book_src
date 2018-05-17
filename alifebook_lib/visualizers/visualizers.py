@@ -14,9 +14,14 @@ class MatrixVisualizer(object):
         self.height = size[1]
         self.screen = pygame.display.set_mode(size)
         #pygame.display.set_caption("title")
+        #self.pixels = np.empty((self.width, self.height, 3), dtype=np.uint8)
 
     def update(self, matrix):
-        img = pygame.surfarray.make_surface(matrix.T)
+        matrix = np.repeat(matrix.T[:,:,np.newaxis], 3, axis=2)
+        matrix[matrix<0] = 0
+        matrix[matrix>255] = 255
+        pixels = matrix.astype(np.uint8)
+        img = pygame.surfarray.make_surface(pixels)
         if self.screen.get_size() != img.get_size():
             img = pygame.transform.scale(img, self.screen.get_size())
         self.screen.blit(img, (0,0))
