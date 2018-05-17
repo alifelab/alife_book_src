@@ -3,27 +3,30 @@
 import sys, os
 sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
-from alifebook_lib.visualizers import BinaryMatrixVisualizer
+from alifebook_lib.visualizers import MatrixVisualizer
 import game_of_life_patterns
 
-field_width = 100
-field_height = 100
 
-### random ###
-# space = np.random.randint(2, size=(field_height,field_width), dtype=np.int8)
+WIDTH = 50
+HEIGHT = 50
 
-### patterns ###
-space = np.zeros((field_height,field_width), dtype=np.int8)
-pattern = game_of_life_patterns.glider
-#pattern = game_of_life_patterns.glider_gun
-space[2:2+pattern.shape[0], 2:2+pattern.shape[1]] = pattern
+space = np.zeros((HEIGHT,WIDTH), dtype=np.int8)
 
-visualizer = BinaryMatrixVisualizer((600, 600))
+# 初期化
+### ランダム ###
+space = np.random.randint(2, size=(HEIGHT,WIDTH), dtype=np.int8)
+### game_of_life_patterns.pyの中の各パターンを利用 ###
+# pattern = game_of_life_patterns.GLIDER
+# space[2:2+pattern.shape[0], 2:2+pattern.shape[1]] = pattern
+
+visualizer = MatrixVisualizer((600, 600))
 
 while True:
     next_space = np.empty(space.shape, dtype=np.int8)
     for i in range(space.shape[0]):
         for j in range(space.shape[1]):
+            # 自分と近傍のセルの状態を取得
+            # c: center (自分自身)
             # nw: north west, ne: north east, c: center ...
             nw = space[i-1,j-1]
             n  = space[i-1,j]
@@ -42,4 +45,4 @@ while True:
             else:
                 next_space[i,j] = 0
     space = next_space
-    visualizer.update(space)
+    visualizer.update(space*255)

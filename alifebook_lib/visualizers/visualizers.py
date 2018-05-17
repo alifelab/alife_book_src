@@ -5,10 +5,10 @@ from pygame.locals import *
 
 
 
-class BinaryMatrixVisualizer(object):
-    """docstring for BinaryMatrixVisualizer."""
+class MatrixVisualizer(object):
+    """docstring for MatrixVisualizer."""
     def __init__(self, size):
-        super(BinaryMatrixVisualizer, self).__init__()
+        super(MatrixVisualizer, self).__init__()
         pygame.init()
         self.width = size[0]
         self.height = size[1]
@@ -16,8 +16,10 @@ class BinaryMatrixVisualizer(object):
         #pygame.display.set_caption("title")
 
     def update(self, matrix):
-        img = pygame.surfarray.make_surface(matrix.T*255)
-        self.screen.blit(img, (0,0,400,400))
+        img = pygame.surfarray.make_surface(matrix.T)
+        if self.screen.get_size() != img.get_size():
+            img = pygame.transform.scale(img, self.screen.get_size())
+        self.screen.blit(img, (0,0))
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == QUIT:
