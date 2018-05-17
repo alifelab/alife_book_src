@@ -1,8 +1,10 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+import sys, os
+sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib import animation
+from alifebook_lib.visualizers import MatrixVisualizer
 
 # Simulation Parameters
 X_SIZE = 256
@@ -34,14 +36,9 @@ a += np.random.rand(X_SIZE, Y_SIZE)*0.1
 b += np.random.rand(X_SIZE, Y_SIZE)*0.1
 p += np.random.rand(X_SIZE, Y_SIZE)*0.1
 
-# Animation setup
-fig = plt.figure()
-ax = plt.axes()
-hmap = ax.imshow(b+p/50, vmin=0, vmax=1, cmap=plt.cm.gray)
-fig.colorbar(hmap)
+visualizer = MatrixVisualizer((600, 600))
 
-def update(frame):
-    global a, b, c, p
+while True:
     for i in range(visualization_step):
         # calculate laplacian
         laplacian_a = (np.roll(a, 1, axis=0) + np.roll(a, -1, axis=0) + np.roll(a, 1, axis=1) + np.roll(a, -1, axis=1) - 4*a) / (dx*dx)
@@ -50,12 +47,9 @@ def update(frame):
         dadt = Da * laplacian_a - np.exp(-w*p)*a*b*b + r*(1.0-a);
         dbdt = Db * laplacian_b + np.exp(-w*p)*a*b*b - k*b;
         dpdt = k*b - k_p*p;
-        
+
         a += dt * dadt
         b += dt * dbdt
         p += dt * dpdt
-    hmap.set_array(b+p/50)
-    return hmap,
-
-anim = animation.FuncAnimation(fig, update, interval=100, blit=True)
-plt.show(anim)
+    img_matrix = (b + p / 50) * 255
+    visualizer.update(img_matrix)

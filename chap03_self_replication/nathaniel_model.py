@@ -1,8 +1,10 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+import sys, os
+sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib import animation
+from alifebook_lib.visualizers import MatrixVisualizer
 
 # Simulation Parameters
 X_SIZE = 200
@@ -46,15 +48,9 @@ a[100:110,100:110] = 0.45 + np.random.rand(10, 10)*0.1
 b[100:110,100:110] = 0.45 + np.random.rand(10, 10)*0.1
 c[101:108,112:119] = 1.5
 
-# Animation setup
-fig = plt.figure()
-ax = plt.axes()
-# visualize b+c is good to see "body" and "tail"
-hmap = ax.imshow(b+c, vmin=0, vmax=1, cmap=plt.cm.gray)
-fig.colorbar(hmap)
+visualizer = MatrixVisualizer((600, 600))
 
-def update(frame):
-    global a, b, c, a_res
+while True:
     for i in range(visualization_step):
         laplacian_a = (np.roll(a, 1, axis=0) + np.roll(a, -1, axis=0) + np.roll(a, 1, axis=1) + np.roll(a, -1, axis=1) - 4*a) / (dx*dx)
         laplacian_b = (np.roll(b, 1, axis=0) + np.roll(b, -1, axis=0) + np.roll(b, 1, axis=1) + np.roll(b, -1, axis=1) - 4*b) / (dx*dx)
@@ -63,7 +59,7 @@ def update(frame):
         dadt = Da * laplacian_a - a*b*b + r*(a_res - a)
         dbdt = Db * laplacian_b + a*b*b - k_2*b*c*c - k_1*b
         dcdt = Dc * laplacian_c + k_2*b*c*c - k_3*c
-        
+
         a += dt * dadt
         b += dt * dbdt
         c += dt * dcdt
@@ -73,8 +69,4 @@ def update(frame):
             a_res -= a_res_step
         else:
             a_res = a_res_end
-    hmap.set_array(b+c)
-    return hmap,
-
-anim = animation.FuncAnimation(fig, update, interval=100, blit=True)
-plt.show(anim)
+    visualizer.update((b+c)*255)
