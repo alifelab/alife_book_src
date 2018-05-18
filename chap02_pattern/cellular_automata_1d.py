@@ -6,6 +6,11 @@ sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポ�
 import numpy as np
 from alifebook_lib.visualizers import MatrixVisualizer
 
+# visualizerの初期化。表示領域のサイズを与える。
+WINDOW_RESOLUTION_W = 600
+WINDOW_RESOLUTION_H = 400
+visualizer = MatrixVisualizer((WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H))
+
 WIDTH = 600
 HEIGHT = 400
 
@@ -21,9 +26,6 @@ space = np.zeros((HEIGHT, WIDTH), dtype=np.int8)
 # space[0,:] = np.random.randint(2, size=len(space))
 ### 中央の１ピクセルのみ１、後は０ ###
 space[0, space.shape[1]//2] = 1
-
-# visualizerの初期化。表示領域のサイズを与える。
-visualizer = MatrixVisualizer((WIDTH, HEIGHT))
 
 t = 0
 while True:

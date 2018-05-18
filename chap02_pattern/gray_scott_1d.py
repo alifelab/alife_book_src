@@ -6,6 +6,10 @@ sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポ�
 import numpy as np
 from alifebook_lib.visualizers import MatrixVisualizer
 
+# visualizerの初期化。表示領域のサイズを与える。
+WINDOW_RESOLUTION_W = 600
+WINDOW_RESOLUTION_H = 600
+visualizer = MatrixVisualizer((WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H))
 
 # Simulation Parameters
 VISUALIZATION_TIME = 256  # size of visualized time duration = visualization height
@@ -25,7 +29,6 @@ Dv = 1e-5
 # f, k = 0.012, 0.05
 # waves
 # f, k = 0.025, 0.05
-
 f, k = 0.018, 0.077;
 
 # Initialization
@@ -40,8 +43,6 @@ v[0, SPACE_SIZE//2-init_pattern_size//2:SPACE_SIZE//2+init_pattern_size//2] = 0.
 # add random noize in order to break the square symmetry
 u[0,:] += np.random.rand(SPACE_SIZE)*0.01
 v[0,:] += np.random.rand(SPACE_SIZE)*0.01
-
-visualizer = MatrixVisualizer((600, 600))
 
 t = 0
 while True:

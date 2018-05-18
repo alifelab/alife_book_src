@@ -6,6 +6,10 @@ sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポ�
 import numpy as np
 from alifebook_lib.visualizers import MatrixVisualizer
 
+# visualizerの初期化。表示領域のサイズを与える。
+WINDOW_RESOLUTION_W = 600
+WINDOW_RESOLUTION_H = 600
+visualizer = MatrixVisualizer((WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H))
 
 # シミュレーションの各パラメタ
 SPACE_GRID_SIZE = 256
@@ -37,8 +41,6 @@ v[SPACE_GRID_SIZE//2-SQUARE_SIZE//2:SPACE_GRID_SIZE//2+SQUARE_SIZE//2,
 # add random noize in order to break the square symmetry
 u = u + u*np.random.rand(SPACE_GRID_SIZE, SPACE_GRID_SIZE)*0.01
 v = v + u*np.random.rand(SPACE_GRID_SIZE, SPACE_GRID_SIZE)*0.01
-
-visualizer = MatrixVisualizer((600, 600))
 
 while True:
     for i in range(VISUALIZATION_STEP):

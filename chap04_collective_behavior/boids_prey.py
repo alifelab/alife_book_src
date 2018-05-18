@@ -1,39 +1,37 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+import sys, os
+sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib import animation
-from mpl_toolkits.mplot3d import Axes3D
+from alifebook_lib.visualizers import SwarmVisualizer
 
-# simulation parameters
+# visualizerの初期化。表示領域のサイズを与える。
+WINDOW_RESOLUTION_W = 600
+WINDOW_RESOLUTION_H = 600
+visualizer = SwarmVisualizer((WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H))
+
+# シミュレーションパラメタ
 N = 64
 PREY_FORCE = 0.0001
-COHISION_FORCE = 0.01
-SEPARATIN_FORCE = 0.01
+COHESION_FORCE = 0.01
+SEPARATION_FORCE = 0.01
 ALIGNMENT_FORCE = 0.1
 # all interaction distance and angle take same value for simplify.
 INTERACTION_DISTANCE = 0.05
 INTERACTION_ANGLE = np.pi / 3
 MIN_VEL = 0.001
 MAX_VEL = 0.005
+PREY_MOVEMENT_STEP = 50
 
-
+# 位置と速度
 x = np.random.rand(N, 3) * 0.1
 v = np.random.rand(N, 3) * MIN_VEL
+# preyの位置
 prey_x = np.random.rand(1, 3) * 0.5
 
-# Animation setup
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-plots = ax.scatter(x[:,0], x[:,1], x[:,2])
-prey_plot = ax.scatter(prey_x[:,0], prey_x[:,1], prey_x[:,2])
-ax.set_xlim(0, 0.5)
-ax.set_ylim(0, 0.5)
-ax.set_zlim(0, 0.5)
-
-
-def update(frame):
-    global x, v, prey_x
+t = 0
+while True:
     # 3 force, cohesion, separation and alignment
     dv_coh = np.zeros((N,3))
     dv_sep = np.zeros((N,3))
@@ -54,18 +52,19 @@ def update(frame):
         interact_agents_v = vj[ (dist < INTERACTION_DISTANCE) & (angle < INTERACTION_ANGLE) ]
         # calculate several forces.
         if (len(interact_agents_x) > 0):
-            dv_coh[i] = COHISION_FORCE * (np.average(interact_agents_x, axis=0) - xi)
+            dv_coh[i] = COHESION_FORCE * (np.average(interact_agents_x, axis=0) - xi)
         if (len(interact_agents_x) > 0):
-            dv_sep[i] = SEPARATIN_FORCE * np.sum(xi - interact_agents_x, axis=0)
+            dv_sep[i] = SEPARATION_FORCE * np.sum(xi - interact_agents_x, axis=0)
         if (len(interact_agents_v) > 0):
             dv_ali[i] = ALIGNMENT_FORCE * (np.average(interact_agents_v, axis=0) - vi)
     v += dv_coh + dv_sep + dv_ali
 
     # PREY MODEL
     v += PREY_FORCE * (prey_x - x) / np.linalg.norm((prey_x - x), axis=1, keepdims=True)**2
-    if frame%30 == 0:
+    if t % PREY_MOVEMENT_STEP == 0:
         prey_x = np.random.rand(1, 3) * 0.5
-        
+    t += 1
+
     # check min/max velocity.
     for i in range(N):
         v_abs = np.linalg.norm(v[i])
@@ -76,15 +75,5 @@ def update(frame):
 
     # update
     x += v
-    
-    plots._offsets3d = (x[:,0], x[:,1], x[:,2])
-    prey_plot._offsets3d = (prey_x[:,0], prey_x[:,1], prey_x[:,2])
 
-    # show only around the center of gravity
-    #ax.set_xlim(np.average(x[:,0])-0.1, np.average(x[:,0])+0.1)
-    #ax.set_ylim(np.average(x[:,1])-0.1, np.average(x[:,1])+0.1)
-    #ax.set_zlim(np.average(x[:,2])-0.1, np.average(x[:,2])+0.1)
-
-#anim = animation.FuncAnimation(fig, update, interval=100, blit=True)
-anim = animation.FuncAnimation(fig, update, interval=100)
-plt.show(anim)
+    visualizer.update(x, v, markers_x=prey_x, range=(0, 0.5))
