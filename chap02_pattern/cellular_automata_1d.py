@@ -7,8 +7,8 @@ import numpy as np
 from alifebook_lib.visualizers import MatrixVisualizer
 
 # visualizerの初期化。表示領域のサイズを与える。
-WINDOW_RESOLUTION_W = 600
-WINDOW_RESOLUTION_H = 400
+WINDOW_RESOLUTION_W = 800
+WINDOW_RESOLUTION_H = 600
 visualizer = MatrixVisualizer((WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H))
 
 WIDTH = 600
