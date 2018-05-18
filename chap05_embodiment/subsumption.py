@@ -90,7 +90,6 @@ class ExploreModule(SubsumptionModule):
 
     def on_update(self):
         if self.get_input('feed_touching'):
-            print("feeding")
             # speed down to explore
             self.set_output("left_wheel_speed",  0)
             self.set_output("right_wheel_speed", 0)
