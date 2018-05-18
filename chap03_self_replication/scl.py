@@ -14,15 +14,19 @@ visualizer = SCLVisualizer((WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H))
 
 SPACE_SIZE = 16
 
-INIT_CATALYST_POSITIONS = [(SPACE_SIZE//2,SPACE_SIZE//2)]
-INIT_BONDED_LINK_POSITIONS = []
+# ２種類のサンプル初期設定
 
-# INIT_CATALYST_POSITIONS = [(16,16), (3,3), (29,29), (3, 29), (29, 3)]
-# INIT_BONDED_LINK_POSITIONS = [ \
-# (14,13),(15,13),(16,13),(17,13),(18,13), \
-# (19,14),(19,15),(19,16),(19,17),(19,18), \
-# (18,19),(17,19),(16,19),(15,19),(14,19), \
-# (13,18),(13,17),(13,16),(13,15),(13,14)]
+### catalystのみ ###
+# INIT_CATALYST_POSITIONS = [(SPACE_SIZE//2,SPACE_SIZE//2)]
+# INIT_BONDED_LINK_POSITIONS = []
+
+### catalyst + bond ###
+INIT_CATALYST_POSITIONS = [(8,8)]
+INIT_BONDED_LINK_POSITIONS = [ \
+(6,5),(7,5),(8,5),(9,5),(10,5), \
+(11,6),(11,7),(11,8),(11,9),(11,10), \
+(10,11),(9,11),(8,11),(7,11),(6,11), \
+(5,10),(5,9),(5,8),(5,7),(5,6)]
 
 SUBSTRATE_DENSITY = 0.8
 MOBILITY_FACTOR = {
@@ -51,8 +55,7 @@ for (x, y), _ in np.ndenumerate(particles):
         p = {'type': 'HOLE', 'disintegrating': False, 'bonds': []}
     particles[x,y] = p
 
-for i in range(len(INIT_CATALYST_POSITIONS)):
-    x, y = INIT_CATALYST_POSITIONS[i]
+for x, y in INIT_CATALYST_POSITIONS:
     particles[x, y]['type'] = 'CATALYST'
 
 for i in range(len(INIT_BONDED_LINK_POSITIONS)):
