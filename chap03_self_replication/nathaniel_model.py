@@ -6,6 +6,11 @@ sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポ�
 import numpy as np
 from alifebook_lib.visualizers import MatrixVisualizer
 
+# visualizerの初期化。表示領域のサイズを与える。
+WINDOW_RESOLUTION_W = 600
+WINDOW_RESOLUTION_H = 600
+visualizer = MatrixVisualizer((WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H))
+
 # Simulation Parameters
 X_SIZE = 200
 Y_SIZE = 200
@@ -35,7 +40,6 @@ a_res = 1.02
 a_res_end = 1.0
 a_res_step = (a_res - a_res_end) * dt / 2000
 
-
 # Initialization
 # this initial setup is by Nathaniel's thesis pp104
 # 10x10 square A and B concentrated area and 7x7 C area
@@ -47,8 +51,6 @@ square_size_real = 0.1
 a[100:110,100:110] = 0.45 + np.random.rand(10, 10)*0.1
 b[100:110,100:110] = 0.45 + np.random.rand(10, 10)*0.1
 c[101:108,112:119] = 1.5
-
-visualizer = MatrixVisualizer((600, 600))
 
 while True:
     for i in range(visualization_step):

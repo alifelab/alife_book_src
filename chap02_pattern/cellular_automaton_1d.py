@@ -6,11 +6,13 @@ sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポ�
 import numpy as np
 from alifebook_lib.visualizers import MatrixVisualizer
 
+# visualizerの初期化。表示領域のサイズを与える。
+WINDOW_RESOLUTION_W = 600
+WINDOW_RESOLUTION_H = 400
+visualizer = MatrixVisualizer((WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H))
+
 WIDTH = 600
 HEIGHT = 400
-
-# visualizerの初期化。表示領域のサイズを与える。
-visualizer = MatrixVisualizer((WIDTH, HEIGHT))
 
 # CAのバイナリコーディングされたルール (Wolfram code)
 RULE = 110

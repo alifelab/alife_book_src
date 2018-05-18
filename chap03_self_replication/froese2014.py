@@ -6,6 +6,11 @@ sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポ�
 import numpy as np
 from alifebook_lib.visualizers import MatrixVisualizer
 
+# visualizerの初期化。表示領域のサイズを与える。
+WINDOW_RESOLUTION_W = 600
+WINDOW_RESOLUTION_H = 600
+visualizer = MatrixVisualizer((WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H))
+
 # Simulation Parameters
 X_SIZE = 256
 Y_SIZE = 256
@@ -35,8 +40,6 @@ b[X_SIZE//2-square_size//2:X_SIZE//2+square_size//2, Y_SIZE//2-square_size//2:Y_
 a += np.random.rand(X_SIZE, Y_SIZE)*0.1
 b += np.random.rand(X_SIZE, Y_SIZE)*0.1
 p += np.random.rand(X_SIZE, Y_SIZE)*0.1
-
-visualizer = MatrixVisualizer((600, 600))
 
 while True:
     for i in range(visualization_step):
