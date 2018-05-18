@@ -20,3 +20,7 @@ https://www.anaconda.com/download/
 ```terminal
 $ pip install pyglet pymunk vispy keras pygame Pillow
 ```
+
+### kerasのバックエンドについて
+kerasがインストール済みで、バックエンドをtensorflow以外に設定している場合はエラーが出るので、tensorflowに切り替えてください.
+https://keras.io/ja/backend/
