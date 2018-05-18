@@ -46,7 +46,7 @@ while True:
                        np.roll(u, 1, axis=1) + np.roll(u, -1, axis=1) - 4*u) / (dx*dx)
         laplacian_v = (np.roll(v, 1, axis=0) + np.roll(v, -1, axis=0) +
                        np.roll(v, 1, axis=1) + np.roll(v, -1, axis=1) - 4*v) / (dx*dx)
-        # Gray-Scott model equation
+        # Gray-Scottモデル方程式
         dudt = Du*laplacian_u - u*v*v + f*(1.0-u)
         dvdt = Dv*laplacian_v + u*v*v - (f+k)*v
         u += dt * dudt
