@@ -30,7 +30,7 @@ while True:
             # 自分と近傍のセルの状態を取得
             # c: center (自分自身)
             # nw: north west, ne: north east, c: center ...
-            nw = space[i-1,j-1]
+            nw = state[i-1,j-1]
             n  = state[i-1,j]
             ne = state[i-1,(j+1)%state.shape[1]]
             w  = state[i,j-1]
