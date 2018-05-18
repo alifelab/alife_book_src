@@ -9,6 +9,9 @@ from alifebook_lib.visualizers import MatrixVisualizer
 WIDTH = 600
 HEIGHT = 400
 
+# visualizerの初期化。表示領域のサイズを与える。
+visualizer = MatrixVisualizer((WIDTH, HEIGHT))
+
 # CAのバイナリコーディングされたルール (Wolfram code)
 RULE = 110
 
@@ -21,9 +24,6 @@ space = np.zeros((HEIGHT, WIDTH), dtype=np.int8)
 # space[0,:] = np.random.randint(2, size=len(space))
 ### 中央の１ピクセルのみ１、後は０ ###
 space[0, space.shape[1]//2] = 1
-
-# visualizerの初期化。表示領域のサイズを与える。
-visualizer = MatrixVisualizer((WIDTH, HEIGHT))
 
 t = 0
 while True:

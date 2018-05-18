@@ -7,6 +7,7 @@ import numpy as np
 from alifebook_lib.visualizers import MatrixVisualizer
 import game_of_life_patterns
 
+visualizer = MatrixVisualizer((600, 600))
 
 WIDTH = 50
 HEIGHT = 50
@@ -19,8 +20,6 @@ space = np.zeros((HEIGHT,WIDTH), dtype=np.int8)
 ### game_of_life_patterns.pyの中の各パターンを利用 ###
 pattern = game_of_life_patterns.GLIDER_GUN
 space[2:2+pattern.shape[0], 2:2+pattern.shape[1]] = pattern
-
-visualizer = MatrixVisualizer((600, 600))
 
 while True:
     # 次の状態を一時的に保存する変数

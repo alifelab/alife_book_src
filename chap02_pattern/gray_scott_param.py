@@ -21,6 +21,8 @@ f_max = 0.05
 k_min = 0.05
 k_max = 0.07
 
+visualizer = MatrixVisualizer((600, 600))
+
 f_lin = np.linspace(f_min, f_max, SPACE_GRID_SIZE)
 k_lin = np.linspace(k_min, k_max, SPACE_GRID_SIZE)
 f, k = np.meshgrid(f_lin, k_lin)
@@ -37,8 +39,6 @@ v[SPACE_GRID_SIZE//2-SQUARE_SIZE//2:SPACE_GRID_SIZE//2+SQUARE_SIZE//2,
 # add random noize in order to break the square symmetry
 u = u + u*np.random.rand(SPACE_GRID_SIZE, SPACE_GRID_SIZE)*0.01
 v = v + u*np.random.rand(SPACE_GRID_SIZE, SPACE_GRID_SIZE)*0.01
-
-visualizer = MatrixVisualizer((600, 600))
 
 while True:
     for i in range(VISUALIZATION_STEP):
