@@ -18,5 +18,5 @@ https://www.anaconda.com/download/
 2. 必要なライブラリのインストール
 
 ```terminal
-$ pip install pyglet pymunk vispy keras pygame
+$ pip install pyglet pymunk vispy keras pygame PIL
 ```
