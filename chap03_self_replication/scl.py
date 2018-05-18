@@ -1,13 +1,16 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-import matplotlib as mpl
-mpl.use('tkagg')
-
+import sys, os
+sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib import animation
-from scl_lib import draw
+from alifebook_lib.visualizers import SCLVisualizer
 from scl_interaction_functions import *
+
+# visualizerの初期化。表示領域のサイズを与える。
+WINDOW_RESOLUTION_W = 600
+WINDOW_RESOLUTION_H = 600
+visualizer = SCLVisualizer((WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H))
 
 SPACE_SIZE = 16
 
@@ -39,16 +42,6 @@ BOND_DECAY_PROBABILITY     = 0.0005
 ABSORPTION_PROBABILITY     = 0.5
 EMISSION_PROBABILITY       = 0.5
 
-
-#
-# Initialization
-#
-fig = plt.figure(figsize=(8,8))
-ax = plt.axes(xlim=(-1,SPACE_SIZE), ylim=(-1,SPACE_SIZE), aspect='equal')
-ax.set_xticks([])
-ax.set_yticks([])
-ax.invert_yaxis()
-
 particles = np.empty((SPACE_SIZE, SPACE_SIZE), dtype=object)
 for (x, y), _ in np.ndenumerate(particles):
     if evaluate_probability(SUBSTRATE_DENSITY):
@@ -69,8 +62,8 @@ for i in range(len(INIT_BONDED_LINK_POSITIONS)):
     particles[x0, y0]['bonds'].append((x1, y1))
     particles[x1, y1]['bonds'].append((x0, y0))
 
-def update(frame):
-    # update model
+while True:
+    # Mobile
     mobile = np.full(particles.shape, True, dtype=bool)
     for x in range(SPACE_SIZE):
         for y in range(SPACE_SIZE):
@@ -83,7 +76,6 @@ def update(frame):
                     and len(p['bonds']) == 0 and len(n_p['bonds']) == 0:
                 particles[x,y], particles[n_x,n_y] = n_p, p
                 mobile[x, y] = mobile[n_x, n_y] = False
-
     # Reaction
     for x in range(SPACE_SIZE):
         for y in range(SPACE_SIZE):
@@ -95,9 +87,4 @@ def update(frame):
             bond_decay(particles, x, y, BOND_DECAY_PROBABILITY)
             absorption(particles, x, y, ABSORPTION_PROBABILITY)
             emission(particles, x, y, EMISSION_PROBABILITY)
-    draw(ax, particles)
-    return ax.patches
-
-
-anim = animation.FuncAnimation(fig, update, interval = 80, blit=True)
-plt.show(anim)
+    visualizer.update(particles)
