@@ -2,7 +2,9 @@ import sys
 import numpy as np
 import pygame
 from pygame.locals import *
-
+from matplotlib import pyplot as plt
+from matplotlib import animation
+from mpl_toolkits.mplot3d import Axes3D
 
 
 class MatrixVisualizer(object):
@@ -29,3 +31,28 @@ class MatrixVisualizer(object):
         for event in pygame.event.get():
             if event.type == QUIT:
                 sys.exit()
+
+
+class SwarmVisualizer(object):
+    """docstring for SwarmVisualizer."""
+    def __init__(self, size):
+        super(SwarmVisualizer, self).__init__()
+        # Animation setup
+        fig = plt.figure()
+        self.ax = fig.add_subplot(111, projection='3d')
+        self.running = False
+
+
+    def update(self, x, v):
+        if not self.running:
+            self.plots = self.ax.scatter(x[:,0], x[:,1], x[:,2])
+            self.running = True
+
+        self.plots._offsets3d = (x[:,0], x[:,1], x[:,2])
+
+        # show only around the center of gravity
+        self.ax.set_xlim(np.average(x[:,0])-0.1, np.average(x[:,0])+0.1)
+        self.ax.set_ylim(np.average(x[:,1])-0.1, np.average(x[:,1])+0.1)
+        self.ax.set_zlim(np.average(x[:,2])-0.1, np.average(x[:,2])+0.1)
+
+        plt.pause(0.001)

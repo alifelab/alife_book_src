@@ -1,11 +1,17 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+import sys, os
+sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib import animation
-from mpl_toolkits.mplot3d import Axes3D
+from alifebook_lib.visualizers import SwarmVisualizer
 
-# simulation parameters
+# visualizerの初期化。表示領域のサイズを与える。
+WINDOW_RESOLUTION_W = 600
+WINDOW_RESOLUTION_H = 600
+visualizer = SwarmVisualizer((WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H))
+
+# シミュレーションパラメタ
 N = 64
 COHESION_FORCE = 0.008
 SEPARATION_FORCE = 0.04
@@ -19,16 +25,11 @@ ALIGNMENT_ANGLE = np.pi / 3
 MIN_VEL = 0.001
 MAX_VEL = 0.005
 
+# 位置と速度
 x = np.random.rand(N, 3) * 0.1
 v = np.random.rand(N, 3) * MIN_VEL
 
-# Animation setup
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-plots = ax.scatter(x[:,0], x[:,1], x[:,2])
-
-def update(frame):
-    global x, v
+while True:
     # 3 force, cohesion, separation and alignment
     dv_coh = np.zeros((N,3))
     dv_sep = np.zeros((N,3))
@@ -68,13 +69,4 @@ def update(frame):
     # update
     x += v
 
-    plots._offsets3d = (x[:,0], x[:,1], x[:,2])
-
-    # show only around the center of gravity
-    ax.set_xlim(np.average(x[:,0])-0.1, np.average(x[:,0])+0.1)
-    ax.set_ylim(np.average(x[:,1])-0.1, np.average(x[:,1])+0.1)
-    ax.set_zlim(np.average(x[:,2])-0.1, np.average(x[:,2])+0.1)
-
-#anim = animation.FuncAnimation(fig, update, interval=100, blit=True)
-anim = animation.FuncAnimation(fig, update, interval=100)
-plt.show(anim)
+    visualizer.update(x, v)
