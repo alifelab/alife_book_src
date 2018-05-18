@@ -8,8 +8,8 @@ from mpl_toolkits.mplot3d import Axes3D
 # simulation parameters
 N = 64
 PREY_FORCE = 0.0001
-COHISION_FORCE = 0.01
-SEPARATIN_FORCE = 0.01
+COHESION_FORCE = 0.01
+SEPARATION_FORCE = 0.01
 ALIGNMENT_FORCE = 0.1
 # all interaction distance and angle take same value for simplify.
 INTERACTION_DISTANCE = 0.05
@@ -54,9 +54,9 @@ def update(frame):
         interact_agents_v = vj[ (dist < INTERACTION_DISTANCE) & (angle < INTERACTION_ANGLE) ]
         # calculate several forces.
         if (len(interact_agents_x) > 0):
-            dv_coh[i] = COHISION_FORCE * (np.average(interact_agents_x, axis=0) - xi)
+            dv_coh[i] = COHESION_FORCE * (np.average(interact_agents_x, axis=0) - xi)
         if (len(interact_agents_x) > 0):
-            dv_sep[i] = SEPARATIN_FORCE * np.sum(xi - interact_agents_x, axis=0)
+            dv_sep[i] = SEPARATION_FORCE * np.sum(xi - interact_agents_x, axis=0)
         if (len(interact_agents_v) > 0):
             dv_ali[i] = ALIGNMENT_FORCE * (np.average(interact_agents_v, axis=0) - vi)
     v += dv_coh + dv_sep + dv_ali
@@ -65,7 +65,7 @@ def update(frame):
     v += PREY_FORCE * (prey_x - x) / np.linalg.norm((prey_x - x), axis=1, keepdims=True)**2
     if frame%30 == 0:
         prey_x = np.random.rand(1, 3) * 0.5
-        
+
     # check min/max velocity.
     for i in range(N):
         v_abs = np.linalg.norm(v[i])
@@ -76,7 +76,7 @@ def update(frame):
 
     # update
     x += v
-    
+
     plots._offsets3d = (x[:,0], x[:,1], x[:,2])
     prey_plot._offsets3d = (prey_x[:,0], prey_x[:,1], prey_x[:,2])
 
