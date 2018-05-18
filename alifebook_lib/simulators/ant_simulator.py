@@ -4,7 +4,6 @@ import numpy as np
 from vispy import app, gloo, visuals
 from vispy.visuals import transforms
 from vispy.util.transforms import perspective
-import ipdb
 from PIL import Image
 
 GLSL_PATH = path.join(path.dirname(path.abspath(__file__)), 'glsl')
@@ -109,7 +108,6 @@ class AntSimulator(app.Canvas):
                 xi = int(x * self._potential_grid_size[1])
                 yi = int(y * self._potential_grid_size[0])
                 obs[ai, si] = self._potential[yi, xi]
-                #ipdb.set_trace()
         return obs
 
     def set_agent_color(self, index, color):
