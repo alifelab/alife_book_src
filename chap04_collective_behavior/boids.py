@@ -69,4 +69,4 @@ while True:
     # update
     x += v
 
-    visualizer.update(x, v)
+    visualizer.update(x, v, range=(-0.1, 0.1), focus_center_of_mass=True)
