@@ -1,8 +1,11 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+import sys, os
+sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
 from abc import abstractmethod
-from alifebook_lib.simulator import TwoWheelVehicleRobotSimulator
+from alifebook_lib.simulators import TwoWheelVehicleRobotSimulator
 
 class SubsumptionModule(object):
     def __init__(self):
