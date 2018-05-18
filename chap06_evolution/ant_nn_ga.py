@@ -76,8 +76,8 @@ while True:
     print("         max:", np.max(fitness))
     print("         min:", np.min(fitness))
     idx = np.argmax(fitness)
-    best_pop = population[idx]
-    np.save("gen{0:04}_best.npy".format(generation), best_pop)
+    best_individual = population[idx]
+    np.save("gen{0:04}_best.npy".format(generation), best_individual)
 
 
     np.random.seed()
@@ -92,7 +92,7 @@ while True:
         parents.append(population[winner_idx])
 
     # best population alive next gen
-    offsprings[0] = best_pop
+    offsprings[0] = best_individual
 
     # same as parents N/3
     for i in range(1, POPULATION_SIZE//3):
