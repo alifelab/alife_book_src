@@ -22,7 +22,7 @@ def encode_weights(model):
 # GA and trial parameters
 ONE_TRIAL_STEP = 5000
 POPULATION_SIZE = 50
-TORNAMENT_SIZE = 5
+TOURNAMENT_SIZE = 5
 
 CONTEXT_NN_NUM = 2
 nn_model = Sequential()
@@ -86,7 +86,7 @@ while True:
     PARENT_NUM = POPULATION_SIZE // 2
     parents = []
     for i in range(PARENT_NUM):
-        idxs = np.random.randint(0, len(population), TORNAMENT_SIZE)
+        idxs = np.random.randint(0, len(population), TOURNAMENT_SIZE)
         fits = np.array(fitness)[idxs]
         winner_idx = idxs[np.argmax(fits)]
         parents.append(population[winner_idx])
