@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+"""
+Froese, Tom, Nathaniel Virgo, and Takashi Ikegami. 2014
+Motility at the origin of life: Its characterization and a model
+"""
 import sys, os
 sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
