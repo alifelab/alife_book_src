@@ -7,9 +7,7 @@ import numpy as np
 from alifebook_lib.visualizers import MatrixVisualizer
 
 # visualizerの初期化。表示領域のサイズを与える。
-WINDOW_RESOLUTION_W = 800
-WINDOW_RESOLUTION_H = 600
-visualizer = MatrixVisualizer((WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H))
+visualizer = MatrixVisualizer(600, 600)
 
 WIDTH = 600
 HEIGHT = 400
@@ -28,7 +26,8 @@ space = np.zeros((HEIGHT, WIDTH), dtype=np.int8)
 space[0, space.shape[1]//2] = 1
 
 t = 0
-while True:
+# 表示をアップデート。spaceは0/1なので、255階調に変換する。
+while visualizer.update(space*255):
     # 今と次の行を計算
     current_line = t % space.shape[0]
     next_line = (t+1) % space.shape[0]
@@ -48,5 +47,4 @@ while True:
             space[next_line, i] = 1
         else:
             space[next_line, i] = 0
-    # 表示をアップデート。spaceは0/1なので、255階調に変換する。
-    visualizer.update(space*255)
+    

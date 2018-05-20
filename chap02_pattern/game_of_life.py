@@ -8,9 +8,7 @@ from alifebook_lib.visualizers import MatrixVisualizer
 import game_of_life_patterns
 
 # visualizerの初期化。表示領域のサイズを与える。
-WINDOW_RESOLUTION_W = 600
-WINDOW_RESOLUTION_H = 600
-visualizer = MatrixVisualizer((WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H))
+visualizer = MatrixVisualizer(600, 600)
 
 WIDTH = 50
 HEIGHT = 50
@@ -24,7 +22,7 @@ state = np.zeros((HEIGHT,WIDTH), dtype=np.int8)
 pattern = game_of_life_patterns.GLIDER_GUN
 state[2:2+pattern.shape[0], 2:2+pattern.shape[1]] = pattern
 
-while True:
+while visualizer.update(state*255):
     # 次の状態を一時的に保存する変数
     next_state = np.empty(state.shape, dtype=np.int8)
     for i in range(HEIGHT):
@@ -49,4 +47,3 @@ while True:
             else:
                 next_state[i,j] = 0
     state = next_state
-    visualizer.update(state*255)

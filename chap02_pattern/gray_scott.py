@@ -7,9 +7,7 @@ import numpy as np
 from alifebook_lib.visualizers import MatrixVisualizer
 
 # visualizerの初期化。表示領域のサイズを与える。
-WINDOW_RESOLUTION_W = 600
-WINDOW_RESOLUTION_H = 600
-visualizer = MatrixVisualizer((WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H))
+visualizer = MatrixVisualizer(600, 600)
 
 # シミュレーションの各パラメタ
 SPACE_GRID_SIZE = 256
@@ -39,7 +37,7 @@ v[SPACE_GRID_SIZE//2-SQUARE_SIZE//2:SPACE_GRID_SIZE//2+SQUARE_SIZE//2,
 u += np.random.rand(SPACE_GRID_SIZE, SPACE_GRID_SIZE)*0.1
 v += np.random.rand(SPACE_GRID_SIZE, SPACE_GRID_SIZE)*0.1
 
-while True:
+while visualizer.update(u*256):
     for i in range(VISUALIZATION_STEP):
         # ラプラシアンの計算
         laplacian_u = (np.roll(u, 1, axis=0) + np.roll(u, -1, axis=0) +
@@ -51,4 +49,3 @@ while True:
         dvdt = Dv*laplacian_v + u*v*v - (f+k)*v
         u += dt * dudt
         v += dt * dvdt
-    visualizer.update(u*255)

@@ -1,33 +1,55 @@
-import sys
 import numpy as np
-import pygame
-from pygame.locals import *
-from matplotlib import pyplot as plt
-from matplotlib import animation
-from mpl_toolkits.mplot3d import Axes3D
+import vispy
+from vispy import gloo, app
 
+vispy.use('Glfw')
+
+VERTEX_SHADER = """
+    attribute vec2 a_position;
+    attribute vec2 a_texcoord;
+    varying vec2 v_texcoord;
+    void main()
+    {
+        gl_Position = vec4(a_position, 0.0, 1.0);
+        v_texcoord = a_texcoord;
+    }
+"""
+
+FRAGMENT_SHADER = """
+    uniform sampler2D u_texture;
+    varying vec2 v_texcoord;
+    void main()
+    {
+        float r = texture2D(u_texture, v_texcoord).r;
+        gl_FragColor = vec4(r,r,r,1);
+    }
+"""
 
 class MatrixVisualizer(object):
     """docstring for MatrixVisualizer."""
-    def __init__(self, size):
-        super(MatrixVisualizer, self).__init__()
-        pygame.init()
-        self.width = size[0]
-        self.height = size[1]
-        self.screen = pygame.display.set_mode(size)
-        #pygame.display.set_caption("title")
-        #self.pixels = np.empty((self.width, self.height, 3), dtype=np.uint8)
+    def __init__(self, width, height):
+        self._canvas = app.Canvas(size=(width, height), position=(0,0), title="ALife book "+self.__class__.__name__)
+        self._canvas.events.draw.connect(self.on_draw)
+        self._render_program = gloo.Program(VERTEX_SHADER, FRAGMENT_SHADER)
+        self._render_program['a_position'] = [(-1,-1), (-1,+1), (+1,-1), (+1,+1)]
+        self._render_program['a_texcoord'] = [( 0, 1), ( 0, 0), ( 1, 1), ( 1, 0)]
+        self._render_program['u_texture'] = np.zeros((1,1)).astype(np.uint8)
+        self._canvas.show()
+
+    def on_draw(self, event):
+        gloo.clear()
+        self._render_program.draw(gloo.gl.GL_TRIANGLE_STRIP)
 
     def update(self, matrix):
-        matrix = np.repeat(matrix.T[:,:,np.newaxis], 3, axis=2)
         matrix[matrix<0] = 0
-        matrix[matrix>255] = 255
-        pixels = matrix.astype(np.uint8)
-        img = pygame.surfarray.make_surface(pixels)
-        if self.screen.get_size() != img.get_size():
-            img = pygame.transform.scale(img, self.screen.get_size())
-        self.screen.blit(img, (0,0))
-        pygame.display.update()
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                sys.exit()
+        matrix[matrix>=256] = 255
+        self._render_program['u_texture'] = matrix.astype(np.uint8)
+        self._canvas.update()
+        app.process_events()
+        return not self._canvas._closed
+
+if __name__ == '__main__':
+    v = Visualizer(600, 600)
+    data = np.repeat(np.arange(0, 256, dtype=np.uint8)[np.newaxis,:], 3, axis=0)
+    while v.update(data):
+        data = np.roll(data, 1, axis=1)

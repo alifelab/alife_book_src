@@ -10,19 +10,16 @@ import numpy as np
 from alifebook_lib.visualizers import MatrixVisualizer
 
 # visualizerの初期化。表示領域のサイズを与える。
-WINDOW_RESOLUTION_W = 600
-WINDOW_RESOLUTION_H = 600
-visualizer = MatrixVisualizer((WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H))
+visualizer = MatrixVisualizer(600, 600)
 
-# Simulation Parameters
+# シミュレーションの各パラメタ
 X_SIZE = 256
 Y_SIZE = 256
-#dx = 0.01
 dx = 1
 dt = 0.5
 visualization_step = 32
 
-# Model Parameters
+# モデルの各パラメタ
 Da = 0.3
 Db = 0.15
 k = 0.0942
@@ -30,12 +27,12 @@ k_p = 0.0002
 w = 0.015
 r = 0.032
 
-# Initialization
+# 初期化
 a = np.ones((X_SIZE, Y_SIZE))
 b = np.zeros((X_SIZE, Y_SIZE))
 p = np.zeros((X_SIZE, Y_SIZE))
 
-# set initiale square pattern on center
+# 中央に初期パターンを置く
 square_size = 10
 a[X_SIZE//2-square_size//2:X_SIZE//2+square_size//2, Y_SIZE//2-square_size//2:Y_SIZE//2+square_size//2] = 0
 b[X_SIZE//2-square_size//2:X_SIZE//2+square_size//2, Y_SIZE//2-square_size//2:Y_SIZE//2+square_size//2] = 1
@@ -44,18 +41,16 @@ a += np.random.rand(X_SIZE, Y_SIZE)*0.1
 b += np.random.rand(X_SIZE, Y_SIZE)*0.1
 p += np.random.rand(X_SIZE, Y_SIZE)*0.1
 
-while True:
+# 例えば、b + p / 50 をグレースケールで表示。見たいものに変更してみましょう。
+while visualizer.update((b + p / 50) * 255):
     for i in range(visualization_step):
-        # calculate laplacian
+        # ラプラシアンの計算
         laplacian_a = (np.roll(a, 1, axis=0) + np.roll(a, -1, axis=0) + np.roll(a, 1, axis=1) + np.roll(a, -1, axis=1) - 4*a) / (dx*dx)
         laplacian_b = (np.roll(b, 1, axis=0) + np.roll(b, -1, axis=0) + np.roll(b, 1, axis=1) + np.roll(b, -1, axis=1) - 4*b) / (dx*dx)
-
+        # アップデート
         dadt = Da * laplacian_a - np.exp(-w*p)*a*b*b + r*(1.0-a);
         dbdt = Db * laplacian_b + np.exp(-w*p)*a*b*b - k*b;
         dpdt = k*b - k_p*p;
-
         a += dt * dadt
         b += dt * dbdt
         p += dt * dpdt
-    img_matrix = (b + p / 50) * 255
-    visualizer.update(img_matrix)
