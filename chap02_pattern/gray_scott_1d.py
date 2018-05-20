@@ -34,7 +34,7 @@ u[0,:] += np.random.rand(SPACE_SIZE)*0.01
 v[0,:] += np.random.rand(SPACE_SIZE)*0.01
 
 t = 0
-while visualizer.update(u*256):
+while visualizer:  # visualizerはウィンドウが閉じられるとFalseを返す
     for i in range(visualization_step):
         current_line = (t * visualization_step + i) % VISUALIZATION_TIME
         next_line = (current_line + 1) % VISUALIZATION_TIME
@@ -49,3 +49,5 @@ while visualizer.update(u*256):
         u[next_line] = current_u + dt * dudt
         v[next_line] = current_v + dt * dvdt
         t += 1
+    # 表示をアップデート。uは0-1なので、255階調に変換する。
+    visualizer.update(u*256)

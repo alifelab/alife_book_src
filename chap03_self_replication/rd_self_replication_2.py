@@ -49,7 +49,7 @@ a[100:110,100:110] = 0.45 + np.random.rand(10, 10)*0.1
 b[100:110,100:110] = 0.45 + np.random.rand(10, 10)*0.1
 c[101:108,112:119] = 1.5
 
-while visualizer.update((b+c)*255):
+while visualizer:
     for i in range(visualization_step):
         laplacian_a = (np.roll(a, 1, axis=0) + np.roll(a, -1, axis=0) + np.roll(a, 1, axis=1) + np.roll(a, -1, axis=1) - 4*a) / (dx*dx)
         laplacian_b = (np.roll(b, 1, axis=0) + np.roll(b, -1, axis=0) + np.roll(b, 1, axis=1) + np.roll(b, -1, axis=1) - 4*b) / (dx*dx)
@@ -62,3 +62,5 @@ while visualizer.update((b+c)*255):
         c += dt * dcdt
         # a_resを減らす（a_res_endよりは減らさない）
         a_res = max(a_res - a_res_step, a_res_end)
+    # ここでは、b + c をグレースケールで表示。見たいものに変更してみましょう。
+    visualizer.update((b+c)*255)

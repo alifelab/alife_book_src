@@ -22,7 +22,7 @@ state = np.zeros((HEIGHT,WIDTH), dtype=np.int8)
 pattern = game_of_life_patterns.GLIDER_GUN
 state[2:2+pattern.shape[0], 2:2+pattern.shape[1]] = pattern
 
-while visualizer.update(state*255):
+while visualizer:  # visualizerはウィンドウが閉じられるとFalseを返す
     # 次の状態を一時的に保存する変数
     next_state = np.empty(state.shape, dtype=np.int8)
     for i in range(HEIGHT):
@@ -47,3 +47,5 @@ while visualizer.update(state*255):
             else:
                 next_state[i,j] = 0
     state = next_state
+    # 表示をアップデート。spaceは0/1なので、255階調に変換する。
+    visualizer.update(space*255)

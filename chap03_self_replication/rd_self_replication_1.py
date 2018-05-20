@@ -41,8 +41,7 @@ a += np.random.rand(X_SIZE, Y_SIZE)*0.1
 b += np.random.rand(X_SIZE, Y_SIZE)*0.1
 p += np.random.rand(X_SIZE, Y_SIZE)*0.1
 
-# 例えば、b + p / 50 をグレースケールで表示。見たいものに変更してみましょう。
-while visualizer.update((b + p / 50) * 255):
+while visualizer:
     for i in range(visualization_step):
         # ラプラシアンの計算
         laplacian_a = (np.roll(a, 1, axis=0) + np.roll(a, -1, axis=0) + np.roll(a, 1, axis=1) + np.roll(a, -1, axis=1) - 4*a) / (dx*dx)
@@ -54,3 +53,5 @@ while visualizer.update((b + p / 50) * 255):
         a += dt * dadt
         b += dt * dbdt
         p += dt * dpdt
+    # ここでは、b + p / 50 をグレースケールで表示。見たいものに変更してみましょう。
+    visualizer.update((b + p / 50) * 255)

@@ -26,8 +26,7 @@ space = np.zeros((HEIGHT, WIDTH), dtype=np.int8)
 space[0, space.shape[1]//2] = 1
 
 t = 0
-# 表示をアップデート。spaceは0/1なので、255階調に変換する。
-while visualizer.update(space*255):
+while visualizer:  # visualizerはウィンドウが閉じられるとFalseを返す
     # 今と次の行を計算
     current_line = t % space.shape[0]
     next_line = (t+1) % space.shape[0]
@@ -47,4 +46,5 @@ while visualizer.update(space*255):
             space[next_line, i] = 1
         else:
             space[next_line, i] = 0
-    
+    # 表示をアップデート。spaceは0/1なので、255階調に変換する。
+    visualizer.update(space*255)

@@ -46,10 +46,13 @@ class MatrixVisualizer(object):
         self._render_program['u_texture'] = matrix.astype(np.uint8)
         self._canvas.update()
         app.process_events()
+
+    def __bool__(self):
         return not self._canvas._closed
 
 if __name__ == '__main__':
-    v = Visualizer(600, 600)
+    v = MatrixVisualizer(600, 600)
     data = np.repeat(np.arange(0, 256, dtype=np.uint8)[np.newaxis,:], 3, axis=0)
-    while v.update(data):
+    while v:
         data = np.roll(data, 1, axis=1)
+        v.update(data)

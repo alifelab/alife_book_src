@@ -37,7 +37,7 @@ v[SPACE_GRID_SIZE//2-SQUARE_SIZE//2:SPACE_GRID_SIZE//2+SQUARE_SIZE//2,
 u += np.random.rand(SPACE_GRID_SIZE, SPACE_GRID_SIZE)*0.1
 v += np.random.rand(SPACE_GRID_SIZE, SPACE_GRID_SIZE)*0.1
 
-while visualizer.update(u*256):
+while visualizer:  # visualizerはウィンドウが閉じられるとFalseを返す
     for i in range(VISUALIZATION_STEP):
         # ラプラシアンの計算
         laplacian_u = (np.roll(u, 1, axis=0) + np.roll(u, -1, axis=0) +
@@ -49,3 +49,5 @@ while visualizer.update(u*256):
         dvdt = Dv*laplacian_v + u*v*v - (f+k)*v
         u += dt * dudt
         v += dt * dvdt
+    # 表示をアップデート。uは0-1なので、255階調に変換する。
+    visualizer.update(u*256)

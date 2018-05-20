@@ -40,7 +40,7 @@ v[SPACE_GRID_SIZE//2-SQUARE_SIZE//2:SPACE_GRID_SIZE//2+SQUARE_SIZE//2,
 u = u + u*np.random.rand(SPACE_GRID_SIZE, SPACE_GRID_SIZE)*0.01
 v = v + u*np.random.rand(SPACE_GRID_SIZE, SPACE_GRID_SIZE)*0.01
 
-while visualizer.update(u*256):
+while visualizer:  # visualizerはウィンドウが閉じられるとFalseを返す
     for i in range(VISUALIZATION_STEP):
         # ラプラシアンの計算
         # 空間の両境界でパラメタが急に変化するため周期境界条件は不適切なので、対称境界条件を使う
@@ -59,3 +59,5 @@ while visualizer.update(u*256):
         dvdt = Dv*laplacian_v + u*v*v - (f+k)*v
         u += dt * dudt
         v += dt * dvdt
+    # 表示をアップデート。uは0-1なので、255階調に変換する。
+    visualizer.update(u*256)
