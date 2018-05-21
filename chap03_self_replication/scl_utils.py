@@ -10,7 +10,7 @@ def get_neumann_neighborhood(x, y, space_size):
     return n
 
 # get 1 random neumann neighborhood position of (x,y)
-def get_rand_neumann_neighborhood(x, y, space_size):
+def get_random_neumann_neighborhood(x, y, space_size):
     neighborhood = get_neumann_neighborhood(x, y, space_size)
     nx, ny = neighborhood[np.random.randint(len(neighborhood))]
     return nx, ny
@@ -23,14 +23,14 @@ def get_moore_neighborhood(x, y, space_size):
     return n
 
 # get 1 random moore neighborhood position of (x,y)
-def get_rand_moore_neighborhood(x, y, space_size):
+def get_random_moore_neighborhood(x, y, space_size):
     neighborhood = get_moore_neighborhood(x, y, space_size)
     nx, ny = neighborhood[np.random.randint(len(neighborhood))]
     return nx, ny
 
 # get 2 random moore neighborhood which adjacent each other
-def get_rand_2_moore_neighborhood(x, y, space_size):
-    n0_x, n0_y = get_rand_moore_neighborhood(x, y, space_size)
+def get_random_2_moore_neighborhood(x, y, space_size):
+    n0_x, n0_y = get_random_moore_neighborhood(x, y, space_size)
     if x == n0_x:
         n1_x = np.random.choice([(n0_x+1)%space_size, (n0_x-1)%space_size])
         n1_y = n0_y

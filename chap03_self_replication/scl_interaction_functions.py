@@ -1,15 +1,10 @@
-#
-# Update Functions
-#
-
 from scl_utils import *
-
 
 def production(particles, x, y, probability):
     p = particles[x,y]
     if p['type'] != 'CATALYST':
         return
-    n0_x, n0_y, n1_x, n1_y = get_rand_2_moore_neighborhood(x, y, particles.shape[0])
+    n0_x, n0_y, n1_x, n1_y = get_random_2_moore_neighborhood(x, y, particles.shape[0])
     n0_p = particles[n0_x, n0_y]
     n1_p = particles[n1_x, n1_y]
     if n0_p['type'] != 'SUBSTRATE' or n1_p['type'] != 'SUBSTRATE':
@@ -28,13 +23,13 @@ def disintegration(particles, x, y, probability):
     if not p['disintegrating']:
         return
     # forced emission of substrate
-    n_x, n_y = get_rand_moore_neighborhood(x, y, particles.shape[0])
+    n_x, n_y = get_random_moore_neighborhood(x, y, particles.shape[0])
     n_p = particles[n_x, n_y]
     if p['type'] == 'LINK_SUBSTRATE' and n_p['type'] == 'HOLE':
         p['type']   = 'LINK'
         n_p['type'] = 'SUBSTRATE'
     # disintegration
-    n_x, n_y = get_rand_moore_neighborhood(x, y, particles.shape[0])
+    n_x, n_y = get_random_moore_neighborhood(x, y, particles.shape[0])
     n_p = particles[n_x, n_y]
     if p['type'] == 'LINK' and n_p['type'] == 'HOLE':
         # forced decay of bonds connected to the link
@@ -49,7 +44,7 @@ def disintegration(particles, x, y, probability):
 
 def bonding(particles, x, y, chain_initiate_prob, chain_splice_prob, chain_extend_prob):
     p = particles[x,y]
-    n_x, n_y = get_rand_moore_neighborhood(x, y, particles.shape[0])
+    n_x, n_y = get_random_moore_neighborhood(x, y, particles.shape[0])
     n_p = particles[n_x, n_y]
     if not p['type'] in ('LINK', 'LINK_SUBSTRATE'):
         return
@@ -106,7 +101,7 @@ def bond_decay(particles, x, y, probability):
 
 def absorption(particles, x, y, probability):
     p = particles[x,y]
-    n_x, n_y = get_rand_moore_neighborhood(x, y, particles.shape[0])
+    n_x, n_y = get_random_moore_neighborhood(x, y, particles.shape[0])
     n_p = particles[n_x, n_y]
     if p['type'] != 'LINK' or n_p['type'] != 'SUBSTRATE':
         return
@@ -118,7 +113,7 @@ def absorption(particles, x, y, probability):
 
 def emission(particles, x, y, probability):
     p = particles[x,y]
-    n_x, n_y = get_rand_moore_neighborhood(x, y, particles.shape[0])
+    n_x, n_y = get_random_moore_neighborhood(x, y, particles.shape[0])
     n_p = particles[n_x, n_y]
     if p['type'] != 'LINK_SUBSTRATE' or n_p['type'] != 'HOLE':
         return

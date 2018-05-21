@@ -96,7 +96,7 @@ class SCLVisualizer(object):
         self.axis = None
 
     def update(self, particles):
-        x = [[self._map_type2int(t) for t in row] for row in particles]
+        print(particles)
         if self.axis is None:
             self.axis = plt.axes(xlim=(-1,particles.shape[0]), ylim=(-1,particles.shape[1]), aspect='equal')
             self.axis.set_xticks([])

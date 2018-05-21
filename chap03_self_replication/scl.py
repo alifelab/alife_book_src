@@ -33,15 +33,15 @@ MOBILITY_FACTOR = {
 'LINK':           0.05,
 'LINK_SUBSTRATE': 0.05,
 }
-PRODUCTION_PROBABILITY     = 0.95
-DISINTEGRATION_PROBABILITY = 0.0005
 #BONDING_PROBABILITY        = 0.8
-BONDING_CHAIN_INITIATE_PROB        = 0.1
-BONDING_CHAIN_EXTEND_PROB          = 0.6
-BONDING_CHAIN_SPLICE_PROB          = 0.9
-BOND_DECAY_PROBABILITY     = 0.0005
-ABSORPTION_PROBABILITY     = 0.5
-EMISSION_PROBABILITY       = 0.5
+PRODUCTION_PROBABILITY             = 0.95
+DISINTEGRATION_PROBABILITY         = 0.0005
+BONDING_CHAIN_INITIATE_PROBABILITY = 0.1
+BONDING_CHAIN_EXTEND_PROBABILITY   = 0.6
+BONDING_CHAIN_SPLICE_PROBABILITY   = 0.9
+BOND_DECAY_PROBABILITY             = 0.0005
+ABSORPTION_PROBABILITY             = 0.5
+EMISSION_PROBABILITY               = 0.5
 
 particles = np.empty((SPACE_SIZE, SPACE_SIZE), dtype=object)
 for (x, y), _ in np.ndenumerate(particles):
@@ -69,7 +69,7 @@ while visualizer:
         for y in range(SPACE_SIZE):
             p = particles[x,y]
 
-            n_x, n_y = get_rand_neumann_neighborhood(x, y, SPACE_SIZE)
+            n_x, n_y = get_random_neumann_neighborhood(x, y, SPACE_SIZE)
             n_p = particles[n_x, n_y]
             mobility_factor = np.sqrt(MOBILITY_FACTOR[p['type']] * MOBILITY_FACTOR[n_p['type']])
             if mobile[x, y] and mobile[n_x, n_y] and evaluate_probability(mobility_factor) and p != np \
@@ -81,9 +81,9 @@ while visualizer:
         for y in range(SPACE_SIZE):
             production(particles, x, y, PRODUCTION_PROBABILITY)
             disintegration(particles, x, y, DISINTEGRATION_PROBABILITY)
-            bonding(particles, x, y, BONDING_CHAIN_INITIATE_PROB,
-                                     BONDING_CHAIN_SPLICE_PROB,
-                                     BONDING_CHAIN_EXTEND_PROB)
+            bonding(particles, x, y, BONDING_CHAIN_INITIATE_PROBABILITY,
+                                     BONDING_CHAIN_SPLICE_PROBABILITY,
+                                     BONDING_CHAIN_EXTEND_PROBABILITY)
             bond_decay(particles, x, y, BOND_DECAY_PROBABILITY)
             absorption(particles, x, y, ABSORPTION_PROBABILITY)
             emission(particles, x, y, EMISSION_PROBABILITY)
