@@ -25,7 +25,7 @@ INIT_BONDED_LINK_POSITIONS = [ \
 (10,11),(9,11),(8,11),(7,11),(6,11), \
 (5,10),(5,9),(5,8),(5,7),(5,6)]
 
-SUBSTRATE_DENSITY = 0.8
+INITIAL_SUBSTRATE_DENSITY = 0.8
 MOBILITY_FACTOR = {
 'HOLE':           0.1,
 'SUBSTRATE':      0.1,
@@ -45,8 +45,7 @@ EMISSION_PROBABILITY               = 0.5
 
 particles = np.empty((SPACE_SIZE, SPACE_SIZE), dtype=object)
 for (x, y), _ in np.ndenumerate(particles):
-    if evaluate_probability(SUBSTRATE_DENSITY):
-    #elif x > 10 and x < 30 and y > 10 and y < 20:
+    if evaluate_probability(INITIAL_SUBSTRATE_DENSITY):
         p = {'type': 'SUBSTRATE', 'disintegrating': False, 'bonds': []}
     else:
         p = {'type': 'HOLE', 'disintegrating': False, 'bonds': []}
