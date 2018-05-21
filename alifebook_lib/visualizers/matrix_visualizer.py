@@ -1,36 +1,20 @@
+from os import path
 import numpy as np
 import vispy
 from vispy import gloo, app
 
 vispy.use('Glfw')
 
-VERTEX_SHADER = """
-    attribute vec2 a_position;
-    attribute vec2 a_texcoord;
-    varying vec2 v_texcoord;
-    void main()
-    {
-        gl_Position = vec4(a_position, 0.0, 1.0);
-        v_texcoord = a_texcoord;
-    }
-"""
-
-FRAGMENT_SHADER = """
-    uniform sampler2D u_texture;
-    varying vec2 v_texcoord;
-    void main()
-    {
-        float r = texture2D(u_texture, v_texcoord).r;
-        gl_FragColor = vec4(r,r,r,1);
-    }
-"""
+GLSL_PATH = path.join(path.dirname(path.abspath(__file__)), 'glsl')
 
 class MatrixVisualizer(object):
     """docstring for MatrixVisualizer."""
     def __init__(self, width, height):
         self._canvas = app.Canvas(size=(width, height), position=(0,0), title="ALife book "+self.__class__.__name__)
         self._canvas.events.draw.connect(self.on_draw)
-        self._render_program = gloo.Program(VERTEX_SHADER, FRAGMENT_SHADER)
+        vertex_shader = open(path.join(GLSL_PATH, 'matrix_visualizer_vertex.glsl'), 'r').read()
+        fragment_shader = open(path.join(GLSL_PATH, 'matrix_visualizer_fragment.glsl'), 'r').read()
+        self._render_program = gloo.Program(vertex_shader, fragment_shader)
         self._render_program['a_position'] = [(-1,-1), (-1,+1), (+1,-1), (+1,+1)]
         self._render_program['a_texcoord'] = [( 0, 1), ( 0, 0), ( 1, 1), ( 1, 0)]
         self._render_program['u_texture'] = np.zeros((1,1)).astype(np.uint8)
