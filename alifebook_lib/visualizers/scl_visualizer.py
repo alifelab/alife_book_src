@@ -87,7 +87,7 @@ def clear_bond(ax, x0, y0, x1, y1):
 
 class SCLVisualizer(object):
     """docstring for SCLVisualizer."""
-    def __init__(self, size):
+    def __init__(self, width, height):
         super(SCLVisualizer, self).__init__()
         #
         # Initialization
@@ -96,6 +96,7 @@ class SCLVisualizer(object):
         self.axis = None
 
     def update(self, particles):
+        x = [[self._map_type2int(t) for t in row] for row in particles]
         if self.axis is None:
             self.axis = plt.axes(xlim=(-1,particles.shape[0]), ylim=(-1,particles.shape[1]), aspect='equal')
             self.axis.set_xticks([])
@@ -104,3 +105,6 @@ class SCLVisualizer(object):
 
         draw(self.axis, particles)
         plt.pause(0.001)
+
+    def __bool__(self):
+        return True

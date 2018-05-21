@@ -8,14 +8,11 @@ from alifebook_lib.visualizers import SCLVisualizer
 from scl_interaction_functions import *
 
 # visualizerの初期化。表示領域のサイズを与える。
-WINDOW_RESOLUTION_W = 600
-WINDOW_RESOLUTION_H = 600
-visualizer = SCLVisualizer((WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H))
+visualizer = SCLVisualizer(600, 600)
 
 SPACE_SIZE = 16
 
 # ２種類のサンプル初期設定
-
 ### catalystのみ ###
 # INIT_CATALYST_POSITIONS = [(SPACE_SIZE//2,SPACE_SIZE//2)]
 # INIT_BONDED_LINK_POSITIONS = []
@@ -65,7 +62,7 @@ for i in range(len(INIT_BONDED_LINK_POSITIONS)):
     particles[x0, y0]['bonds'].append((x1, y1))
     particles[x1, y1]['bonds'].append((x0, y0))
 
-while True:
+while visualizer:
     # Mobile
     mobile = np.full(particles.shape, True, dtype=bool)
     for x in range(SPACE_SIZE):
