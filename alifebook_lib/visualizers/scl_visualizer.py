@@ -96,7 +96,6 @@ class SCLVisualizer(object):
         self.axis = None
 
     def update(self, particles):
-        print(particles)
         if self.axis is None:
             self.axis = plt.axes(xlim=(-1,particles.shape[0]), ylim=(-1,particles.shape[1]), aspect='equal')
             self.axis.set_xticks([])

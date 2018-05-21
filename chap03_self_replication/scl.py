@@ -12,18 +12,11 @@ visualizer = SCLVisualizer(600, 600)
 
 SPACE_SIZE = 16
 
-# ２種類のサンプル初期設定
-### catalystのみ ###
-# INIT_CATALYST_POSITIONS = [(SPACE_SIZE//2,SPACE_SIZE//2)]
-# INIT_BONDED_LINK_POSITIONS = []
-
-### catalyst + bond ###
-INIT_CATALYST_POSITIONS = [(8,8)]
-INIT_BONDED_LINK_POSITIONS = [ \
-(6,5),(7,5),(8,5),(9,5),(10,5), \
-(11,6),(11,7),(11,8),(11,9),(11,10), \
-(10,11),(9,11),(8,11),(7,11),(6,11), \
-(5,10),(5,9),(5,8),(5,7),(5,6)]
+INITIAL_CATALYST_POSITIONS = [(8,8)]
+INITIAL_BONDED_LINK_POSITIONS = [ (6,5),(7,5),(8,5),(9,5),(10,5),
+                                  (11,6),(11,7),(11,8),(11,9),(11,10),
+                                  (10,11),(9,11),(8,11),(7,11),(6,11),
+                                  (5,10),(5,9),(5,8),(5,7),(5,6)]
 
 INITIAL_SUBSTRATE_DENSITY = 0.8
 MOBILITY_FACTOR = {
@@ -43,6 +36,7 @@ BOND_DECAY_PROBABILITY             = 0.0005
 ABSORPTION_PROBABILITY             = 0.5
 EMISSION_PROBABILITY               = 0.5
 
+# 初期化
 particles = np.empty((SPACE_SIZE, SPACE_SIZE), dtype=object)
 for (x, y), _ in np.ndenumerate(particles):
     if evaluate_probability(INITIAL_SUBSTRATE_DENSITY):
@@ -51,18 +45,19 @@ for (x, y), _ in np.ndenumerate(particles):
         p = {'type': 'HOLE', 'disintegrating': False, 'bonds': []}
     particles[x,y] = p
 
-for x, y in INIT_CATALYST_POSITIONS:
+for x, y in INITIAL_CATALYST_POSITIONS:
     particles[x, y]['type'] = 'CATALYST'
 
-for i in range(len(INIT_BONDED_LINK_POSITIONS)):
-    x0, y0 = INIT_BONDED_LINK_POSITIONS[i]
-    x1, y1 = INIT_BONDED_LINK_POSITIONS[i-1]
-    particles[x0, y0]['type'] = 'LINK'
-    particles[x0, y0]['bonds'].append((x1, y1))
-    particles[x1, y1]['bonds'].append((x0, y0))
+# 膜がある状態からスタートするには、コメントアウトしてください
+# for i in range(len(INITIAL_BONDED_LINK_POSITIONS)):
+#     x0, y0 = INITIAL_BONDED_LINK_POSITIONS[i]
+#     x1, y1 = INITIAL_BONDED_LINK_POSITIONS[i-1]
+#     particles[x0, y0]['type'] = 'LINK'
+#     particles[x0, y0]['bonds'].append((x1, y1))
+#     particles[x1, y1]['bonds'].append((x0, y0))
 
 while visualizer:
-    # Mobile
+    # 移動
     mobile = np.full(particles.shape, True, dtype=bool)
     for x in range(SPACE_SIZE):
         for y in range(SPACE_SIZE):
@@ -75,7 +70,7 @@ while visualizer:
                     and len(p['bonds']) == 0 and len(n_p['bonds']) == 0:
                 particles[x,y], particles[n_x,n_y] = n_p, p
                 mobile[x, y] = mobile[n_x, n_y] = False
-    # Reaction
+    # 反応
     for x in range(SPACE_SIZE):
         for y in range(SPACE_SIZE):
             production(particles, x, y, PRODUCTION_PROBABILITY)
