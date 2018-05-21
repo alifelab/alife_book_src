@@ -7,9 +7,7 @@ import numpy as np
 from alifebook_lib.visualizers import SwarmVisualizer
 
 # visualizerの初期化。表示領域のサイズを与える。
-WINDOW_RESOLUTION_W = 600
-WINDOW_RESOLUTION_H = 600
-visualizer = SwarmVisualizer((WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H))
+visualizer = SwarmVisualizer(600, 600)
 
 # シミュレーションパラメタ
 N = 64
@@ -29,7 +27,7 @@ MAX_VEL = 0.005
 x = np.random.rand(N, 3) * 0.1
 v = np.random.rand(N, 3) * MIN_VEL
 
-while True:
+while visualizer:
     # 3 force, cohesion, separation and alignment
     dv_coh = np.zeros((N,3))
     dv_sep = np.zeros((N,3))

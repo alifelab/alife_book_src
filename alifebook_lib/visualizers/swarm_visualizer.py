@@ -9,7 +9,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 class SwarmVisualizer(object):
     """docstring for SwarmVisualizer."""
-    def __init__(self, size):
+    def __init__(self, width, height):
         super(SwarmVisualizer, self).__init__()
         # Animation setup
         fig = plt.figure()
@@ -42,3 +42,6 @@ class SwarmVisualizer(object):
             self.ax.set_zlim(range[0], range[1])
 
         plt.pause(0.001)
+
+    def __bool__(self):
+        return True
