@@ -2,15 +2,12 @@ from scl_utils import *
 
 def production(particles, x, y, probability):
     p = particles[x,y]
-    if p['type'] != 'CATALYST':
-        return
     n0_x, n0_y, n1_x, n1_y = get_random_2_moore_neighborhood(x, y, particles.shape[0])
     n0_p = particles[n0_x, n0_y]
     n1_p = particles[n1_x, n1_y]
-    if n0_p['type'] != 'SUBSTRATE' or n1_p['type'] != 'SUBSTRATE':
+    if p['type'] != 'CATALYST' or n0_p['type'] != 'SUBSTRATE' or n1_p['type'] != 'SUBSTRATE':
         return
-    if not evaluate_probability(probability):
-        return
+    if evaluate_probability(probability):
     n0_p['type'] = 'HOLE'
     n1_p['type'] = 'LINK'
 
@@ -105,8 +102,7 @@ def absorption(particles, x, y, probability):
     n_p = particles[n_x, n_y]
     if p['type'] != 'LINK' or n_p['type'] != 'SUBSTRATE':
         return
-    if not evaluate_probability(probability):
-        return
+    if evaluate_probability(probability):
     p['type']   = 'LINK_SUBSTRATE'
     n_p['type'] = 'HOLE'
 
@@ -117,7 +113,6 @@ def emission(particles, x, y, probability):
     n_p = particles[n_x, n_y]
     if p['type'] != 'LINK_SUBSTRATE' or n_p['type'] != 'HOLE':
         return
-    if not evaluate_probability(probability):
-        return
+    if evaluate_probability(probability):
     p['type']   = 'LINK'
     n_p['type'] = 'SUBSTRATE'
