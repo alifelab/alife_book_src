@@ -12,20 +12,23 @@ visualizer = SCLVisualizer(600, 600)
 
 SPACE_SIZE = 16
 
-INITIAL_CATALYST_POSITIONS = [(8,8)]
-INITIAL_BONDED_LINK_POSITIONS = [ (6,5),(7,5),(8,5),(9,5),(10,5),
-                                  (11,6),(11,7),(11,8),(11,9),(11,10),
-                                  (10,11),(9,11),(8,11),(7,11),(6,11),
-                                  (5,10),(5,9),(5,8),(5,7),(5,6)]
-
+# 初期化設定に関するパラメタ
 INITIAL_SUBSTRATE_DENSITY = 0.8
+INITIAL_CATALYST_POSITIONS = [(8,8)]
+INITIAL_BONDED_LINK_POSITIONS = [
+    (5,6,6,5),    (6,5,7,5),   (7,5,8,5),  (8,5,9,5),  (9,5,10,5),
+    (10,5,11,6),  (11,6,11,7), (11,7,11,8),(11,8,11,9),(11,9,11,10),
+    (11,10,10,11),(10,11,9,11),(9,11,8,11),(8,11,7,11),(7,11,6,11),
+    (6,11,5,10),  (5,10,5,9),  (5,9,5,8),  (5,8,5,7),  (5,7,5,6)]
+
+# モデルのパラメタ
+# 各分子の移動しやすさ
 MOBILITY_FACTOR = {
-'HOLE':           0.1,
-'SUBSTRATE':      0.1,
-'CATALYST':       0.0001,
-'LINK':           0.05,
-'LINK_SUBSTRATE': 0.05,
-}
+    'HOLE':           0.1,
+    'SUBSTRATE':      0.1,
+    'CATALYST':       0.0001,
+    'LINK':           0.05,
+    'LINK_SUBSTRATE': 0.05,}
 #BONDING_PROBABILITY        = 0.8
 PRODUCTION_PROBABILITY             = 0.95
 DISINTEGRATION_PROBABILITY         = 0.0005
@@ -38,20 +41,20 @@ EMISSION_PROBABILITY               = 0.5
 
 # 初期化
 particles = np.empty((SPACE_SIZE, SPACE_SIZE), dtype=object)
-for (x, y), _ in np.ndenumerate(particles):
-    if evaluate_probability(INITIAL_SUBSTRATE_DENSITY):
-        p = {'type': 'SUBSTRATE', 'disintegrating': False, 'bonds': []}
-    else:
-        p = {'type': 'HOLE', 'disintegrating': False, 'bonds': []}
-    particles[x,y] = p
-
+# INITIAL_SUBSTRATE_DENSITYに従って、SUBSTRATEとHOLEを配置する。
+for x in range(SPACE_SIZE):
+    for y in range(SPACE_SIZE):
+        if evaluate_probability(INITIAL_SUBSTRATE_DENSITY):
+            p = {'type': 'SUBSTRATE', 'disintegrating': False, 'bonds': []}
+        else:
+            p = {'type': 'HOLE', 'disintegrating': False, 'bonds': []}
+        particles[x,y] = p
+# INITIAL_CATALYST_POSITIONSにCATALYSTを配置する。
 for x, y in INITIAL_CATALYST_POSITIONS:
     particles[x, y]['type'] = 'CATALYST'
 
 # 膜がある状態からスタートするには、コメントアウトしてください
-# for i in range(len(INITIAL_BONDED_LINK_POSITIONS)):
-#     x0, y0 = INITIAL_BONDED_LINK_POSITIONS[i]
-#     x1, y1 = INITIAL_BONDED_LINK_POSITIONS[i-1]
+# for x0, y0, x1, y1 in INITIAL_BONDED_LINK_POSITIONS:
 #     particles[x0, y0]['type'] = 'LINK'
 #     particles[x0, y0]['bonds'].append((x1, y1))
 #     particles[x1, y1]['bonds'].append((x0, y0))
@@ -68,7 +71,7 @@ while visualizer:
             mobility_factor = np.sqrt(MOBILITY_FACTOR[p['type']] * MOBILITY_FACTOR[n_p['type']])
             if mobile[x, y] and mobile[n_x, n_y] and evaluate_probability(mobility_factor) and p != np \
                     and len(p['bonds']) == 0 and len(n_p['bonds']) == 0:
-                particles[x,y], particles[n_x,n_y] = n_p, p
+                    particles[x,y], particles[n_x,n_y] = n_p, p
                 mobile[x, y] = mobile[n_x, n_y] = False
     # 反応
     for x in range(SPACE_SIZE):
