@@ -61,18 +61,18 @@ for x, y in INITIAL_CATALYST_POSITIONS:
 
 while visualizer:
     # 移動
-    mobile = np.full(particles.shape, True, dtype=bool)
+    moved = np.full(particles.shape, False, dtype=bool)
     for x in range(SPACE_SIZE):
         for y in range(SPACE_SIZE):
             p = particles[x,y]
-
             n_x, n_y = get_random_neumann_neighborhood(x, y, SPACE_SIZE)
             n_p = particles[n_x, n_y]
             mobility_factor = np.sqrt(MOBILITY_FACTOR[p['type']] * MOBILITY_FACTOR[n_p['type']])
-            if mobile[x, y] and mobile[n_x, n_y] and evaluate_probability(mobility_factor) and p != np \
-                    and len(p['bonds']) == 0 and len(n_p['bonds']) == 0:
+            if not moved[x, y] and not moved[n_x, n_y] and \
+               len(p['bonds']) == 0 and len(n_p['bonds']) == 0 and \
+               evaluate_probability(mobility_factor):
                     particles[x,y], particles[n_x,n_y] = n_p, p
-                mobile[x, y] = mobile[n_x, n_y] = False
+                    moved[x, y] = moved[n_x, n_y] = True
     # 反応
     for x in range(SPACE_SIZE):
         for y in range(SPACE_SIZE):
