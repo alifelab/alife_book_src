@@ -1,7 +1,3 @@
-#
-# Utility Functions
-#
-
 import numpy as np
 
 """
