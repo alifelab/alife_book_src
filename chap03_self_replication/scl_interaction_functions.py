@@ -8,18 +8,19 @@ def production(particles, x, y, probability):
     if p['type'] != 'CATALYST' or n0_p['type'] != 'SUBSTRATE' or n1_p['type'] != 'SUBSTRATE':
         return
     if evaluate_probability(probability):
-    n0_p['type'] = 'HOLE'
-    n1_p['type'] = 'LINK'
+        n0_p['type'] = 'HOLE'
+        n1_p['type'] = 'LINK'
 
 
 def disintegration(particles, x, y, probability):
     p = particles[x,y]
+    # disintegrationはすぐに起こらない場合もあるので、一旦フラグを立てる
     if p['type'] in ('LINK', 'LINK_SUBSTRATE') and evaluate_probability(probability):
-        p['disintegrating'] = True
+        p['disintegrating_frag'] = True
 
-    if not p['disintegrating']:
+    if not p['disintegrating_frag']:
         return
-    # forced emission of substrate
+    # LINKがSUBSTRATEを含む場合には、強制的に放出する
     n_x, n_y = get_random_moore_neighborhood(x, y, particles.shape[0])
     n_p = particles[n_x, n_y]
     if p['type'] == 'LINK_SUBSTRATE' and n_p['type'] == 'HOLE':
@@ -29,14 +30,13 @@ def disintegration(particles, x, y, probability):
     n_x, n_y = get_random_moore_neighborhood(x, y, particles.shape[0])
     n_p = particles[n_x, n_y]
     if p['type'] == 'LINK' and n_p['type'] == 'HOLE':
-        # forced decay of bonds connected to the link
+        # disintegrationが起こる時は、LINKに繋がったbondは全て壊れる
         for b in p['bonds']:
             particles[b[0], b[1]]['bonds'].remove((x, y))
         p['bonds'] = []
-
         p['type']   = 'SUBSTRATE'
         n_p['type'] = 'SUBSTRATE'
-        p['disintegrating'] = False
+        p['disintegrating_frag'] = False
 
 
 def bonding(particles, x, y, chain_initiate_prob, chain_splice_prob, chain_extend_prob):
@@ -58,9 +58,9 @@ def bonding(particles, x, y, chain_initiate_prob, chain_splice_prob, chain_exten
     if (an0_x, an0_y) in n_p['bonds'] or (an1_x, an1_y) in n_p['bonds']:
         return
 
-    # Bonding inhibitted when these 2 situations.
-    # 1) thera are bondinb particle in moore neighborhood (chainInhibitBond)
-    # 2) thera are Catalyst particle in moore neighborhood (catInhibitBond)
+    # Bondingは以下の２つの場合には起こらない
+    # 1) moore近傍にすでに結合している膜分子がある場合 (chainInhibitBond)
+    # 2) moore近傍に触媒分子が存在する場合 (catInhibitBond)
     mn_list = get_moore_neighborhood(x, y, particles.shape[0])
     for x1, y1 in mn_list:
         # if particles[x1,y1]['type'] is 'CATALYST':
@@ -103,8 +103,8 @@ def absorption(particles, x, y, probability):
     if p['type'] != 'LINK' or n_p['type'] != 'SUBSTRATE':
         return
     if evaluate_probability(probability):
-    p['type']   = 'LINK_SUBSTRATE'
-    n_p['type'] = 'HOLE'
+        p['type']   = 'LINK_SUBSTRATE'
+        n_p['type'] = 'HOLE'
 
 
 def emission(particles, x, y, probability):
@@ -114,5 +114,5 @@ def emission(particles, x, y, probability):
     if p['type'] != 'LINK_SUBSTRATE' or n_p['type'] != 'HOLE':
         return
     if evaluate_probability(probability):
-    p['type']   = 'LINK'
-    n_p['type'] = 'SUBSTRATE'
+        p['type']   = 'LINK'
+        n_p['type'] = 'SUBSTRATE'
