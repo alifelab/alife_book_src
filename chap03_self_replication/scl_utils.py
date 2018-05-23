@@ -36,7 +36,6 @@ def get_random_moore_neighborhood(x, y, space_size):
 ムーア近傍の内、ランダムに2つの座標を返す
 ただし２点は隣接していることを保証する
 """
-# get 2 random moore neighborhood which adjacent each other
 def get_random_2_moore_neighborhood(x, y, space_size):
     n0_x, n0_y = get_random_moore_neighborhood(x, y, space_size)
     if x == n0_x:
