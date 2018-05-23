@@ -21,7 +21,7 @@ Dv = 1e-5
 f_min = 0.01
 f_max = 0.05
 k_min = 0.05
-k_max = 0.065
+k_max = 0.07
 
 f_lin = np.linspace(f_min, f_max, SPACE_GRID_SIZE)
 k_lin = np.linspace(k_min, k_max, SPACE_GRID_SIZE)
