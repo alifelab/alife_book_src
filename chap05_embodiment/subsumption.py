@@ -5,7 +5,7 @@ import sys, os
 sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
 from abc import abstractmethod
-from alifebook_lib.simulators import TwoWheelVehicleRobotSimulator
+from alifebook_lib.simulators import VehicleRobotSimulator
 
 class SubsumptionModule(object):
     def __init__(self):
@@ -148,6 +148,6 @@ def controll_func(sensor_data):
     return controller.get_output('left_wheel_speed'), controller.get_output('right_wheel_speed')
 
 if __name__ == '__main__':
-    sim = TwoWheelVehicleRobotSimulator(controll_func, obstacle_num=5, feed_num=40)
+    sim = VehicleRobotSimulator(controll_func, obstacle_num=5, feed_num=40)
     sim.controll_func = controll_func
     sim.run()

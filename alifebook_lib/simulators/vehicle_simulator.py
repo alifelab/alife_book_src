@@ -15,7 +15,7 @@ draw_options = pymunk.pyglet_util.DrawOptions()
 running = True
 
 
-class TwoWheelVehicleRobotSimulator(object):
+class VehicleRobotSimulator(object):
     COLLISION_TYPE = IntEnum("COLLISION_TYPE", "OBJECT VEHICLE LEFT_SENSOR RIGHT_SENSOR FEED")
 
     # simulation setting parameters
@@ -29,7 +29,7 @@ class TwoWheelVehicleRobotSimulator(object):
     FEED_EATING_TIME = 100
 
     def __init__(self, controll_func, obstacle_num=5, obstacle_radius=30, feed_num=0, feed_radius=5):
-        super(TwoWheelVehicleRobotSimulator, self).__init__()
+        super(VehicleRobotSimulator, self).__init__()
         self.__controll_func = controll_func
         self.__left_sensor_val = 0
         self.__right_sensor_val = 0
@@ -189,3 +189,13 @@ def on_key_press(symbol, modifiers):
     if symbol == pyglet.window.key.SPACE:
         global running
         running = not running
+
+if __name__ == '__main__':
+    def control_func(sensor_data):
+        left_wheel_speed = 20 + 20 * sensor_data["left_distance"]
+        right_wheel_speed = 20 + 20 * sensor_data["right_distance"]
+        return left_wheel_speed, right_wheel_speed
+
+    simulator = VehicleRobotSimulator(control_func, obstacle_num=5)
+    simulator.control_func = control_func
+    simulator.run()
