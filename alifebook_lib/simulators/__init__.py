@@ -1,2 +1,2 @@
-from .simulator import TwoWheelVehicleRobotSimulator
+from .vehicle_simulator import TwoWheelVehicleRobotSimulator
 from .ant_simulator import AntSimulator
