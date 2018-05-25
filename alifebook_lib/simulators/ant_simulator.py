@@ -73,8 +73,8 @@ class AntSimulator(app.Canvas):
         self._agents_fitness = np.zeros(self._N)
         return self.__get_observations()
 
-    def on_timer(self, event):
-        self.update()
+    # def on_timer(self, event):
+    #     self.update()
 
     def on_draw(self, event):
         gloo.clear()
@@ -149,23 +149,20 @@ class AntSimulator(app.Canvas):
     def get_fitness(self):
         return self._agents_fitness
 
-
-
-def action(observation):
-    N = len(observation)
-    # go forward
-    # v = np.ones(N)
-    # av = np.ones(N) * 0.5
-    # random motion
-    v = np.random.random(N)
-    av = np.random.random(N)
-    act = np.c_[v, av]
-    return act
+    def __bool__(self):
+        return not self._closed
 
 
 if __name__ == '__main__':
-    sim = AntSimulator(1)
-    obs = sim.reset()
-    while True:
-        act = action(obs)
-        obs = sim.step(act)
+    simulator = AntSimulator(1)
+    observation = simulator.reset()
+    while simulator:
+        N = len(observation)
+        # go forward
+        # v = np.ones(N)
+        # av = np.ones(N) * 0.5
+        # random motion
+        v = np.random.random(N)
+        av = np.random.random(N)
+        action = np.c_[v, av]
+        observation = simulator.step(action)
