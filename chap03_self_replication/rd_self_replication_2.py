@@ -63,4 +63,4 @@ while visualizer:
         # a_resを減らす（a_res_endよりは減らさない）
         a_res = max(a_res - a_res_step, a_res_end)
     # ここでは、b + c をグレースケールで表示。見たいものに変更してみましょう。
-    visualizer.update((b+c)*255)
+    visualizer.update(b+c)

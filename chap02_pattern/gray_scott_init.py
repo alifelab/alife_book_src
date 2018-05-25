@@ -38,16 +38,5 @@ u += np.random.rand(SPACE_GRID_SIZE, SPACE_GRID_SIZE)*0.1
 v += np.random.rand(SPACE_GRID_SIZE, SPACE_GRID_SIZE)*0.1
 
 while visualizer:  # visualizerはウィンドウが閉じられるとFalseを返す
-    for i in range(VISUALIZATION_STEP):
-        # ラプラシアンの計算
-        laplacian_u = (np.roll(u, 1, axis=0) + np.roll(u, -1, axis=0) +
-                       np.roll(u, 1, axis=1) + np.roll(u, -1, axis=1) - 4*u) / (dx*dx)
-        laplacian_v = (np.roll(v, 1, axis=0) + np.roll(v, -1, axis=0) +
-                       np.roll(v, 1, axis=1) + np.roll(v, -1, axis=1) - 4*v) / (dx*dx)
-        # Gray-Scottモデル方程式
-        dudt = Du*laplacian_u - u*v*v + f*(1.0-u)
-        dvdt = Dv*laplacian_v + u*v*v - (f+k)*v
-        u += dt * dudt
-        v += dt * dvdt
-    # 表示をアップデート。uは0-1なので、255階調に変換する。
+    # 表示をアップデート
     visualizer.update(u)

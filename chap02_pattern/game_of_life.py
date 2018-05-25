@@ -47,5 +47,5 @@ while visualizer:  # visualizerはウィンドウが閉じられるとFalseを�
             else:
                 next_state[i,j] = 0
     state = next_state
-    # 表示をアップデート。stateは0/1なので、255階調に変換する。
-    visualizer.update(state*255)
+    # 表示をアップデート
+    visualizer.update(state)

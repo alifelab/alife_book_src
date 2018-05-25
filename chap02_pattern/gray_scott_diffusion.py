@@ -45,9 +45,9 @@ while visualizer:  # visualizerはウィンドウが閉じられるとFalseを�
         laplacian_v = (np.roll(v, 1, axis=0) + np.roll(v, -1, axis=0) +
                        np.roll(v, 1, axis=1) + np.roll(v, -1, axis=1) - 4*v) / (dx*dx)
         # Gray-Scottモデル方程式
-        dudt = Du*laplacian_u - u*v*v + f*(1.0-u)
-        dvdt = Dv*laplacian_v + u*v*v - (f+k)*v
+        dudt = Du*laplacian_u
+        dvdt = Dv*laplacian_v
         u += dt * dudt
         v += dt * dvdt
-    # 表示をアップデート。uは0-1なので、255階調に変換する。
+    # 表示をアップデート
     visualizer.update(u)

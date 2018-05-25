@@ -9,7 +9,8 @@ GLSL_PATH = path.join(path.dirname(path.abspath(__file__)), 'glsl')
 
 class MatrixVisualizer(object):
     """docstring for MatrixVisualizer."""
-    def __init__(self, width, height):
+    def __init__(self, width, height, value_range_min=0, value_range_max=1):
+        self.value_range = (value_range_min, value_range_max)
         self._canvas = app.Canvas(size=(width, height), position=(0,0), title="ALife book "+self.__class__.__name__)
         self._canvas.events.draw.connect(self.on_draw)
         vertex_shader = open(path.join(GLSL_PATH, 'matrix_visualizer_vertex.glsl'), 'r').read()
@@ -25,9 +26,10 @@ class MatrixVisualizer(object):
         self._render_program.draw(gloo.gl.GL_TRIANGLE_STRIP)
 
     def update(self, matrix):
-        matrix[matrix<0] = 0
-        matrix[matrix>=256] = 255
-        self._render_program['u_texture'] = matrix.astype(np.uint8)
+        matrix[matrix < self.value_range[0]] = self.value_range[0]
+        matrix[matrix > self.value_range[1]] = self.value_range[1]
+        img = ((matrix.astype(np.float64) - self.value_range[0]) / (self.value_range[1] - self.value_range[0]) * 255).astype(np.uint8)
+        self._render_program['u_texture'] = img
         self._canvas.update()
         app.process_events()
 

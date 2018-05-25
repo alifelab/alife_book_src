@@ -54,4 +54,4 @@ while visualizer:
         b += dt * dbdt
         p += dt * dpdt
     # ここでは、b + p / 50 をグレースケールで表示。見たいものに変更してみましょう。
-    visualizer.update((b + p / 50) * 255)
+    visualizer.update(b + p / 50)
