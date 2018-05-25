@@ -21,9 +21,9 @@ state_tmp = np.zeros(SPACE_SIZE, dtype=np.int8)
 
 # 最初の状態を初期化
 ### ランダム ###
-state[:] = np.random.randint(2, size=len(state))
+# state[:] = np.random.randint(2, size=len(state))
 ### 中央の１ピクセルのみ１、後は０ ###
-# state[len(state)//2] = 1
+state[len(state)//2] = 1
 
 while visualizer:  # visualizerはウィンドウが閉じられるとFalseを返す
     # stateから計算した次の結果をstate_tmpに保存
@@ -45,4 +45,4 @@ while visualizer:  # visualizerはウィンドウが閉じられるとFalseを�
     # 最後に入れ替え
     state, state_tmp = state_tmp, state
     # 表示をアップデート
-    visualizer.update(state*255)
+    visualizer.update(state)
