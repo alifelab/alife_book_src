@@ -5,7 +5,7 @@ import sys, os
 sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
 from abc import abstractmethod
-from alifebook_lib.simulators import VehicleRobotSimulator
+from alifebook_lib.simulators import VehicleSimulator
 
 class SubsumptionModule(object):
     def __init__(self):
@@ -13,6 +13,7 @@ class SubsumptionModule(object):
         self.__inputs = {}
         self.__outputs = {}
         self.child_modules = {}
+        self.set_active_module_name("")
         self.on_init()
 
     def add_child_module(self, name, module):
@@ -37,6 +38,12 @@ class SubsumptionModule(object):
             m.update()
         self.on_update()
 
+    def set_active_module_name(self, name):
+        self.__active_module_name = name
+
+    def get_active_module_name(self):
+        return self.__active_module_name
+
     @abstractmethod
     def on_init(self):
         pass
@@ -53,6 +60,7 @@ class AvoidModule(SubsumptionModule):
     def on_update(self):
         self.set_output("left_wheel_speed",  10 + 30 * self.get_input("left_distance"))
         self.set_output("right_wheel_speed", 10 + 30 * self.get_input("right_distance"))
+        self.set_active_module_name(self.__class__.__name__)
 
 
 class WanderModule(SubsumptionModule):
@@ -72,6 +80,7 @@ class WanderModule(SubsumptionModule):
             # through child module's output to output
             self.set_output("left_wheel_speed",  self.child_modules['avoid'].get_output("left_wheel_speed"))
             self.set_output("right_wheel_speed", self.child_modules['avoid'].get_output("right_wheel_speed"))
+            self.set_active_module_name(self.child_modules['avoid'].get_active_module_name())
         elif self.counter == self.TURN_START_STEP:
             # suppress child avoid module and start turning
             if np.random.rand() < 0.5:
@@ -80,6 +89,7 @@ class WanderModule(SubsumptionModule):
             else:
                 self.set_output("left_wheel_speed",  30)
                 self.set_output("right_wheel_speed", 20)
+            self.set_active_module_name(self.__class__.__name__)
         else:
             pass
 
@@ -93,11 +103,13 @@ class ExploreModule(SubsumptionModule):
             # speed down to explore
             self.set_output("left_wheel_speed",  0)
             self.set_output("right_wheel_speed", 0)
+            self.set_active_module_name(self.__class__.__name__)
         else:
             # not inhibit child(wander) module
             # through child module's output to output
             self.set_output("left_wheel_speed",  self.child_modules['wander'].get_output("left_wheel_speed"))
             self.set_output("right_wheel_speed", self.child_modules['wander'].get_output("right_wheel_speed"))
+            self.set_active_module_name(self.child_modules['wander'].get_active_module_name())
 
 
 from t3 import T3
@@ -117,6 +129,7 @@ class ChaosWanderModule(SubsumptionModule):
             right_wheel_speed = 50 * y
             self.set_output("left_wheel_speed",  left_wheel_speed)
             self.set_output("right_wheel_speed", right_wheel_speed)
+            self.set_active_module_name(self.__class__.__name__)
         else:
             # when distance sensor touch obstacle, child module (avoid module) will be activated
             self.set_output("left_wheel_speed",  self.child_modules['avoid'].get_output("left_wheel_speed"))
@@ -124,6 +137,7 @@ class ChaosWanderModule(SubsumptionModule):
             # and update chaos module's parameters
             self.t3.set_parameters(omega0 = np.random.rand())
             self.t3.set_parameters(omega1 = np.random.rand())
+            self.set_active_module_name(self.child_modules['avoid'].get_active_module_name())
 
 
 class ChaosExploreModule(ExploreModule):
@@ -137,9 +151,9 @@ class ChaosExploreModule(ExploreModule):
 ######################
 #controller = AvoidModule()  # same as braitenberg vehicle (layer0)
 #controller = WanderModule()  # add wandering module (layer1)
-#controller = ExploreModule() # add explore module (layer2)
+controller = ExploreModule() # add explore module (layer2)
 #controller = ChaosWanderModule()  # chaos version of wandering module
-controller = ChaosExploreModule()  # chaos wandering + explore module
+#controller = ChaosExploreModule()  # chaos wandering + explore module
 
 
 def controll_func(sensor_data):
@@ -147,7 +161,28 @@ def controll_func(sensor_data):
     controller.update()
     return controller.get_output('left_wheel_speed'), controller.get_output('right_wheel_speed')
 
-if __name__ == '__main__':
-    sim = VehicleRobotSimulator(controll_func, obstacle_num=5, feed_num=40)
-    sim.controll_func = controll_func
-    sim.run()
+# simulatorの初期化 (Appendix参照)
+simulator = VehicleSimulator(obstacle_num=5, feed_num=40)
+
+while simulator:
+    # 現在のセンサー情報を取得
+    sensor_data = simulator.get_sensor_data()
+    # サブサンプションのコントローラをアップデート
+    controller.set_inputs(sensor_data)
+    controller.update()
+
+    # アクションを生成してアップデート
+    left_wheel_speed  = controller.get_output('left_wheel_speed')
+    right_wheel_speed = controller.get_output('right_wheel_speed')
+    action = [left_wheel_speed, right_wheel_speed]
+    color = (0, 0, 255)
+    active_module = controller.get_active_module_name()
+    if active_module is "AvoidModule":
+        color = (255, 0, 0)
+    elif active_module is "WanderModule" or active_module is "ChaosWanderModule":
+        color = (0, 255, 0)
+    elif active_module is "ExploreModule" or active_module is "ChaosExploreModule":
+        color = (0, 0, 255)
+    else:
+        color = (150, 150, 150)
+    simulator.update(action, body_color=color)
