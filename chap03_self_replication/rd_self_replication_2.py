@@ -9,8 +9,7 @@ sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポ�
 import numpy as np
 from alifebook_lib.visualizers import MatrixVisualizer
 
-# visualizerの初期化。表示領域のサイズを与える。
-visualizer = MatrixVisualizer(600, 600)
+visualizer = MatrixVisualizer()
 
 # シミュレーションの各パラメタ
 X_SIZE = 200
