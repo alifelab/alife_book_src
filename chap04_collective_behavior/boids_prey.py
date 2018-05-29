@@ -6,8 +6,8 @@ sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポ�
 import numpy as np
 from alifebook_lib.visualizers import SwarmVisualizer
 
-# visualizerの初期化。表示領域のサイズを与える。
-visualizer = SwarmVisualizer(WINDOW_RESOLUTION_W, WINDOW_RESOLUTION_H)
+# visualizerの初期化 (Appendix参照)
+visualizer = SwarmVisualizer()
 
 # シミュレーションパラメタ
 N = 64
