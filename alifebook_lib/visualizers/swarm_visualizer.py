@@ -10,8 +10,8 @@ class SwarmVisualizer(object):
     def __init__(self, width=600, height=600):
         self._canvas = SceneCanvas(size=(width, height), position=(0,0), title="ALife book "+self.__class__.__name__)
         self._view = self._canvas.central_widget.add_view()
-        self._view.camera = 'arcball'
-        #self._view.camera = 'turntable'
+        #self._view.camera = 'arcball'
+        self._view.camera = 'turntable'
         self._axis = visuals.XYZAxis(parent=self._view.scene)
         self._arrows = None
         self._canvas.show()
