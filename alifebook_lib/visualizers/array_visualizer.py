@@ -4,8 +4,6 @@ import vispy
 from vispy import gloo, app
 from .matrix_visualizer import MatrixVisualizer
 
-vispy.use('Glfw')
-
 class ArrayVisualizer(MatrixVisualizer):
     """docstring for ArrayVisualizer."""
     def __init__(self, width=600, height=600, history_size=600, value_range_min=0, value_range_max=1):

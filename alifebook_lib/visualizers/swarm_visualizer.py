@@ -38,8 +38,8 @@ if __name__ == '__main__':
     N = 1000
     v = SwarmVisualizer()
     pos = np.random.normal(size=(N, 3), scale=0.2)
-    vel = np.random.normal(size=(N, 3), scale=0.2) * 0.01
+    vel = np.random.normal(size=(N, 3), scale=0.2) * 0.001
     while v:
-        vel -= pos * 0.0001
+        vel -= pos * 0.00001
         pos +=  vel
         v.update(pos, vel)
