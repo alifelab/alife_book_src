@@ -10,7 +10,7 @@ from alifebook_lib.visualizers import SwarmVisualizer
 visualizer = SwarmVisualizer()
 
 # シミュレーションパラメタ
-N = 64
+N = 256
 # 力の強さ
 COHESION_FORCE = 0.008
 SEPARATION_FORCE = 0.04
@@ -25,9 +25,12 @@ SEPARATION_ANGLE = np.pi / 2
 ALIGNMENT_ANGLE = np.pi / 3
 MIN_VEL = 0.001
 MAX_VEL = 0.005
+# 中心力
+# CENTRAL_FORCE = 0.0001
+# CENTER_POSITION = np.zeros(3)
 
 # 位置と速度
-x = np.random.rand(N, 3) * 0.1
+x = np.random.rand(N, 3) * 2 - 1
 v = np.random.rand(N, 3) * MIN_VEL
 
 while visualizer:
@@ -59,6 +62,7 @@ while visualizer:
             dv_ali[i] = ALIGNMENT_FORCE * (np.average(ali_agents_v, axis=0) - v_this)
     # 速度のアップデートと上限/下限のチェック
     v += dv_coh + dv_sep + dv_ali
+    # v += CENTRAL_FORCE * (CENTER_POSITION - x)
     for i in range(N):
         v_abs = np.linalg.norm(v[i])
         if (v_abs < MIN_VEL):
@@ -67,5 +71,4 @@ while visualizer:
             v[i] = MAX_VEL * v[i] / v_abs
     # 位置のアップデート
     x += v
-
-    visualizer.update(x, v, range=(-0.1, 0.1), focus_center_of_mass=True)
+    visualizer.update(x, v)
