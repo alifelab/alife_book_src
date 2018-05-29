@@ -6,8 +6,8 @@ sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポ�
 import numpy as np
 from alifebook_lib.visualizers import ArrayVisualizer
 
-# visualizerの初期化。表示領域のサイズを与える。
-visualizer = ArrayVisualizer(600, 600, history_size=600)
+# visualizerの初期化 (Appendix参照)
+visualizer = ArrayVisualizer()
 
 SPACE_SIZE = 600
 
@@ -15,7 +15,6 @@ SPACE_SIZE = 600
 RULE = 110
 
 # CAの結果
-# 列方向は空間、行方向は時間
 state = np.zeros(SPACE_SIZE, dtype=np.int8)
 state_tmp = np.zeros(SPACE_SIZE, dtype=np.int8)
 

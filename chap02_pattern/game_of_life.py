@@ -7,8 +7,8 @@ import numpy as np
 from alifebook_lib.visualizers import MatrixVisualizer
 import game_of_life_patterns
 
-# visualizerの初期化。表示領域のサイズを与える。
-visualizer = MatrixVisualizer(600, 600)
+# visualizerの初期化 (Appendix参照)
+visualizer = MatrixVisualizer()
 
 WIDTH = 50
 HEIGHT = 50
@@ -17,10 +17,10 @@ state = np.zeros((HEIGHT,WIDTH), dtype=np.int8)
 
 # 初期化
 ### ランダム ###
-# state = np.random.randint(2, size=(HEIGHT,WIDTH), dtype=np.int8)
+state = np.random.randint(2, size=(HEIGHT,WIDTH), dtype=np.int8)
 ### game_of_life_patterns.pyの中の各パターンを利用. 左上(2,2)の位置にセットする. ###
-pattern = game_of_life_patterns.GLIDER_GUN
-state[2:2+pattern.shape[0], 2:2+pattern.shape[1]] = pattern
+# pattern = game_of_life_patterns.OSCILLATOR
+# state[2:2+pattern.shape[0], 2:2+pattern.shape[1]] = pattern
 
 while visualizer:  # visualizerはウィンドウが閉じられるとFalseを返す
     # 次の状態を一時的に保存する変数

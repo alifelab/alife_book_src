@@ -9,7 +9,7 @@ GLSL_PATH = path.join(path.dirname(path.abspath(__file__)), 'glsl')
 
 class MatrixVisualizer(object):
     """docstring for MatrixVisualizer."""
-    def __init__(self, width, height, value_range_min=0, value_range_max=1):
+    def __init__(self, width=600, height=600, value_range_min=0, value_range_max=1):
         self.value_range = (value_range_min, value_range_max)
         self._canvas = app.Canvas(size=(width, height), position=(0,0), title="ALife book "+self.__class__.__name__)
         self._canvas.events.draw.connect(self.on_draw)
