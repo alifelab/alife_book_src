@@ -87,7 +87,7 @@ def clear_bond(ax, x0, y0, x1, y1):
 
 class SCLVisualizer(object):
     """docstring for SCLVisualizer."""
-    def __init__(self, width, height):
+    def __init__(self, width=600, height=600):
         super(SCLVisualizer, self).__init__()
         #
         # Initialization
