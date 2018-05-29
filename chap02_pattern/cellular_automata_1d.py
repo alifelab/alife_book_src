@@ -14,7 +14,7 @@ SPACE_SIZE = 600
 # CAのバイナリコーディングされたルール (Wolfram code)
 RULE = 110
 
-# CAの結果
+# CAの状態空間
 state = np.zeros(SPACE_SIZE, dtype=np.int8)
 state_tmp = np.zeros(SPACE_SIZE, dtype=np.int8)
 
