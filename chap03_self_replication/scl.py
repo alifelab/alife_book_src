@@ -7,6 +7,7 @@ import numpy as np
 from alifebook_lib.visualizers import SCLVisualizer
 from scl_interaction_functions import *
 
+# visualizerの初期化 (Appendix参照)
 visualizer = SCLVisualizer()
 
 SPACE_SIZE = 16

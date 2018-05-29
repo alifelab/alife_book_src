@@ -9,6 +9,7 @@ sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポ�
 import numpy as np
 from alifebook_lib.visualizers import MatrixVisualizer
 
+# visualizerの初期化 (Appendix参照)
 visualizer = MatrixVisualizer()
 
 # シミュレーションの各パラメタ
