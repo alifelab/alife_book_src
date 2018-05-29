@@ -44,7 +44,7 @@ while visualizer:  # visualizerはウィンドウが閉じられるとFalseを�
                        np.roll(u, 1, axis=1) + np.roll(u, -1, axis=1) - 4*u) / (dx*dx)
         laplacian_v = (np.roll(v, 1, axis=0) + np.roll(v, -1, axis=0) +
                        np.roll(v, 1, axis=1) + np.roll(v, -1, axis=1) - 4*v) / (dx*dx)
-        # Gray-Scottモデル方程式
+        # uとvの変化量
         dudt = Du*laplacian_u
         dvdt = Dv*laplacian_v
         u += dt * dudt
