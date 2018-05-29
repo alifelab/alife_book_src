@@ -3,7 +3,7 @@ import numpy as np
 import vispy
 from vispy import gloo, app
 
-vispy.use('Glfw')
+vispy.use('Glfw')  # avoid bug on Qt
 
 GLSL_PATH = path.join(path.dirname(path.abspath(__file__)), 'glsl')
 
