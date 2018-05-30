@@ -1,12 +1,10 @@
 import sys
 import numpy as np
-import pygame
-from pygame.locals import *
 from matplotlib import pyplot as plt
 from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D
-import matplotlib as mpl
-mpl.use('tkagg')
+import matplotlib
+matplotlib.use('tkagg')
 
 particle_shapes = None
 
