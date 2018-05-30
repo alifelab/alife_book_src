@@ -14,6 +14,7 @@ WIDTH = 50
 HEIGHT = 50
 
 state = np.zeros((HEIGHT,WIDTH), dtype=np.int8)
+next_state = np.empty((HEIGHT,WIDTH), dtype=np.int8)
 
 # 初期化
 ### ランダム ###
@@ -23,8 +24,6 @@ state = np.random.randint(2, size=(HEIGHT,WIDTH), dtype=np.int8)
 # state[2:2+pattern.shape[0], 2:2+pattern.shape[1]] = pattern
 
 while visualizer:  # visualizerはウィンドウが閉じられるとFalseを返す
-    # 次の状態を一時的に保存する変数
-    next_state = np.empty(state.shape, dtype=np.int8)
     for i in range(HEIGHT):
         for j in range(WIDTH):
             # 自分と近傍のセルの状態を取得
@@ -46,6 +45,6 @@ while visualizer:  # visualizerはウィンドウが閉じられるとFalseを�
                 next_state[i,j] = 1
             else:
                 next_state[i,j] = 0
-    state = next_state
+    state, next_state = next_state, state
     # 表示をアップデート
     visualizer.update(state)

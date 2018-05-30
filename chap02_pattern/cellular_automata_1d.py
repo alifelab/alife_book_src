@@ -16,7 +16,7 @@ RULE = 110
 
 # CAの状態空間
 state = np.zeros(SPACE_SIZE, dtype=np.int8)
-state_tmp = np.zeros(SPACE_SIZE, dtype=np.int8)
+next_state = np.empty(SPACE_SIZE, dtype=np.int8)
 
 # 最初の状態を初期化
 ### ランダム ###
@@ -25,7 +25,7 @@ state_tmp = np.zeros(SPACE_SIZE, dtype=np.int8)
 state[len(state)//2] = 1
 
 while visualizer:  # visualizerはウィンドウが閉じられるとFalseを返す
-    # stateから計算した次の結果をstate_tmpに保存
+    # stateから計算した次の結果をnext_stateに保存
     for i in range(SPACE_SIZE):
         # left, center, right cellの状態を取得
         l = state[i-1]
@@ -38,10 +38,10 @@ while visualizer:  # visualizerはウィンドウが閉じられるとFalseを�
         #     RULEをneighbor_cell_code分だけビットシフトして１と論理積をとる。
         neighbor_cell_code = 2**2 * l + 2**1 * c + 2**0 * r
         if (RULE >> neighbor_cell_code) & 1:
-            state_tmp[i] = 1
+            next_state[i] = 1
         else:
-            state_tmp[i] = 0
+            next_state[i] = 0
     # 最後に入れ替え
-    state, state_tmp = state_tmp, state
+    state, next_state = next_state, state
     # 表示をアップデート
     visualizer.update(state)
