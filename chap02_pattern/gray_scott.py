@@ -49,5 +49,5 @@ while visualizer:  # visualizerはウィンドウが閉じられるとFalseを�
         dvdt = Dv*laplacian_v + u*v*v - (f+k)*v
         u += dt * dudt
         v += dt * dvdt
-    # 表示をアップデート。uは0-1なので、255階調に変換する。
+    # 表示をアップデート
     visualizer.update(u)
