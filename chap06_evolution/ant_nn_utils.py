@@ -2,12 +2,14 @@ import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, Activation, InputLayer
 
+CONTEXT_NEURON_NUM=2
+HIDDEN_NEURON_NUM=4
 
-def generate_nn_model(hidden_neuron_num, context_neuron_num):
+def generate_nn_model():
     nn_model = Sequential()
-    nn_model.add(InputLayer((7+context_neuron_num,)))
-    nn_model.add(Dense(hidden_neuron_num, activation='sigmoid'))
-    nn_model.add(Dense(2+context_neuron_num, activation='sigmoid'))
+    nn_model.add(InputLayer((7+CONTEXT_NEURON_NUM,)))
+    nn_model.add(Dense(HIDDEN_NEURON_NUM, activation='sigmoid'))
+    nn_model.add(Dense(2+CONTEXT_NEURON_NUM, activation='sigmoid'))
     return nn_model
 
 
