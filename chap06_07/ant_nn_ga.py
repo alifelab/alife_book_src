@@ -73,7 +73,7 @@ while True:
         offspring = parents[offspring_idx]
         offsprings[i] = offspring
 
-    # POPULATION_SIZE/3匹は突然変異後次世代に
+    # POPULATION_SIZE/3匹は突然変異後に次世代に
     for i in range(POPULATION_SIZE//3, 2*POPULATION_SIZE//3):
         offspring_idx = np.random.randint(0, PARENT_NUM)
         offspring = parents[offspring_idx]
