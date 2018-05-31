@@ -22,7 +22,7 @@ class VehicleSimulator(object):
     FEED_EATING_TIME = 100
 
     #def __init__(self, controll_func, obstacle_num=5, obstacle_radius=30, feed_num=0, feed_radius=5):
-    def __init__(self, obstacle_num=5, obstacle_radius=30, feed_num=0, feed_radius=5):
+    def __init__(self, width=600, height=600, obstacle_num=5, obstacle_radius=30, feed_num=0, feed_radius=5):
         super(VehicleSimulator, self).__init__()
         #self.__controll_func = controll_func
         self.__left_sensor_val = 0
@@ -229,4 +229,4 @@ if __name__ == '__main__':
         left_wheel_speed  = 20 + 20 * sensor_data["left_distance"]
         right_wheel_speed = 20 + 20 * sensor_data["right_distance"]
         action = [left_wheel_speed, right_wheel_speed]
-        simulator.update(action, body_color=(0, 0, 255))
+        simulator.update(action)
