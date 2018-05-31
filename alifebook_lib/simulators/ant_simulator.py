@@ -14,7 +14,7 @@ DEBUG_ENV = False
 #class AntSimulator(app.Canvas):
 class AntSimulator(object):
     """docstring for AntSimulator."""
-    def __init__(self, N, width=600, height=600, decay_rate=1.0, secretion=False):
+    def __init__(self, N, width=600, height=600, decay_rate=1.0, hormone_secretion=None):
         #super(AntSimulator, self).__init__(title='Title', size=(600, 600), resizable=True, position=(0, 0), keys='interactive')
 
         #app.Canvas(title='Title', size=(600, 600), resizable=True, position=(0, 0), keys='interactive')
@@ -25,7 +25,7 @@ class AntSimulator(object):
         self._potential_init = np.array(Image.open(path.join(ENV_MAP_PATH, 'envmap01.png'))).astype(np.float32) / 255.
         self._potential_grid_size = self._potential_init.shape
         self._potential_decay_rate = decay_rate
-        self._hormone_secretion = secretion
+        self._hormone_secretion = hormone_secretion
 
         self.reset()
 
@@ -133,14 +133,15 @@ class AntSimulator(object):
 
         grid_idx = (self._agents_pos * self._potential_grid_size).astype(int)
         self._agents_fitness += [self._potential[y,x] for x,y in grid_idx]
-        if self._hormone_secretion:
-            for x, y in grid_idx:
-                for i in [-1, 0, 1]:
-                    for j in [-1, 0, 1]:
-                        self._potential[(y+i)%self._potential_grid_size[0],(x+j)%self._potential_grid_size[1]] = 1
-        else:
+        if self._hormone_secretion is None:
             for x, y in grid_idx:
                 self._potential[y,x] = 0
+        else:
+            for x, y in grid_idx:
+                for i in list(range(-2, 3)):
+                    for j in list(range(-2, 3)):
+                        self._potential[(y+i)%self._potential_grid_size[0],(x+j)%self._potential_grid_size[1]] += self._hormone_secretion
+            self._potential.clip(0, 1)
         self._potential *= self._potential_decay_rate
         self._canvas.update()
         app.process_events()
