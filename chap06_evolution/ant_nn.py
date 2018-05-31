@@ -4,36 +4,26 @@
 import sys, os
 sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
-from keras.models import Sequential
-from keras.layers import Dense, Activation, InputLayer
 from alifebook_lib.simulators import AntSimulator
-from alifebook_lib.utils.nn_ga_utils import *
+from ant_nn_utils import *
 
+CONTEXT_NEURON_NUM=2
+HIDDEN_NEURON_NUM=4
 
-CONTEXT_NN_NUM = 2
+nn_model = generate_nn_model(HIDDEN_NEURON_NUM, CONTEXT_NEURON_NUM)
+# アウトプットの一部をコンテキストニューロンとして次回のインプットに回すための変数
+context_val = np.zeros(CONTEXT_NEURON_NUM)
 
-nn_model = Sequential()
-nn_model.add(InputLayer((7+CONTEXT_NN_NUM,)))
-nn_model.add(Dense(4, activation='sigmoid'))
-nn_model.add(Dense(2+CONTEXT_NN_NUM, activation='sigmoid'))
-context_val = np.zeros(CONTEXT_NN_NUM)
+if len(sys.argv) == 1:
+    gene = np.random.rand(get_gene_length(nn_model))
+else:
+    gene = np.load(sys.argv[1])
+decode_weights(nn_model, gene)
 
-def action(observation):
-    global context_val
-    o = observation[0]  # in this script, agent num = 1
-    nn_input = np.r_[o, context_val]
-    nn_input = nn_input.reshape(1, len(nn_input))
-    nn_output = nn_model.predict(nn_input)
-    act = np.array([nn_output[0][:2]])
-    context_val = nn_output[0][2:]
-    return act
-
-g = np.load(sys.argv[1])
-decode_weights(nn_model, g)
-
-sim = AntSimulator(1)
-obs = sim.reset()
-#obs = sim.reset(int(sys.argv[2]))
+# 引数はエージェントの数（Appendix参照）
+simulator = AntSimulator(1)
+simulator.reset()
 while True:
-    act = action(obs)
-    obs = sim.step(act)
+    sensor_datas = simulator.get_sensor_data()
+    action, context_val = generate_action(nn_model, sensor_datas[0], context_val)
+    simulator.update(action)
