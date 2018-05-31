@@ -11,12 +11,15 @@ ENV_MAP_PATH = path.join(path.dirname(path.abspath(__file__)), 'img')
 
 DEBUG_ENV = False
 
+#class AntSimulator(app.Canvas):
+class AntSimulator(object):
+    """docstring for AntSimulator."""
+    def __init__(self, N, width=600, height=600, decay_rate=1.0, secretion=False):
+        #super(AntSimulator, self).__init__(title='Title', size=(600, 600), resizable=True, position=(0, 0), keys='interactive')
 
-class AntSimulator(app.Canvas):
-
-    def __init__(self, N, decay_rate=1.0, secretion=False):
-        super(AntSimulator, self).__init__(title='Title', size=(600, 600), resizable=False, position=(0, 0), keys='interactive')
-
+        #app.Canvas(title='Title', size=(600, 600), resizable=True, position=(0, 0), keys='interactive')
+        self._canvas = app.Canvas(size=(width, height), position=(0,0), title="ALife book "+self.__class__.__name__)
+        self._canvas.events.draw.connect(self.on_draw)
         # simulation settings
         self._N = N
         self._potential_init = np.array(Image.open(path.join(ENV_MAP_PATH, 'envmap01.png'))).astype(np.float32) / 255.
@@ -53,7 +56,7 @@ class AntSimulator(app.Canvas):
         gloo.set_state(clear_color='black', blend=True, blend_func=('src_alpha', 'one_minus_src_alpha'))
 
         #self._timer = app.Timer('auto', connect=self.on_timer, start=True)
-        self.show()
+        self._canvas.show()
         #self.app.run()
 
     def reset(self, seed=1234):
@@ -71,7 +74,6 @@ class AntSimulator(app.Canvas):
         self._agents_radius = 0.05
         self._sensor_angle = np.linspace(0, 2*np.pi, 7, endpoint=False)
         self._agents_fitness = np.zeros(self._N)
-        return self.__get_observations()
 
     # def on_timer(self, event):
     #     self.update()
@@ -92,11 +94,10 @@ class AntSimulator(app.Canvas):
             hv.pos = line
             hv.draw()
 
+#    def on_resize(self, event):
+#        gloo.set_viewport(0, 0, *self.physical_size)
 
-    def on_resize(self, event):
-        gloo.set_viewport(0, 0, *self.physical_size)
-
-    def __get_observations(self):
+    def get_sensor_data(self):
         obs = np.empty((self._N, 7))
         for ai in range(self._N):
             for si in range(7):
@@ -120,7 +121,7 @@ class AntSimulator(app.Canvas):
             c = (1, 0, 0, 1)
         self.agents_visuals[index].border_color = c
 
-    def step(self, action):
+    def update(self, action):
         # action take 0-1 value
         v = action[:,0] * 0.0005 + 0.0005
         av = (action[:,1] - 0.5) * 2 * np.pi * 0.05
@@ -141,23 +142,22 @@ class AntSimulator(app.Canvas):
             for x, y in grid_idx:
                 self._potential[y,x] = 0
         self._potential *= self._potential_decay_rate
-        self.update()
-        self.app.process_events()
-
-        return self.__get_observations()
+        self._canvas.update()
+        app.process_events()
 
     def get_fitness(self):
         return self._agents_fitness
 
     def __bool__(self):
-        return not self._closed
-
+        return not self._canvas._closed
 
 if __name__ == '__main__':
-    simulator = AntSimulator(1)
-    observation = simulator.reset()
+    N = 3
+    simulator = AntSimulator(N)
+    #simulator.reset()
+
     while simulator:
-        N = len(observation)
+        observation = simulator.get_sensor_data()
         # go forward
         # v = np.ones(N)
         # av = np.ones(N) * 0.5
@@ -165,4 +165,4 @@ if __name__ == '__main__':
         v = np.random.random(N)
         av = np.random.random(N)
         action = np.c_[v, av]
-        observation = simulator.step(action)
+        simulator.update(action)
