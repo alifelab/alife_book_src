@@ -65,16 +65,17 @@ class AvoidModule(SubsumptionModule):
 
 class WanderModule(SubsumptionModule):
     TURN_START_STEP = 100
-    TURN_END_STEP = 150
+    TURN_END_STEP = 180
     def on_init(self):
         self.counter = 0
         self.add_child_module('avoid', AvoidModule())
 
     def on_update(self):
-        if self.get_input("right_distance") < 0.1 and self.get_input("left_distance") < 0.1:
+        if self.get_input("right_distance") < 0.001 and self.get_input("left_distance") < 0.001:
             self.counter = (self.counter + 1) % self.TURN_END_STEP
         else:
             self.counter = 0
+
         if self.counter < self.TURN_START_STEP:
             # not inhibit child(avoid) module
             # through child module's output to output
@@ -84,32 +85,14 @@ class WanderModule(SubsumptionModule):
         elif self.counter == self.TURN_START_STEP:
             # suppress child avoid module and start turning
             if np.random.rand() < 0.5:
-                self.set_output("left_wheel_speed",  20)
-                self.set_output("right_wheel_speed", 30)
+                self.set_output("left_wheel_speed",  15)
+                self.set_output("right_wheel_speed", 10)
             else:
-                self.set_output("left_wheel_speed",  30)
-                self.set_output("right_wheel_speed", 20)
+                self.set_output("left_wheel_speed",  10)
+                self.set_output("right_wheel_speed", 15)
             self.set_active_module_name(self.__class__.__name__)
         else:
             pass
-
-
-class ExploreModule(SubsumptionModule):
-    def on_init(self):
-        self.add_child_module('wander', WanderModule())
-
-    def on_update(self):
-        if self.get_input('feed_touching'):
-            # speed down to explore
-            self.set_output("left_wheel_speed",  0)
-            self.set_output("right_wheel_speed", 0)
-            self.set_active_module_name(self.__class__.__name__)
-        else:
-            # not inhibit child(wander) module
-            # through child module's output to output
-            self.set_output("left_wheel_speed",  self.child_modules['wander'].get_output("left_wheel_speed"))
-            self.set_output("right_wheel_speed", self.child_modules['wander'].get_output("right_wheel_speed"))
-            self.set_active_module_name(self.child_modules['wander'].get_active_module_name())
 
 
 from t3 import T3
@@ -140,9 +123,24 @@ class ChaosWanderModule(SubsumptionModule):
             self.set_active_module_name(self.child_modules['avoid'].get_active_module_name())
 
 
-class ChaosExploreModule(ExploreModule):
+class ExploreModule(SubsumptionModule):
     def on_init(self):
-        self.add_child_module('wander', ChaosWanderModule())
+        # カオスバージョンのwander moduleに切替可能
+        self.add_child_module('wander', WanderModule())
+        #self.add_child_module('wander', ChaosWanderModule())
+
+    def on_update(self):
+        if self.get_input('feed_touching'):
+            # speed down to explore
+            self.set_output("left_wheel_speed",  0)
+            self.set_output("right_wheel_speed", 0)
+            self.set_active_module_name(self.__class__.__name__)
+        else:
+            # not inhibit child(wander) module
+            # through child module's output to output
+            self.set_output("left_wheel_speed",  self.child_modules['wander'].get_output("left_wheel_speed"))
+            self.set_output("right_wheel_speed", self.child_modules['wander'].get_output("right_wheel_speed"))
+            self.set_active_module_name(self.child_modules['wander'].get_active_module_name())
 
 
 ######################
@@ -150,9 +148,8 @@ class ChaosExploreModule(ExploreModule):
 ######################
 #controller = AvoidModule()
 #controller = WanderModule()
-controller = ExploreModule()
-#controller = ChaosWanderModule()  # ワンダーモジュールの内部にカオスを入れる
-#controller = ChaosExploreModule()
+controller = ChaosWanderModule()  # ワンダーモジュールの内部にカオスを入れる
+#controller = ExploreModule()
 
 # simulatorの初期化 (Appendix参照)
 simulator = VehicleSimulator(obstacle_num=5, feed_num=40)
