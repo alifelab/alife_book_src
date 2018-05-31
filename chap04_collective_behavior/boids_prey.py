@@ -69,6 +69,7 @@ while visualizer:
         dv_boundary[i] = - BOUNDARY_FORCE * x_this * (dist_center - 1) / dist_center if (dist_center > 1) else 0
     # 速度のアップデートと上限/下限のチェック
     v += dv_coh + dv_sep + dv_ali + dv_boundary
+    # 餌への吸引力を加える
     v += PREY_FORCE * (prey_x - x) / np.linalg.norm((prey_x - x), axis=1, keepdims=True)**2
     if t % PREY_MOVEMENT_STEP == 0:
         prey_x = np.random.rand(1, 3) * 2 - 1
