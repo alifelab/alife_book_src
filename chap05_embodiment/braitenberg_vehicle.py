@@ -7,7 +7,7 @@ import numpy as np
 from alifebook_lib.simulators import VehicleSimulator
 
 # simulatorの初期化 (Appendix参照)
-simulator = VehicleSimulator(control_func, obstacle_num=5)
+simulator = VehicleSimulator(obstacle_num=5)
 
 while simulator:
     # 現在のセンサー情報を取得
