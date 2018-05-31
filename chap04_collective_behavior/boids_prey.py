@@ -28,14 +28,14 @@ MIN_VEL = 0.005
 MAX_VEL = 0.03
 # 境界で働く力（0にすると自由境界）
 BOUNDARY_FORCE = 0.001
-# 餌に吸引される力と動かす間隔
+# エサに吸引される力と動かす間隔
 PREY_FORCE = 0.0005
 PREY_MOVEMENT_STEP = 150
 
 # 位置と速度
 x = np.random.rand(N, 3) * 2 - 1
 v = (np.random.rand(N, 3) * 2 - 1 ) * MIN_VEL
-# 餌の位置
+# エサの位置
 prey_x = np.random.rand(1, 3) * 2 - 1
 
 # cohesion, separation, alignmentの３つの力を代入する変数
@@ -69,11 +69,11 @@ while visualizer:
         dv_boundary[i] = - BOUNDARY_FORCE * x_this * (dist_center - 1) / dist_center if (dist_center > 1) else 0
     # 速度のアップデートと上限/下限のチェック
     v += dv_coh + dv_sep + dv_ali + dv_boundary
-    # 餌への吸引力を加える
+    # エサへの吸引力を加える
     v += PREY_FORCE * (prey_x - x) / np.linalg.norm((prey_x - x), axis=1, keepdims=True)**2
     if t % PREY_MOVEMENT_STEP == 0:
         prey_x = np.random.rand(1, 3) * 2 - 1
-        visualizer.set_markers(prey_x)
+        visualizer.set_markers(prey_x) # エサの位置を表示する（Appendix参照）
     t += 1
     for i in range(N):
         v_abs = np.linalg.norm(v[i])
