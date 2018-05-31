@@ -23,6 +23,7 @@ ALIGNMENT_DISTANCE = 0.05
 COHESION_ANGLE = np.pi / 2
 SEPARATION_ANGLE = np.pi / 2
 ALIGNMENT_ANGLE = np.pi / 3
+# 速度の上限/下限
 MIN_VEL = 0.001
 MAX_VEL = 0.005
 # 中心力

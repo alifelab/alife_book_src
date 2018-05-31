@@ -14,19 +14,28 @@ class SwarmVisualizer(object):
         self._view.camera = 'turntable'
         self._axis = visuals.XYZAxis(parent=self._view.scene)
         self._arrows = None
+        self._markers = None
         self._canvas.show()
 
     def update(self, position, direction):
-        assert position.shape[1] == 3
-        assert direction.shape[1] == 3
+        assert position.ndim is 2 and position.shape[1] in (2,3)
+        assert direction.ndim is 2 and direction.shape[1] in (2,3)
         assert position.shape[0] == direction.shape[0]
         if self._arrows is None:
-            self._arrows = visuals.Arrow(arrow_size=self.ARROW_SIZE, parent=self._view.scene)
+            self._arrows = visuals.Arrow(arrow_size=self.ARROW_SIZE, arrow_type='triangle_30', parent=self._view.scene)
         # arrow_coordinate[0::2] is position of arrow and
         # arrow_coordinate[1::2] is direction of tail (length is ignored)
         arrow_coordinate = np.repeat(position, 2, axis=0)
         arrow_coordinate[::2] -=  direction
         self._arrows.set_data(arrows=arrow_coordinate.reshape((-1, 6)))
+        self._canvas.update()
+        vispy.app.process_events()
+
+    def set_markers(self, position):
+        assert position.ndim is 2 and position.shape[-1] in (2,3)
+        if self._markers is None:
+            self._markers = visuals.Markers(parent=self._view.scene)
+        self._markers.set_data(position, face_color=(1,0,0), size=20)
         self._canvas.update()
         vispy.app.process_events()
 
@@ -39,6 +48,7 @@ if __name__ == '__main__':
     v = SwarmVisualizer()
     pos = np.random.normal(size=(N, 3), scale=0.2)
     vel = np.random.normal(size=(N, 3), scale=0.2) * 0.001
+    v.set_markers(np.array([[0,0,0]]))
     while v:
         vel -= pos * 0.00001
         pos +=  vel
