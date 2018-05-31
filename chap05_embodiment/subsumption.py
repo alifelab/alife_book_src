@@ -145,21 +145,14 @@ class ChaosExploreModule(ExploreModule):
         self.add_child_module('wander', ChaosWanderModule())
 
 
-
 ######################
 # change architecture
 ######################
-#controller = AvoidModule()  # same as braitenberg vehicle (layer0)
-#controller = WanderModule()  # add wandering module (layer1)
-controller = ExploreModule() # add explore module (layer2)
-#controller = ChaosWanderModule()  # chaos version of wandering module
-#controller = ChaosExploreModule()  # chaos wandering + explore module
-
-
-def controll_func(sensor_data):
-    controller.set_inputs(sensor_data)
-    controller.update()
-    return controller.get_output('left_wheel_speed'), controller.get_output('right_wheel_speed')
+#controller = AvoidModule()
+#controller = WanderModule()
+controller = ExploreModule()
+#controller = ChaosWanderModule()  # ワンダーモジュールの内部にカオスを入れる
+#controller = ChaosExploreModule()
 
 # simulatorの初期化 (Appendix参照)
 simulator = VehicleSimulator(obstacle_num=5, feed_num=40)
@@ -178,11 +171,9 @@ while simulator:
     color = (0, 0, 255)
     active_module = controller.get_active_module_name()
     if active_module is "AvoidModule":
-        color = (255, 0, 0)
-    elif active_module is "WanderModule" or active_module is "ChaosWanderModule":
-        color = (0, 255, 0)
-    elif active_module is "ExploreModule" or active_module is "ChaosExploreModule":
-        color = (0, 0, 255)
-    else:
-        color = (150, 150, 150)
-    simulator.update(action, body_color=color)
+        simulator.set_bodycolor((255, 0, 0))
+    elif active_module in ("WanderModule", "ChaosWanderModule"):
+        simulator.set_bodycolor((0, 255, 0))
+    elif active_module in ("ExploreModule", "ChaosExploreModule"):
+        simulator.set_bodycolor((0, 0, 255))
+    simulator.update(action)

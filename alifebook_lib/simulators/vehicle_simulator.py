@@ -65,15 +65,15 @@ class VehicleSimulator(object):
 
         # vehicle
         mass = 1
-        self.vehicle_body = pymunk.Body(mass, pymunk.moment_for_circle(mass, 0, self.VEHICLE_RADIUS))
-        self.vehicle_body.position = self.ARENA_SIZE/2+self.DISPLAY_MARGIN, self.ARENA_SIZE/2+self.DISPLAY_MARGIN
-        self.vehicle_shape = pymunk.Circle(self.vehicle_body, self.VEHICLE_RADIUS)
-        self.vehicle_shape.friction = 0.2
-        self.vehicle_shape.collision_type = self.COLLISION_TYPE.VEHICLE
-        self.__simulation_space.add(self.vehicle_body, self.vehicle_shape)
+        self.__vehicle_body = pymunk.Body(mass, pymunk.moment_for_circle(mass, 0, self.VEHICLE_RADIUS))
+        self.__vehicle_body.position = self.ARENA_SIZE/2+self.DISPLAY_MARGIN, self.ARENA_SIZE/2+self.DISPLAY_MARGIN
+        self.__vehicle_shape = pymunk.Circle(self.__vehicle_body, self.VEHICLE_RADIUS)
+        self.__vehicle_shape.friction = 0.2
+        self.__vehicle_shape.collision_type = self.COLLISION_TYPE.VEHICLE
+        self.__simulation_space.add(self.__vehicle_body, self.__vehicle_shape)
 
         # left sensor
-        sensor_l_s = pymunk.Segment(self.vehicle_body, (0, 0), (self.SENSOR_RANGE * np.cos(self.SENSOR_ANGLE), self.SENSOR_RANGE * np.sin(self.SENSOR_ANGLE)), 0)
+        sensor_l_s = pymunk.Segment(self.__vehicle_body, (0, 0), (self.SENSOR_RANGE * np.cos(self.SENSOR_ANGLE), self.SENSOR_RANGE * np.sin(self.SENSOR_ANGLE)), 0)
         sensor_l_s.sensor = True
         sensor_l_s.collision_type = self.COLLISION_TYPE.LEFT_SENSOR
         handler_l = self.__simulation_space.add_collision_handler(self.COLLISION_TYPE.LEFT_SENSOR, self.COLLISION_TYPE.OBJECT)
@@ -82,7 +82,7 @@ class VehicleSimulator(object):
         self.__simulation_space.add(sensor_l_s)
 
         # right sensor
-        sensor_r_s = pymunk.Segment(self.vehicle_body, (0, 0), (self.SENSOR_RANGE * np.cos(-self.SENSOR_ANGLE), self.SENSOR_RANGE * np.sin(-self.SENSOR_ANGLE)), 0)
+        sensor_r_s = pymunk.Segment(self.__vehicle_body, (0, 0), (self.SENSOR_RANGE * np.cos(-self.SENSOR_ANGLE), self.SENSOR_RANGE * np.sin(-self.SENSOR_ANGLE)), 0)
         sensor_r_s.sensor = True
         sensor_r_s.collision_type = self.COLLISION_TYPE.RIGHT_SENSOR
         handler_r = self.__simulation_space.add_collision_handler(self.COLLISION_TYPE.RIGHT_SENSOR, self.COLLISION_TYPE.OBJECT)
@@ -117,47 +117,43 @@ class VehicleSimulator(object):
         # TODO: implement reset action
         pass
 
-    def update(self, action, body_color=None):
-        if body_color is not None:
-            assert len(body_color) == 3
-            self.vehicle_shape.color = body_color
-
-        self.vehicle_body.velocity = (0, 0)
-        self.vehicle_body.angular_velocity = 0
-        #self.vehicle_body.force = (10,10)
-        #self.vehicle_body.force = (5000,5000)
-        #v = self.vehicle_body.velocity
-        #print(self.vehicle_body.velocity_at_world_point((0, self.VEHICLE_RADIUS)))
-        #self.vehicle_body.force = 100*(50-v[0]) , 100*(50-v[1])
+    def update(self, action):
+        self.__vehicle_body.velocity = (0, 0)
+        self.__vehicle_body.angular_velocity = 0
+        #self.__vehicle_body.force = (10,10)
+        #self.__vehicle_body.force = (5000,5000)
+        #v = self.__vehicle_body.velocity
+        #print(self.__vehicle_body.velocity_at_world_point((0, self.VEHICLE_RADIUS)))
+        #self.__vehicle_body.force = 100*(50-v[0]) , 100*(50-v[1])
         #print(v)
-        #self.vehicle_body.torque = 10000
+        #self.__vehicle_body.torque = 10000
         #self.flag = False
-        #self.vehicle_body.force = (500000,500000)
+        #self.__vehicle_body.force = (500000,500000)
 
         #target_velocity_l, target_velocity_r = 10, 0
 
-        #current_velocity_l = self.vehicle_body.velocity_at_local_point((0, self.VEHICLE_RADIUS)).get_length()
-        #current_velocity_r = self.vehicle_body.velocity_at_local_point((0, -self.VEHICLE_RADIUS)).get_length()
+        #current_velocity_l = self.__vehicle_body.velocity_at_local_point((0, self.VEHICLE_RADIUS)).get_length()
+        #current_velocity_r = self.__vehicle_body.velocity_at_local_point((0, -self.VEHICLE_RADIUS)).get_length()
 
         #force_l = 1*(target_velocity_l - current_velocity_l)
         #force_r = 1*(target_velocity_r - current_velocity_r)
-        #self.vehicle_body.apply_force_at_local_point((force_l, 0), (0, self.VEHICLE_RADIUS))
+        #self.__vehicle_body.apply_force_at_local_point((force_l, 0), (0, self.VEHICLE_RADIUS))
         #if force_l > 0:
-            #self.vehicle_body.apply_force_at_local_point((force_l, 0), (0, self.VEHICLE_RADIUS))
+            #self.__vehicle_body.apply_force_at_local_point((force_l, 0), (0, self.VEHICLE_RADIUS))
         #else:
-            #self.vehicle_body.apply_force_at_local_point((-force_l, 0), (0, self.VEHICLE_RADIUS))
-        #self.vehicle_body.apply_force_at_local_point((force_l, 0), (0, self.VEHICLE_RADIUS))
-        #self.vehicle_body.apply_force_at_local_point((force_r, 0), (0, -self.VEHICLE_RADIUS))
-        #self.vehicle_body.apply_force_at_local_point((force_l, 0), (0, self.VEHICLE_RADIUS))
-        #self.vehicle_body.apply_force_at_local_point((10, 0), (0, self.VEHICLE_RADIUS))
-        #self.vehicle_body.apply_force_at_local_point((force_r, 0), (0, -self.VEHICLE_RADIUS))
+            #self.__vehicle_body.apply_force_at_local_point((-force_l, 0), (0, self.VEHICLE_RADIUS))
+        #self.__vehicle_body.apply_force_at_local_point((force_l, 0), (0, self.VEHICLE_RADIUS))
+        #self.__vehicle_body.apply_force_at_local_point((force_r, 0), (0, -self.VEHICLE_RADIUS))
+        #self.__vehicle_body.apply_force_at_local_point((force_l, 0), (0, self.VEHICLE_RADIUS))
+        #self.__vehicle_body.apply_force_at_local_point((10, 0), (0, self.VEHICLE_RADIUS))
+        #self.__vehicle_body.apply_force_at_local_point((force_r, 0), (0, -self.VEHICLE_RADIUS))
         velocity_l, velocity_r = action[0], action[1]
         velocity_l += self.MOTOR_NOISE * np.random.randn()
         velocity_r += self.MOTOR_NOISE * np.random.randn()
-        self.vehicle_body.apply_impulse_at_local_point((velocity_l*self.vehicle_body.mass, 0), (0, self.VEHICLE_RADIUS))
-        self.vehicle_body.apply_impulse_at_local_point((velocity_r*self.vehicle_body.mass, 0), (0, -self.VEHICLE_RADIUS))
-        lf = self.__get_lateral_velocity() * self.vehicle_body.mass
-        self.vehicle_body.apply_impulse_at_local_point(-lf, (0,0))
+        self.__vehicle_body.apply_impulse_at_local_point((velocity_l*self.__vehicle_body.mass, 0), (0, self.VEHICLE_RADIUS))
+        self.__vehicle_body.apply_impulse_at_local_point((velocity_r*self.__vehicle_body.mass, 0), (0, -self.VEHICLE_RADIUS))
+        lf = self.__get_lateral_velocity() * self.__vehicle_body.mass
+        self.__vehicle_body.apply_impulse_at_local_point(-lf, (0,0))
         self.__simulation_space.step(1/100)
 
         pyglet.clock.tick()
@@ -174,6 +170,10 @@ class VehicleSimulator(object):
             "feed_touching": self.__feed_sensor_val
         }
         return sensor_data
+
+    def set_bodycolor(self, color):
+        assert len(color) == 3
+        self.__vehicle_shape.color = color
 
     def __feed_touch_handler(self, arbiter, space, data):
         feed = arbiter.shapes[1]
@@ -193,7 +193,7 @@ class VehicleSimulator(object):
 
     def __left_sensr_handler(self, arbiter, space, data):
         p = arbiter.contact_point_set.points[0]
-        distance = self.vehicle_body.world_to_local(p.point_b).get_length()
+        distance = self.__vehicle_body.world_to_local(p.point_b).get_length()
         self.__left_sensor_val = 1 - distance / self.SENSOR_RANGE
         self.__left_sensor_val += self.SENSOR_NOISE * np.random.randn()
         return True
@@ -204,7 +204,7 @@ class VehicleSimulator(object):
 
     def __right_sensr_handler(self, arbiter, space, data):
         p = arbiter.contact_point_set.points[0]
-        distance = self.vehicle_body.world_to_local(p.point_b).get_length()
+        distance = self.__vehicle_body.world_to_local(p.point_b).get_length()
         self.__right_sensor_val = 1 - distance / self.SENSOR_RANGE
         self.__right_sensor_val += self.SENSOR_NOISE * np.random.randn()
         return True
@@ -214,7 +214,7 @@ class VehicleSimulator(object):
         return True
 
     def __get_lateral_velocity(self):
-        v = self.vehicle_body.world_to_local(self.vehicle_body.velocity + self.vehicle_body.position)
+        v = self.__vehicle_body.world_to_local(self.__vehicle_body.velocity + self.__vehicle_body.position)
         rn = Vec2d(0, -1)
         return v.dot(rn) * rn
 
