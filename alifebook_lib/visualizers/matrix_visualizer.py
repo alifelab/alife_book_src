@@ -1,6 +1,5 @@
 from os import path
 import numpy as np
-import vispy
 from vispy import gloo, app
 
 GLSL_PATH = path.join(path.dirname(path.abspath(__file__)), 'glsl')

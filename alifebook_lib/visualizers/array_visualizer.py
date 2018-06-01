@@ -1,7 +1,5 @@
 from os import path
 import numpy as np
-import vispy
-from vispy import gloo, app
 from .matrix_visualizer import MatrixVisualizer
 
 class ArrayVisualizer(MatrixVisualizer):
