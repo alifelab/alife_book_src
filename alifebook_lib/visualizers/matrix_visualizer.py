@@ -36,7 +36,6 @@ class MatrixVisualizer(object):
 
 if __name__ == '__main__':
     v = MatrixVisualizer(600, 600)
-    data = np.repeat(np.arange(0, 256, dtype=np.uint8)[np.newaxis,:], 3, axis=0)
     while v:
-        data = np.roll(data, 1, axis=1)
+        data = np.random.rand(256, 256)
         v.update(data)
