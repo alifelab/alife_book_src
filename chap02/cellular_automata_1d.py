@@ -12,7 +12,7 @@ visualizer = ArrayVisualizer()
 SPACE_SIZE = 600
 
 # CAのバイナリコーディングされたルール (Wolfram code)
-RULE = 110
+RULE = 30
 
 # CAの状態空間
 state = np.zeros(SPACE_SIZE, dtype=np.int8)
