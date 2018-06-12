@@ -5,7 +5,7 @@ import sys, os
 sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
 from alifebook_lib.simulators import AntSimulator
-from ant_nn_utils import generate_nn_model, generate_action, decode_weights, CONTEXT_NEURON_NUM
+from ant_nn_utils import generate_nn_model, generate_action, decode_weights, CONTEXT_NEURON_NUM, get_gene_length
 
 nn_model = generate_nn_model()
 # アウトプットの一部をコンテキストニューロンとして次回のインプットに回すための変数
