@@ -152,18 +152,15 @@ class AntSimulator(object):
     def __bool__(self):
         return not self._canvas._closed
 
+
 if __name__ == '__main__':
     N = 3
     simulator = AntSimulator(N)
     #simulator.reset()
-
     while simulator:
         observation = simulator.get_sensor_data()
         # go forward
-        # v = np.ones(N)
-        # av = np.ones(N) * 0.5
+        # action = np.c_[np.ones(N), np.ones(N) * 0.5]
         # random motion
-        v = np.random.random(N)
-        av = np.random.random(N)
-        action = np.c_[v, av]
+        action = np.c_[np.random.random(N), np.random.random(N)]
         simulator.update(action)
