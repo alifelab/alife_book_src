@@ -44,4 +44,4 @@ while visualizer:  # visualizerはウィンドウが閉じられるとFalseを�
     # 最後に入れ替え
     state, next_state = next_state, state
     # 表示をアップデート
-    visualizer.update(state)
+    visualizer.update(1-state)

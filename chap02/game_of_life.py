@@ -47,4 +47,4 @@ while visualizer:  # visualizerはウィンドウが閉じられるとFalseを�
                 next_state[i,j] = 0
     state, next_state = next_state, state
     # 表示をアップデート
-    visualizer.update(state)
+    visualizer.update(1-state) # 1を黒, 0を白で表示する
