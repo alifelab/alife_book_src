@@ -18,11 +18,11 @@ VISUALIZATION_STEP = 8  # 何ステップごとに画面を更新するか。
 # モデルの各パラメタ
 Du = 2e-5
 Dv = 1e-5
-f, k = 0.022, 0.051 # stripe
-# f, k = 0.04, 0.06  # amorphous
+f, k = 0.04, 0.06  # amorphous
 # f, k = 0.035, 0.065  # spots
 # f, k = 0.012, 0.05  # wandering bubbles
 # f, k = 0.025, 0.05  # waves
+# f, k = 0.022, 0.051 # stripe
 
 # 初期化
 u = np.ones((SPACE_GRID_SIZE, SPACE_GRID_SIZE))
