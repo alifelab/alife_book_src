@@ -138,8 +138,8 @@ class AntSimulator(object):
                 self._potential[y,x] = 0
         else:
             for x, y in grid_idx:
-                for i in list(range(-2, 3)):
-                    for j in list(range(-2, 3)):
+                for i in list(range(-1, 2)):
+                    for j in list(range(-1, 2)):
                         self._potential[(y+i)%self._potential_grid_size[0],(x+j)%self._potential_grid_size[1]] += self._hormone_secretion
             self._potential.clip(0, 1)
         self._potential *= self._potential_decay_rate
