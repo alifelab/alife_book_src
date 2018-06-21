@@ -77,13 +77,12 @@ class WanderModule(SubsumptionModule):
             self.counter = 0
 
         if self.counter < self.TURN_START_STEP:
-            # not inhibit child(avoid) module
-            # through child module's output to output
+            # counterがTURN_START_STEPに達するまでは下位のモジュールを抑制しない
             self.set_output("left_wheel_speed",  self.child_modules['avoid'].get_output("left_wheel_speed"))
             self.set_output("right_wheel_speed", self.child_modules['avoid'].get_output("right_wheel_speed"))
             self.set_active_module_name(self.child_modules['avoid'].get_active_module_name())
         elif self.counter == self.TURN_START_STEP:
-            # suppress child avoid module and start turning
+            # ランダムに左回りか右回りを決定して車輪の速度をセットする
             if np.random.rand() < 0.5:
                 self.set_output("left_wheel_speed",  15)
                 self.set_output("right_wheel_speed", 10)
@@ -92,6 +91,7 @@ class WanderModule(SubsumptionModule):
                 self.set_output("right_wheel_speed", 15)
             self.set_active_module_name(self.__class__.__name__)
         else:
+            # counterがリセットされるまでは車輪の速度はそのまま
             pass
 
 
@@ -107,17 +107,16 @@ class ChaosWanderModule(SubsumptionModule):
     def on_update(self):
         x, y = self.t3.next()  # update chaos dynamics
         if self.get_input("right_distance") < 0.001 and self.get_input("left_distance") < 0.001:
-            # without thouching distance sensor (on free space), vehicle behave chaotic
+            # 距離センサーが触れない間はカオスを利用して動き回る
             left_wheel_speed = 50 * x
             right_wheel_speed = 50 * y
             self.set_output("left_wheel_speed",  left_wheel_speed)
             self.set_output("right_wheel_speed", right_wheel_speed)
             self.set_active_module_name(self.__class__.__name__)
         else:
-            # when distance sensor touch obstacle, child module (avoid module) will be activated
+            # 距離センサーが検知したら、avoid層で回避して、カオスのパラメターも変更して別の振る舞いを獲得する
             self.set_output("left_wheel_speed",  self.child_modules['avoid'].get_output("left_wheel_speed"))
             self.set_output("right_wheel_speed", self.child_modules['avoid'].get_output("right_wheel_speed"))
-            # and update chaos module's parameters
             self.t3.set_parameters(omega0 = np.random.rand())
             self.t3.set_parameters(omega1 = np.random.rand())
             self.set_active_module_name(self.child_modules['avoid'].get_active_module_name())
@@ -131,13 +130,12 @@ class ExploreModule(SubsumptionModule):
 
     def on_update(self):
         if self.get_input('feed_touching'):
-            # speed down to explore
+            # エサを検知したので下位のモジュールは抑制してスピードダウン
             self.set_output("left_wheel_speed",  0)
             self.set_output("right_wheel_speed", 0)
             self.set_active_module_name(self.__class__.__name__)
         else:
-            # not inhibit child(wander) module
-            # through child module's output to output
+            # エサがない時は下位のモジュールは抑制せずにそのままアウトプットとする
             self.set_output("left_wheel_speed",  self.child_modules['wander'].get_output("left_wheel_speed"))
             self.set_output("right_wheel_speed", self.child_modules['wander'].get_output("right_wheel_speed"))
             self.set_active_module_name(self.child_modules['wander'].get_active_module_name())
