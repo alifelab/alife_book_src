@@ -1,101 +1,49 @@
 # -*- coding: utf-8 -*-
 from os import path
 import numpy as np
-from vispy import app, gloo, visuals
-from vispy.visuals import transforms
-from vispy.util.transforms import perspective
-from PIL import Image
+from vispy import app
+from vispy.scene import SceneCanvas, PanZoomCamera, MatrixTransform
+from vispy.scene.visuals import Image, Polygon
+from PIL.Image import open as open_image
 
-GLSL_PATH = path.join(path.dirname(path.abspath(__file__)), 'glsl')
 ENV_MAP_PATH = path.join(path.dirname(path.abspath(__file__)), 'img')
 
-DEBUG_ENV = False
-
-#class AntSimulator(app.Canvas):
 class AntSimulator(object):
     """docstring for AntSimulator."""
     def __init__(self, N, width=600, height=600, decay_rate=1.0, hormone_secretion=None):
-        #super(AntSimulator, self).__init__(title='Title', size=(600, 600), resizable=True, position=(0, 0), keys='interactive')
-
-        #app.Canvas(title='Title', size=(600, 600), resizable=True, position=(0, 0), keys='interactive')
-        self._canvas = app.Canvas(size=(width, height), position=(0,0), title="ALife book "+self.__class__.__name__)
-        self._canvas.events.draw.connect(self.on_draw)
-        # simulation settings
+        # setup simulation
         self._N = N
-        self._potential_init = np.array(Image.open(path.join(ENV_MAP_PATH, 'envmap01.png'))).astype(np.float32) / 255.
+        self._potential_init = np.array(open_image(path.join(ENV_MAP_PATH, 'envmap01.png'))).astype(np.float32) / 255.
+        self._potential = self._potential_init.copy()
         self._potential_grid_size = self._potential_init.shape
         self._potential_decay_rate = decay_rate
         self._hormone_secretion = hormone_secretion
-
         self.reset()
 
-        vert = open(path.join(GLSL_PATH, 'color_map_vert.glsl'), 'r').read()
-        frag = open(path.join(GLSL_PATH, 'color_map_frag.glsl'), 'r').read()
-        self.potential_render = gloo.Program(vert, frag)
-        self.potential_render["a_position"] = [(-1, -1), (-1, +1), (+1, -1), (+1, +1)]
-        self.potential_render["a_texcoord"] = [(0, 0), (0, 1), (1, 0), (1, 1)]
-        self.potential_render["u_texture"] = self._potential
-        self.potential_render["u_texture"].interpolation = 'nearest'
-
-        self.agents_visuals = []
-        self.agents_head_visuals = []
-        #for pos, vel in zip(self._agents_pos, self._agents_vel):
-        for pos, th in zip(self._agents_pos, self._agents_th):
-            v = visuals.EllipseVisual((pos[0], pos[1], 0), radius=self._agents_radius,
-                                      color=(0, 0, 0, 0), border_color="red", border_width=3)
-            v.transform = transforms.NullTransform()
-            self.agents_visuals.append(v)
-            line = [
-                pos,
-                [pos[0] + self._agents_radius * np.cos(th), pos[1] + self._agents_radius * np.sin(th)]
-            ]
-            visuals.LineVisual(line, color='red')
-            self.agents_head_visuals.append(v)
-
-        #gloo.set_state('translucent', clear_color='white')
-        gloo.set_state(clear_color='black', blend=True, blend_func=('src_alpha', 'one_minus_src_alpha'))
-
-        #self._timer = app.Timer('auto', connect=self.on_timer, start=True)
+        # setup display
+        self._canvas = SceneCanvas(size=(width, height), position=(0,0), keys='interactive', title="ALife book "+self.__class__.__name__)
+        self._canvas.events.mouse_double_click.connect(self._on_mouse_double_click)
+        self._view = self._canvas.central_widget.add_view()
+        self._view.camera = PanZoomCamera((0, 0, self._potential_grid_size[1], self._potential_grid_size[0]), aspect=1)
+        self._potential_image = Image(self._potential, interpolation='nearest', parent=self._view.scene, method='subdivide', clim=(0,1))
+        self._agent_polygon = []
+        for i in range(self._N):
+            p = AntSimulator._generate_agent_visual_polygon()
+            p.parent = self._potential_image
+            self._agent_polygon.append(p)
         self._canvas.show()
-        #self.app.run()
 
     def reset(self, seed=1234):
         np.random.seed(seed)
-        if DEBUG_ENV:
-            self._potential = np.zeros((self._potential_grid_size[1], self._potential_grid_size[1])).astype(np.float32)
-            self._potential[100:, 100:] = 1
-            self._potential[:100, :100] = 0.5
-        else:
-            self._potential =  self._potential_init.copy()
+        self._potential =  self._potential_init.copy()
         self._agents_pos = np.random.random((self._N, 2)).astype(np.float32)
         self._agents_th = np.random.random(self._N).astype(np.float32) * np.pi * 2
         self._agents_vel = np.ones(self._N).astype(np.float32) * 0.001
         self._agents_ang_vel = (np.random.random(self._N).astype(np.float32) * 0.1 - 0.05) * np.pi
         self._agents_radius = 0.05
+        #self._agents_radius = 0.025
         self._sensor_angle = np.linspace(0, 2*np.pi, 7, endpoint=False)
         self._agents_fitness = np.zeros(self._N)
-
-    # def on_timer(self, event):
-    #     self.update()
-
-    def on_draw(self, event):
-        gloo.clear()
-        self.potential_render["u_texture"] = self._potential
-        self.potential_render.draw('triangle_strip')
-        #for v, pos, vel in zip(self.agents_visuals, self._agents_pos, self._agents_vel):
-        for v, hv, pos, th in zip(self.agents_visuals, self.agents_head_visuals, self._agents_pos, self._agents_th):
-            ps = [pos[0]*2-1, pos[1]*2-1, 0]
-            v.center = ps
-            v.draw()
-            line = [
-                ps[:2],
-                [ps[0] + self._agents_radius * np.cos(th), ps[1] + self._agents_radius * np.sin(th)]
-            ]
-            hv.pos = line
-            hv.draw()
-
-#    def on_resize(self, event):
-#        gloo.set_viewport(0, 0, *self.physical_size)
 
     def get_sensor_data(self):
         obs = np.empty((self._N, 7))
@@ -112,14 +60,7 @@ class AntSimulator(object):
         return obs
 
     def set_agent_color(self, index, color):
-        if len(color) == 4:
-            c = color
-        elif len(color) == 3:
-            c = (color[0], color[1], color[2], 1)
-        else:
-            # TODO: warning
-            c = (1, 0, 0, 1)
-        self.agents_visuals[index].border_color = c
+        self._agent_polygon[index].border_color = color
 
     def update(self, action):
         # action take 0-1 value
@@ -143,14 +84,42 @@ class AntSimulator(object):
                         self._potential[(y+i)%self._potential_grid_size[0],(x+j)%self._potential_grid_size[1]] += self._hormone_secretion
             self._potential.clip(0, 1)
         self._potential *= self._potential_decay_rate
+
+        self._potential_image.set_data(self._potential)
+        for polygon, pos, th in zip(self._agent_polygon, self._agents_pos, self._agents_th):
+            polygon.transform.reset()
+            # polygon.transform.scale((self._agents_radius, self._agents_radius))
+            # polygon.transform.rotate(180 * th / np.pi, (0,0,1))
+            # polygon.transform.translate(pos)
+            # polygon.transform.scale((self._potential_grid_size[1], self._potential_grid_size[0]))
+            polygon.transform.scale((self._agents_radius*self._potential_grid_size[1], self._agents_radius*self._potential_grid_size[0]))
+            polygon.transform.rotate(180 * th / np.pi, (0,0,1))
+            polygon.transform.translate((pos[0]*self._potential_grid_size[1], pos[1]*self._potential_grid_size[0]))
+
         self._canvas.update()
         app.process_events()
 
     def get_fitness(self):
         return self._agents_fitness
 
+    def _on_mouse_double_click(self, event):
+        self._view.camera.set_range(x = (0,self._potential_grid_size[1]),
+                                    y = (0,self._potential_grid_size[0]),
+                                    margin=0)
+
     def __bool__(self):
         return not self._canvas._closed
+
+    @staticmethod
+    def _generate_agent_visual_polygon():
+        th = np.linspace(0, 2*np.pi, 64)
+        points = np.c_[np.cos(th), np.sin(th)]
+        points = np.r_[[[0,0]], points]
+        #polygon = Polygon(points, color=(0, 0, 0, 0), border_color=(1, 0, 0), border_method='agg', border_width=2)
+        polygon = Polygon(points, color=(0, 0, 0, 0), border_color=(1, 0, 0))
+        polygon.transform = MatrixTransform()
+        return polygon
+
 
 
 if __name__ == '__main__':
