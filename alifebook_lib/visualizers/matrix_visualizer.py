@@ -10,7 +10,7 @@ class MatrixVisualizer(object):
         #vispy.use('Glfw')  # avoid bug on Qt
         self.value_range = (value_range_min, value_range_max)
         self._canvas = app.Canvas(size=(width, height), position=(0,0), title="ALife book "+self.__class__.__name__)
-        self._canvas.events.draw.connect(self.on_draw)
+        self._canvas.events.draw.connect(self._on_draw)
         vertex_shader = open(path.join(GLSL_PATH, 'matrix_visualizer_vertex.glsl'), 'r').read()
         fragment_shader = open(path.join(GLSL_PATH, 'matrix_visualizer_fragment.glsl'), 'r').read()
         self._render_program = gloo.Program(vertex_shader, fragment_shader)
@@ -19,7 +19,7 @@ class MatrixVisualizer(object):
         self._render_program['u_texture'] = np.zeros((1,1)).astype(np.uint8)
         self._canvas.show()
 
-    def on_draw(self, event):
+    def _on_draw(self, event):
         gloo.clear()
         self._render_program.draw(gloo.gl.GL_TRIANGLE_STRIP)
 
