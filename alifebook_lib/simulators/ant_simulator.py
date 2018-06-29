@@ -10,6 +10,14 @@ ENV_MAP_PATH = path.join(path.dirname(path.abspath(__file__)), 'img')
 
 class AntSimulator(object):
     """docstring for AntSimulator."""
+    MIN_VELOCITY = 0.128 # 0.0005 * self._FIELD_WIDTH #original on legacy program
+    MAX_VELOCITY = 0.256 # 0.001 * self._FIELD_WIDTH #original on legacy program
+    #MIN_VELOCITY = 0.4
+    #MAX_VELOCITY = 0.8
+    MAX_ANGULAR_VELOCITY = 0.05 * np.pi
+    SENSOR_NUM = 7
+    AGENT_RADIUS = 12.8 # 0.05 * self._FIELD_WIDTH  #original on legacy program
+
     def __init__(self, N, width=600, height=600, decay_rate=1.0, hormone_secretion=None):
         # setup simulation
         self._N = N
@@ -18,7 +26,9 @@ class AntSimulator(object):
         self._FIELD_HEIGHT = self._INITIAL_FIELD.shape[0]
         self._FIELD_DECAY_RATE = decay_rate
         self._SECRATION = hormone_secretion
-        self._AGENT_RADIUS = 0.05 * self._FIELD_WIDTH
+        sensor_th = np.linspace(0, 2*np.pi, self.SENSOR_NUM, endpoint=False)
+        self._SENSOR_POSITION = self.AGENT_RADIUS * np.array([np.cos(sensor_th), np.sin(sensor_th)]).T
+        self._SENSOR_ANGLE = np.linspace(0, 2*np.pi, self.SENSOR_NUM, endpoint=False)
         self.reset()  # initialize all variables, position, velocity and field status
 
         # setup display
@@ -29,7 +39,7 @@ class AntSimulator(object):
         self._field_image = Image(self._field, interpolation='nearest', parent=self._view.scene, method='subdivide', clim=(0,1))
         self._agent_polygon = []
         for i in range(self._N):
-            p = AntSimulator._generate_agent_visual_polygon(self._AGENT_RADIUS)
+            p = AntSimulator._generate_agent_visual_polygon(self.AGENT_RADIUS)
             p.parent = self._field_image
             self._agent_polygon.append(p)
         self._canvas.show()
@@ -41,26 +51,17 @@ class AntSimulator(object):
         self._agents_th = np.random.random(self._N).astype(np.float32) * np.pi * 2
         self._agents_vel = np.ones(self._N).astype(np.float32) * 0.001
         self._agents_ang_vel = (np.random.random(self._N).astype(np.float32) * 0.1 - 0.05) * np.pi
-        self._sensor_angle = np.linspace(0, 2*np.pi, 7, endpoint=False)
         self._agents_fitness = np.zeros(self._N)
 
     def get_sensor_data(self):
         sensor_data = np.empty((self._N, 7))
         for ai in range(self._N):
-            # th = self._agents_th[ai] + self._sensor_angle
-            # x = self._agents_pos[ai][0] + self._AGENT_RADIUS * np.cos(th)
-            # y = self._agents_pos[ai][1] + self._AGENT_RADIUS * np.sin(th)
-            # x %= 1.0
-            # y %= 1.0
-            # xi = (x * self._field_grid_size[1]).astype(int)
-            # yi = (y * self._field_grid_size[0]).astype(int)
-            # sensor_data[ai] = self._field[yi, xi]
-            for si, sensor_angle in enumerate(self._sensor_angle):
-                th = self._agents_th[ai] + sensor_angle
-                x = self._agents_pos[ai][0] + self._AGENT_RADIUS * np.cos(th)
-                y = self._agents_pos[ai][1] + self._AGENT_RADIUS * np.sin(th)
-                xi = int((x + self._FIELD_WIDTH) % self._FIELD_WIDTH)
-                yi = int((y + self._FIELD_HEIGHT) % self._FIELD_HEIGHT)
+            th = self._agents_th[ai]
+            rot_mat = np.array([[np.cos(th), -np.sin(th)],[np.sin(th), np.cos(th)]])
+            for si, sensor_pos in enumerate(self._SENSOR_POSITION):
+                sx, sy = rot_mat @ sensor_pos
+                xi = int((sx + self._agents_pos[ai][0] + self._FIELD_WIDTH) % self._FIELD_WIDTH)
+                yi = int((sy + self._agents_pos[ai][1] + self._FIELD_HEIGHT) % self._FIELD_HEIGHT)
                 sensor_data[ai, si] = self._field[yi, xi]
         return sensor_data
 
@@ -69,10 +70,8 @@ class AntSimulator(object):
 
     def update(self, action):
         # action take 0-1 value
-        MIN_V = 0.0005 * self._FIELD_WIDTH
-        MAX_V = 0.001 * self._FIELD_WIDTH
-        v = action[:,0] * (MAX_V - MIN_V) + MIN_V
-        av = (action[:,1] - 0.5) * 2 * np.pi * 0.05
+        v = action[:,0] * (self.MAX_VELOCITY - self.MIN_VELOCITY) + self.MIN_VELOCITY
+        av = (action[:,1] - 0.5) * 2 * self.MAX_ANGULAR_VELOCITY
         self._agents_pos += (v * [np.cos(self._agents_th), np.sin(self._agents_th)]).T
         self._agents_th += av
 
@@ -121,7 +120,6 @@ class AntSimulator(object):
         polygon = Polygon(points, color=(0, 0, 0, 0), border_color=(1, 0, 0))
         polygon.transform = MatrixTransform()
         return polygon
-
 
 
 if __name__ == '__main__':
