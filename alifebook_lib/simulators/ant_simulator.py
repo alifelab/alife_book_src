@@ -28,7 +28,6 @@ class AntSimulator(object):
         self._SECRATION = hormone_secretion
         sensor_th = np.linspace(0, 2*np.pi, self.SENSOR_NUM, endpoint=False)
         self._SENSOR_POSITION = self.AGENT_RADIUS * np.array([np.cos(sensor_th), np.sin(sensor_th)]).T
-        self._SENSOR_ANGLE = np.linspace(0, 2*np.pi, self.SENSOR_NUM, endpoint=False)
         self.reset()  # initialize all variables, position, velocity and field status
 
         # setup display
@@ -85,6 +84,9 @@ class AntSimulator(object):
                 self._field[y,x] = 0
         else:
             for x, y in self._agents_pos.astype(int):
+                # self._field = np.roll(np.roll(self._field, x-1, axis=1), y-1, axis=0)
+                # self._field[0:3,0:3] += self._SECRATION
+                # self._field = np.roll(np.roll(self._field, -x+1, axis=1), -y+1, axis=0)
                 for i in range(-1, 2):
                     for j in range(-1, 2):
                         xi = (x + i + self._FIELD_WIDTH) % self._FIELD_WIDTH
@@ -116,8 +118,8 @@ class AntSimulator(object):
         th = np.linspace(0, 2*np.pi, 16)
         points = np.c_[np.cos(th), np.sin(th)]
         points = np.r_[[[0,0]], points] * radius
-        #polygon = Polygon(points, color=(0, 0, 0, 0), border_color=(1, 0, 0), border_method='agg', border_width=2)
-        polygon = Polygon(points, color=(0, 0, 0, 0), border_color=(1, 0, 0))
+        polygon = Polygon(points, color=(0, 0, 0, 0), border_color=(1, 0, 0), border_method='agg', border_width=2)
+        #polygon = Polygon(points, color=(0, 0, 0, 0), border_color=(1, 0, 0))
         polygon.transform = MatrixTransform()
         return polygon
 
