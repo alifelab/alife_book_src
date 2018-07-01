@@ -1,7 +1,7 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import numpy as np
-
 
 class T3(object):
     def __init__(self, omega0 = 0.9, omega1 = 0.3, epsilon = 0.345):
@@ -57,26 +57,3 @@ class T3(object):
                 return A[7]*np.sin(2*np.pi*(x + y + B[7]));
             else:
                 return -100;
-
-
-from matplotlib import pyplot as plt
-from matplotlib import animation
-
-if __name__ == '__main__':
-    fig = plt.figure()
-    ax = plt.axes(xlim=(0, 1), ylim=(0, 1))
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
-
-    t3 = T3()
-
-    def update(frame):
-        ax.clear()
-        d = np.array([t3.next() for i in range(1000)])
-        ax.scatter(d[:,0], d[:,1], s=1)
-        ax.set_xlim(0, 1)
-        ax.set_ylim(0, 1)
-        return
-
-    anim = animation.FuncAnimation(fig, update, interval = 20, blit=False)
-    plt.show(anim)
