@@ -33,16 +33,16 @@ def _draw_particle(ax, x, y, particle_type):
 
     if particle_type == 'HOLE':
         s = None
-    elif particle_type is 'SUBSTRATE':
+    elif particle_type == 'SUBSTRATE':
         s = plt.Circle((x, y), 0.25, facecolor='c')
         ax.add_patch(s)
-    elif particle_type is 'CATALYST':
+    elif particle_type == 'CATALYST':
         s = plt.Circle((x, y), 0.4, facecolor='m')
         ax.add_patch(s)
-    elif particle_type is 'LINK':
+    elif particle_type == 'LINK':
         s = plt.Rectangle([x - 0.35, y - 0.35], 0.7, 0.7, edgecolor='b', facecolor='w')
         ax.add_patch(s)
-    elif particle_type is 'LINK_SUBSTRATE':
+    elif particle_type == 'LINK_SUBSTRATE':
         s0 = plt.Rectangle([x - 0.35, y - 0.35], 0.7, 0.7, edgecolor='b', facecolor='w')
         ax.add_patch(s0)
         s1 = plt.Circle((x, y), 0.25, facecolor='c')
