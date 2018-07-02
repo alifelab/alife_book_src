@@ -10,18 +10,20 @@ ENV_MAP_PATH = path.join(path.dirname(path.abspath(__file__)), 'img')
 
 class AntSimulator(object):
     """docstring for AntSimulator."""
-    MIN_VELOCITY = 0.128 # 0.0005 * self._FIELD_WIDTH #original on legacy program
-    MAX_VELOCITY = 0.256 # 0.001 * self._FIELD_WIDTH #original on legacy program
-    #MIN_VELOCITY = 0.4
-    #MAX_VELOCITY = 0.8
+    #MIN_VELOCITY = 0.128 # 0.0005 * self._FIELD_WIDTH #original on legacy program
+    #MAX_VELOCITY = 0.256 # 0.001 * self._FIELD_WIDTH #original on legacy program
+    MIN_VELOCITY = 0.2
+    MAX_VELOCITY = 0.8
     MAX_ANGULAR_VELOCITY = 0.05 * np.pi
     SENSOR_NUM = 7
     AGENT_RADIUS = 12.8 # 0.05 * self._FIELD_WIDTH  #original on legacy program
+    SENSOR_NOISE = 0.1
 
     def __init__(self, N, width=600, height=600, decay_rate=1.0, hormone_secretion=None):
         # setup simulation
         self._N = N
         self._INITIAL_FIELD = np.array(open_image(path.join(ENV_MAP_PATH, 'envmap01.png'))).astype(np.float32) / 255.
+        #self._INITIAL_FIELD = np.zeros(self._INITIAL_FIELD.shape)
         self._FIELD_WIDTH = self._INITIAL_FIELD.shape[1]
         self._FIELD_HEIGHT = self._INITIAL_FIELD.shape[0]
         self._FIELD_DECAY_RATE = decay_rate
@@ -61,7 +63,7 @@ class AntSimulator(object):
                 sx, sy = rot_mat @ sensor_pos
                 xi = int((sx + self._agents_pos[ai][0] + self._FIELD_WIDTH) % self._FIELD_WIDTH)
                 yi = int((sy + self._agents_pos[ai][1] + self._FIELD_HEIGHT) % self._FIELD_HEIGHT)
-                sensor_data[ai, si] = self._field[yi, xi]
+                sensor_data[ai, si] = self._field[yi, xi] + np.random.randn() * self.SENSOR_NOISE
         return sensor_data
 
     def set_agent_color(self, index, color):
@@ -78,21 +80,19 @@ class AntSimulator(object):
         self._agents_pos[:,1] = (self._agents_pos[:,1] + self._FIELD_HEIGHT) % self._FIELD_HEIGHT
         self._agents_th = (self._agents_th + 2.0 * np.pi) % (2.0 * np.pi)
 
-        self._agents_fitness += [self._field[y,x] for x,y in self._agents_pos.astype(int)]
-        if self._SECRATION is None:
-            for x, y in self._agents_pos.astype(int):
-                self._field[y,x] = 0
-        else:
-            for x, y in self._agents_pos.astype(int):
-                # self._field = np.roll(np.roll(self._field, x-1, axis=1), y-1, axis=0)
-                # self._field[0:3,0:3] += self._SECRATION
-                # self._field = np.roll(np.roll(self._field, -x+1, axis=1), -y+1, axis=0)
-                for i in range(-1, 2):
-                    for j in range(-1, 2):
-                        xi = (x + i + self._FIELD_WIDTH) % self._FIELD_WIDTH
-                        yi = (y + j + self._FIELD_HEIGHT) % self._FIELD_HEIGHT
+        for x, y in self._agents_pos.astype(int):
+            for i in range(-1, 2):
+                for j in range(-1, 2):
+                    xi = (x + i + self._FIELD_WIDTH) % self._FIELD_WIDTH
+                    yi = (y + j + self._FIELD_HEIGHT) % self._FIELD_HEIGHT
+                    self._agents_fitness += self._field[yi,xi]
+                    if self._SECRATION is None:
+                        #self._field[yi,xi] *= 0.5 # current running
+                        self._field[yi,xi] *= 0.9 # sampledata_last2
+                    else:
                         self._field[yi, xi] += self._SECRATION
-            self._field.clip(0, 1)
+        self._field.clip(0, 1)
+
         self._field *= self._FIELD_DECAY_RATE
 
         self._field_image.set_data(self._field)

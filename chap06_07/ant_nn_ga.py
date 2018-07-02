@@ -10,10 +10,8 @@ from alifebook_lib.simulators import AntSimulator
 from ant_nn_utils import generate_nn_model, generate_action, decode_weights, get_gene_length, CONTEXT_NEURON_NUM
 
 # GAに関するパラメタ
-#ONE_TRIAL_STEP = 2000
-ONE_TRIAL_STEP = 1
-POPULATION_SIZE = 50
-TOURNAMENT_SIZE = 5
+ONE_TRIAL_STEP = 2000
+POPULATION_SIZE = 51
 
 nn_model = generate_nn_model()
 
@@ -22,7 +20,7 @@ population = np.random.random((POPULATION_SIZE, GENE_LENGTH)) * 10 - 5
 offsprings = np.empty(population.shape)
 fitness = np.empty(POPULATION_SIZE)
 
-def select(population, fitness):
+def select(population, fitness, TOURNAMENT_SIZE = 3):
     idxs = np.random.choice(range(len(population)), TOURNAMENT_SIZE, replace=False)
     fits = fitness[idxs]
     winner_idx = idxs[np.argmax(fits)]
@@ -31,7 +29,6 @@ def select(population, fitness):
 simulator = AntSimulator(1)
 generation = 0
 while True:
-    #print("unique population:", len(np.unique([hash(str(p)) for p in population])), '/', len(population))
 
     # 現在の集団を評価する
     for gene_index, gene in enumerate(population):
@@ -60,8 +57,6 @@ while True:
     best_idx = np.argmax(fitness)
     best_individual = population[best_idx]
     np.save("gen{0:04}_best.npy".format(generation), best_individual)
-    #print("best hash:", hash(str(best_individual)))
-    #np.save("test02_gen{0:04}_best.npy".format(generation), best_individual)
 
     # １位のエージェントはそのまま次世代に
     offsprings[0] = best_individual.copy()
@@ -84,13 +79,13 @@ while True:
         p2 = select(population, fitness).copy()
         xo_idx = np.random.randint(1, GENE_LENGTH)
         offspring1 = np.r_[p1[:xo_idx], p2[xo_idx:]]
-        offspring2 = np.r_[p1[xo_idx:], p2[:xo_idx]]
+        offspring2 = np.r_[p2[:xo_idx], p1[xo_idx:]]
         offsprings[i] = offspring1
         try:
             offsprings[i+1] = offspring2
         except IndexError:
-            pass
+            pass  # pupulationがいっぱいの時は破棄
 
-    population = offsprings
+    population = offsprings.copy()
 
     generation += 1

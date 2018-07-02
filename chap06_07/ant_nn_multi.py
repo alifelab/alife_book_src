@@ -25,7 +25,7 @@ for i in range(1, len(sys.argv), 2):
 N = np.sum(agent_num)
 action = np.empty((N, 2)) # 各エージェントのアクションを収めるための (Nx2) の配列
 
-simulator = AntSimulator(N, decay_rate=0.9999, hormone_secretion=0.002)
+simulator = AntSimulator(N, decay_rate=0.995, hormone_secretion=0.15)
 
 # エージェントの遺伝子ファイル毎に色をセットする
 idx = 0
