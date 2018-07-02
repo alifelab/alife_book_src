@@ -10,7 +10,8 @@ from alifebook_lib.simulators import AntSimulator
 from ant_nn_utils import generate_nn_model, generate_action, decode_weights, get_gene_length, CONTEXT_NEURON_NUM
 
 # GAに関するパラメタ
-ONE_TRIAL_STEP = 5000
+#ONE_TRIAL_STEP = 2000
+ONE_TRIAL_STEP = 1
 POPULATION_SIZE = 50
 TOURNAMENT_SIZE = 5
 
@@ -19,14 +20,21 @@ nn_model = generate_nn_model()
 GENE_LENGTH = get_gene_length(nn_model)
 population = np.random.random((POPULATION_SIZE, GENE_LENGTH)) * 10 - 5
 offsprings = np.empty(population.shape)
+fitness = np.empty(POPULATION_SIZE)
+
+def select(population, fitness):
+    idxs = np.random.choice(range(len(population)), TOURNAMENT_SIZE, replace=False)
+    fits = fitness[idxs]
+    winner_idx = idxs[np.argmax(fits)]
+    return population[winner_idx]
 
 simulator = AntSimulator(1)
 generation = 0
 while True:
-    fitness = []
+    #print("unique population:", len(np.unique([hash(str(p)) for p in population])), '/', len(population))
 
     # 現在の集団を評価する
-    for gene in population:
+    for gene_index, gene in enumerate(population):
         print('.', end='', flush=True)
         # 遺伝子情報をニューラルネットワークの重みにデコードする
         decode_weights(nn_model, gene)
@@ -39,7 +47,7 @@ while True:
             simulator.update(action)
 
         # 今回のフィットネスを保存
-        fitness.append(simulator.get_fitness()[0])
+        fitness[gene_index] = simulator.get_fitness()[0]
 
     # 結果をレポート
     print()
@@ -52,45 +60,37 @@ while True:
     best_idx = np.argmax(fitness)
     best_individual = population[best_idx]
     np.save("gen{0:04}_best.npy".format(generation), best_individual)
+    #print("best hash:", hash(str(best_individual)))
+    #np.save("test02_gen{0:04}_best.npy".format(generation), best_individual)
 
     # １位のエージェントはそのまま次世代に
-    offsprings[0] = best_individual
+    offsprings[0] = best_individual.copy()
 
-    np.random.seed()
-
-    # POPULATION_SIZE/2匹の個体が親になる
-    PARENT_NUM = POPULATION_SIZE // 2
-    parents = []
-    for i in range(PARENT_NUM):
-        idxs = np.random.randint(0, len(population), TOURNAMENT_SIZE)
-        fits = np.array(fitness)[idxs]
-        winner_idx = idxs[np.argmax(fits)]
-        parents.append(population[winner_idx])
-
-    # POPULATION_SIZE/3 - 1匹はランダムに次世代に
+    # POPULATION_SIZE/3 - 1匹は次世代にコピーされる
     for i in range(1, POPULATION_SIZE//3):
-        offspring_idx = np.random.randint(0, PARENT_NUM)
-        offspring = parents[offspring_idx]
+        offspring = select(population, fitness).copy()
         offsprings[i] = offspring
 
     # POPULATION_SIZE/3匹は突然変異後に次世代に
     for i in range(POPULATION_SIZE//3, 2*POPULATION_SIZE//3):
-        offspring_idx = np.random.randint(0, PARENT_NUM)
-        offspring = parents[offspring_idx]
-        mut_idx = np.random.randint(0, GENE_LENGTH)
+        offspring = select(population, fitness).copy()
+        mut_idx = np.random.randint(GENE_LENGTH)
         offspring[mut_idx] += np.random.randn()
         offsprings[i] = offspring
 
     # POPULATION_SIZE/3匹は交叉後に次世代に
-    for i in range(2*POPULATION_SIZE//3, POPULATION_SIZE):
-        idx1 = np.random.randint(0, PARENT_NUM)
-        p1 = parents[idx1]
-        idx2 = np.random.randint(0, PARENT_NUM)
-        p2 = parents[idx2]
+    for i in range(2*POPULATION_SIZE//3, POPULATION_SIZE, 2):
+        p1 = select(population, fitness).copy()
+        p2 = select(population, fitness).copy()
         xo_idx = np.random.randint(1, GENE_LENGTH)
-        offspring = np.r_[p1[:xo_idx], p2[xo_idx:]]
-        offsprings[i] = offspring
+        offspring1 = np.r_[p1[:xo_idx], p2[xo_idx:]]
+        offspring2 = np.r_[p1[xo_idx:], p2[:xo_idx]]
+        offsprings[i] = offspring1
+        try:
+            offsprings[i+1] = offspring2
+        except IndexError:
+            pass
 
-    population = offsprings.copy()
+    population = offsprings
 
     generation += 1
