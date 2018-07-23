@@ -9,11 +9,10 @@ from PIL.Image import open as open_image
 ENV_MAP_PATH = path.join(path.dirname(path.abspath(__file__)), 'img')
 
 class AntSimulator(object):
-    """docstring for AntSimulator."""
-    #MIN_VELOCITY = 0.128 # 0.0005 * self._FIELD_WIDTH #original on legacy program
-    #MAX_VELOCITY = 0.256 # 0.001 * self._FIELD_WIDTH #original on legacy program
     MIN_VELOCITY = 0.2
     MAX_VELOCITY = 0.8
+    # MIN_VELOCITY = 0.128 # 0.0005 * self._FIELD_WIDTH #original on legacy program
+    # MAX_VELOCITY = 0.256 # 0.001 * self._FIELD_WIDTH #original on legacy program
     MAX_ANGULAR_VELOCITY = 0.05 * np.pi
     SENSOR_NUM = 7
     AGENT_RADIUS = 12.8 # 0.05 * self._FIELD_WIDTH  #original on legacy program
