@@ -2,7 +2,7 @@
 
 ---
 
-![表紙]()
+![表紙](https://user-images.githubusercontent.com/1583412/43062946-5a31d5b8-8e95-11e8-802a-53d2e58dc93e.jpeg)
 
 ---
 
