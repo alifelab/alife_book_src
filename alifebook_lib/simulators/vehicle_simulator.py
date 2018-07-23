@@ -19,7 +19,7 @@ class VehicleSimulator(object):
     MOTOR_NOISE = 1.0
     FEED_COLOR = (0, 0, 0)
     FEED_ACTIVE_COLOR = (255, 0, 0)
-    FEED_EATING_TIME = 100
+    FEED_EATING_TIME = 200
 
     #def __init__(self, controll_func, obstacle_num=5, obstacle_radius=30, feed_num=0, feed_radius=5):
     def __init__(self, width=600, height=600, obstacle_num=5, obstacle_radius=30, feed_num=0, feed_radius=5):
