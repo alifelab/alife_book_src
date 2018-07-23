@@ -24,10 +24,6 @@
 ## 必要条件
 ソースコードの実行環境と必要なパッケージは以下です。
 
-* Python 3.x
-* NumPy
-* Matplotlib
-
 本書全体
 
 * Python 3.6.3
@@ -45,8 +41,6 @@
 * Keras  2.2.0
 * TensorFlow  1.8.0
 
-※Pythonのバージョンは、3系を利用します。
-
 ## 推奨環境セットアップ方法
 
 1. anacondaのインストール
@@ -56,13 +50,12 @@ https://www.anaconda.com/download/
 2. 必要なライブラリのインストール
 
 ```terminal
-$ pip install pyglet pymunk vispy keras Pillow
+$ pip install pyglet pymunk vispy keras tensorflow
 ```
-
 
 ## 実行方法
 
-各章のフォルダへ移動して実行してください。
+各章のフォルダへ移動してから実行してください。
 
 ```terminal
 $ cd chap02
