@@ -64,13 +64,16 @@ $ python game_of_life.py
 
 詳しい実行方法は本書をご覧ください。
 
+## その他注意点
+
+### 6,7章で利用するkerasのバックエンドについて
+
+kerasがインストール済みで、バックエンドをtensorflow以外に設定している場合はエラーが出るので、tensorflowに切り替えてください。
+
+詳しくは
+https://keras.io/ja/backend/
+
 ## ライセンス
 
 本リポジトリのソースコードは[MITライセンス](http://www.opensource.org/licenses/MIT)です。
 商用・非商用問わず、自由にご利用ください。
-
-
-### 6,7章で利用するkerasのバックエンドについて
-
-kerasがインストール済みで、バックエンドをtensorflow以外に設定している場合はエラーが出るので、tensorflowに切り替えてください.
-https://keras.io/ja/backend/
