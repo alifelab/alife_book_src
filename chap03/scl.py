@@ -45,9 +45,9 @@ particles = np.empty((SPACE_SIZE, SPACE_SIZE), dtype=object)
 for x in range(SPACE_SIZE):
     for y in range(SPACE_SIZE):
         if evaluate_probability(INITIAL_SUBSTRATE_DENSITY):
-            p = {'type': 'SUBSTRATE', 'disintegrating_frag': False, 'bonds': []}
+            p = {'type': 'SUBSTRATE', 'disintegrating_flag': False, 'bonds': []}
         else:
-            p = {'type': 'HOLE', 'disintegrating_frag': False, 'bonds': []}
+            p = {'type': 'HOLE', 'disintegrating_flag': False, 'bonds': []}
         particles[x,y] = p
 # INITIAL_CATALYST_POSITIONSにCATALYSTを配置する。
 for x, y in INITIAL_CATALYST_POSITIONS:
