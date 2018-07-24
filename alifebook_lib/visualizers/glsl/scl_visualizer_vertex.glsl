@@ -42,8 +42,8 @@ void main()
         gl_PointSize = grid_size.x * 2;
         gl_Position = vec4(xy.x, xy.y * grid_size.x / grid_size.y, 0.0, 1.0);
     }
-    gl_PointSize = gl_PointSize * v_size_scale; // make a little bigger for bond opperlap
     v_size_scale = 1.1;
+    gl_PointSize = gl_PointSize * v_size_scale; // make a little bigger for bond opperlap
     v_particle_type = a_particle_type;
     for(int i = 0; i < 2; i++) {
         vec2 bxy = vec2(a_bondding_positions[i*2+0], a_bondding_positions[i*2+1]);
