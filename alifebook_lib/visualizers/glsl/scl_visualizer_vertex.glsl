@@ -22,7 +22,7 @@ uniform vec2 u_particle_num;
 varying float v_particle_type;
 varying vec2 v_is_bondding;
 varying vec2 v_bondding_angles;
-varying float v_size_scale = 1.1;
+varying float v_size_scale;
 
 float PI = 3.141592653589793;
 
@@ -33,6 +33,7 @@ float atan2(in float y, in float x)
 
 void main()
 {
+    v_size_scale = 1.1;
     vec2 grid_size = u_window_size / u_particle_num;
     vec2 xy = 2 * a_position / u_particle_num - 1 + 1 / u_particle_num;
     if (grid_size.x > grid_size.y) {
