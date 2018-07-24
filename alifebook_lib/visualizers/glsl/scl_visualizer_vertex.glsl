@@ -36,10 +36,10 @@ void main()
     vec2 grid_size = u_window_size / u_particle_num;
     vec2 xy = 2 * a_position / u_particle_num - 1 + 1 / u_particle_num;
     if (grid_size.x > grid_size.y) {
-        gl_PointSize = grid_size.y * 2;  // TODO: check around High DPI (Retina)
+        gl_PointSize = grid_size.y;
         gl_Position = vec4(xy.x * grid_size.y / grid_size.x, xy.y, 0.0, 1.0);
     } else {
-        gl_PointSize = grid_size.x * 2;
+        gl_PointSize = grid_size.x;
         gl_Position = vec4(xy.x, xy.y * grid_size.x / grid_size.y, 0.0, 1.0);
     }
     v_size_scale = 1.1;

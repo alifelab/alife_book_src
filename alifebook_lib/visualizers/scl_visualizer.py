@@ -16,9 +16,10 @@ class SCLVisualizer(object):
         vertex_shader = open(path.join(GLSL_PATH, 'scl_visualizer_vertex.glsl'), 'r').read()
         fragment_shader = open(path.join(GLSL_PATH, 'scl_visualizer_fragment.glsl'), 'r').read()
         self._render_program = gloo.Program(vertex_shader, fragment_shader)
-        gloo.set_state(blend=True, blend_func=('src_alpha', 'one'))
+        #gloo.set_state(blend=True, blend_func=('src_alpha', 'one'))
         #gloo.set_state(blend=True, blend_func=('src_alpha', 'one'), clear_color='white')
         #gloo.set_state(blend=True, clear_color='white')
+        gloo.set_state('translucent', clear_color='white')
         self._canvas.show()
         gloo.set_viewport(0, 0, *self._canvas.physical_size)
 
@@ -54,7 +55,7 @@ class SCLVisualizer(object):
         self._render_program['a_particle_type'] = shader_data2[:,0].astype(np.float32)
         self._render_program['a_position'] = shader_data2[:,1:3].astype(np.float32)
         self._render_program['a_bondding_positions'] = shader_data2[:,3:7].astype(np.float32)
-        self._render_program['u_window_size'] = self._canvas.size
+        self._render_program['u_window_size'] = self._canvas.physical_size
         self._render_program['u_particle_num'] = [col_num, row_num]
 
         self._canvas.update()
