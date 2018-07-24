@@ -28,25 +28,33 @@ void main()
     } else if (v_particle_type == 2){
         if (length(p) < CATALYST_RADIUS) gl_FragColor = vec4(0.8,0.25,0.8,1);
         else discard;
-    } else if (v_particle_type == 1 || v_particle_type == 4){
-        if (length(p) < SUBSTRATE_RADIUS) gl_FragColor = vec4(0,0.8,0.8,1);
-		else gl_FragColor = vec4(0,0,0,0);
-    }
-    if (v_particle_type == 3 || v_particle_type == 4){
-        if (abs(p.x) >= LINK_INNER_BORDER || abs(p.y) >= LINK_INNER_BORDER) {
-            if (abs(p.x) <= LINK_OUTER_BORDER && abs(p.y) <= LINK_OUTER_BORDER) {
-                gl_FragColor = vec4(0,0.3,1,1);
-            } else {
+    } else {
+		if ((v_particle_type == 1 || v_particle_type == 4) && (length(p) < SUBSTRATE_RADIUS)) {
+			gl_FragColor = vec4(0,0.8,0.8,1);
+		} else if (v_particle_type == 3 || v_particle_type == 4) {
+			if ((abs(p.x) >= LINK_INNER_BORDER || abs(p.y) >= LINK_INNER_BORDER) &&
+            	 abs(p.x) <= LINK_OUTER_BORDER && abs(p.y) <= LINK_OUTER_BORDER) {
+				gl_FragColor = vec4(0,0.3,1,1);
+            } else if (abs(p.x) > LINK_OUTER_BORDER || abs(p.y) > LINK_OUTER_BORDER){
                 // draw bond
+				bool draw_bond_frag = false;
 				for(int i = 0; i < 2; i++) {
 					if(v_is_bondding[i] > 0) {
 						vec2 line_xy = rotate2d(p, -v_bondding_angles[i]);
 	                	if (line_xy.x > 0 && abs(line_xy.y) < BOND_WIDTH/2) {
 	                    	gl_FragColor = vec4(0,0.3,1,1);
+							draw_bond_frag = true;
 						}
 					}
 				}
-            }
-        }
+				if (!draw_bond_frag) {
+					discard;
+				}
+            } else {
+				discard;
+			}
+        } else {
+			discard;
+		}
     }
 }
