@@ -77,3 +77,8 @@ https://keras.io/ja/backend/
 
 本リポジトリのソースコードは[MITライセンス](http://www.opensource.org/licenses/MIT)です。
 商用・非商用問わず、自由にご利用ください。
+
+---
+プログラムの動作に問題がある場合は、バグを発見した方は、このリポジトリのissueにあげてください。
+
+https://github.com/alifelab/alife_book_src/issues
