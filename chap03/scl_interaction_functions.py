@@ -37,7 +37,7 @@ def disintegration(particles, x, y, probability):
 
 def bonding(particles, x, y,
             chain_initiate_probability, chain_splice_probability, chain_extend_probability,
-            chain_inhibit_bond_flag=True, catalyst_inhibit_bond_flage=True):
+            chain_inhibit_bond_flag=True, catalyst_inhibit_bond_flag=True):
     p = particles[x,y]
     # 対象の近傍粒子をランダムに選ぶ
     n_x, n_y = get_random_moore_neighborhood(x, y, particles.shape[0])
@@ -62,7 +62,7 @@ def bonding(particles, x, y,
         return
     # Bondingは以下の２つの場合には起こらない
     # 1) moore近傍に膜のチェーンが存在する場合 (chain_inhibit_bond_flag)
-    # 2) moore近傍に触媒分子が存在する場合 (catalyst_inhibit_bond_flage)
+    # 2) moore近傍に触媒分子が存在する場合 (catalyst_inhibit_bond_flag)
     mn_list = get_moore_neighborhood(x, y, particles.shape[0]) + get_moore_neighborhood(n_x, n_y, particles.shape[0])
     if chain_inhibit_bond_flag:
         for mn_x, mn_y in mn_list:
