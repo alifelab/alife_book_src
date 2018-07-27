@@ -60,7 +60,6 @@ class VehicleSimulator(object):
         # vehicle
         mass = 1
         self.__vehicle_body = pymunk.Body(mass, pymunk.moment_for_circle(mass, 0, self.VEHICLE_RADIUS))
-        #self.__vehicle_body.position = self.ARENA_SIZE/2+self.DISPLAY_MARGIN, self.ARENA_SIZE/2+self.DISPLAY_MARGIN
         self.__vehicle_shape = pymunk.Circle(self.__vehicle_body, self.VEHICLE_RADIUS)
         self.__vehicle_shape.friction = 0.2
         self.__vehicle_shape.collision_type = self.COLLISION_TYPE.VEHICLE
@@ -96,7 +95,6 @@ class VehicleSimulator(object):
         for i in range(feed_num):
             body = pymunk.Body(1, 1)
             self.__feed_bodies.append(body)
-            #body.position = self.DISPLAY_MARGIN + feed_radius + np.random.rand(2) * (self.ARENA_SIZE - feed_radius*2)
             shape = pymunk.Circle(body, self.__feed_radius)
             shape.sensor = True
             shape.color = self.FEED_COLOR
