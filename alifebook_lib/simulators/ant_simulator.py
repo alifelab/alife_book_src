@@ -118,7 +118,7 @@ class AntSimulator(object):
         points = np.c_[np.cos(th), np.sin(th)]
         points = np.r_[[[0,0]], points] * radius
         polygon = Polygon(points, color=(0, 0, 0, 0), border_color=(1, 0, 0), border_method='agg', border_width=2)
-        #polygon = Polygon(points, color=(0, 0, 0, 0), border_color=(1, 0, 0))
+        #polygon = Polygon(points, color=(0, 0, 0, 0), border_color=(1, 0, 0))  # more fast, but agents visual is hard to seee
         polygon.transform = MatrixTransform()
         return polygon
 
