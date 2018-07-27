@@ -117,33 +117,6 @@ class VehicleSimulator(object):
     def update(self, action):
         self.__vehicle_body.velocity = (0, 0)
         self.__vehicle_body.angular_velocity = 0
-        #self.__vehicle_body.force = (10,10)
-        #self.__vehicle_body.force = (5000,5000)
-        #v = self.__vehicle_body.velocity
-        #print(self.__vehicle_body.velocity_at_world_point((0, self.VEHICLE_RADIUS)))
-        #self.__vehicle_body.force = 100*(50-v[0]) , 100*(50-v[1])
-        #print(v)
-        #self.__vehicle_body.torque = 10000
-        #self.flag = False
-        #self.__vehicle_body.force = (500000,500000)
-
-        #target_velocity_l, target_velocity_r = 10, 0
-
-        #current_velocity_l = self.__vehicle_body.velocity_at_local_point((0, self.VEHICLE_RADIUS)).get_length()
-        #current_velocity_r = self.__vehicle_body.velocity_at_local_point((0, -self.VEHICLE_RADIUS)).get_length()
-
-        #force_l = 1*(target_velocity_l - current_velocity_l)
-        #force_r = 1*(target_velocity_r - current_velocity_r)
-        #self.__vehicle_body.apply_force_at_local_point((force_l, 0), (0, self.VEHICLE_RADIUS))
-        #if force_l > 0:
-            #self.__vehicle_body.apply_force_at_local_point((force_l, 0), (0, self.VEHICLE_RADIUS))
-        #else:
-            #self.__vehicle_body.apply_force_at_local_point((-force_l, 0), (0, self.VEHICLE_RADIUS))
-        #self.__vehicle_body.apply_force_at_local_point((force_l, 0), (0, self.VEHICLE_RADIUS))
-        #self.__vehicle_body.apply_force_at_local_point((force_r, 0), (0, -self.VEHICLE_RADIUS))
-        #self.__vehicle_body.apply_force_at_local_point((force_l, 0), (0, self.VEHICLE_RADIUS))
-        #self.__vehicle_body.apply_force_at_local_point((10, 0), (0, self.VEHICLE_RADIUS))
-        #self.__vehicle_body.apply_force_at_local_point((force_r, 0), (0, -self.VEHICLE_RADIUS))
         velocity_l, velocity_r = action[0], action[1]
         velocity_l += self.MOTOR_NOISE * np.random.randn()
         velocity_r += self.MOTOR_NOISE * np.random.randn()
