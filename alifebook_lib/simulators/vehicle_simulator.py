@@ -27,6 +27,8 @@ class VehicleSimulator(object):
         self.__right_sensor_val = 0
         self.__feed_sensor_val = False
         self.__feed_touch_counter = {}
+        self.__feed_bodies = []
+        self.__feed_radius = feed_radius
 
         self.__window = pyglet.window.Window(self.ARENA_SIZE+self.DISPLAY_MARGIN*2, self.ARENA_SIZE+self.DISPLAY_MARGIN*2, vsync=False)
         self.__draw_options = pymunk.pyglet_util.DrawOptions()
@@ -36,12 +38,6 @@ class VehicleSimulator(object):
             pyglet.gl.glClearColor(255,255,255,255)
             self.__window.clear()
             self.__simulation_space.debug_draw(self.__draw_options)
-
-        # @self.__window.event
-        # def on_key_press(symbol, modifiers):
-        #     if symbol == pyglet.window.key.SPACE:
-        #         global running
-        #         running = not running
 
         @self.__window.event
         def on_close():
@@ -64,7 +60,7 @@ class VehicleSimulator(object):
         # vehicle
         mass = 1
         self.__vehicle_body = pymunk.Body(mass, pymunk.moment_for_circle(mass, 0, self.VEHICLE_RADIUS))
-        self.__vehicle_body.position = self.ARENA_SIZE/2+self.DISPLAY_MARGIN, self.ARENA_SIZE/2+self.DISPLAY_MARGIN
+        #self.__vehicle_body.position = self.ARENA_SIZE/2+self.DISPLAY_MARGIN, self.ARENA_SIZE/2+self.DISPLAY_MARGIN
         self.__vehicle_shape = pymunk.Circle(self.__vehicle_body, self.VEHICLE_RADIUS)
         self.__vehicle_shape.friction = 0.2
         self.__vehicle_shape.collision_type = self.COLLISION_TYPE.VEHICLE
@@ -89,7 +85,6 @@ class VehicleSimulator(object):
         self.__simulation_space.add(sensor_r_s)
 
         # obstacles
-        OBSTACLE_RADIUS = 30
         for a in (np.linspace(0, np.pi*2, obstacle_num, endpoint=False) + np.pi/2):
             body = pymunk.Body(body_type=pymunk.Body.STATIC)
             body.position = (self.DISPLAY_MARGIN+self.ARENA_SIZE/2+self.ARENA_SIZE*0.3*np.cos(a), self.DISPLAY_MARGIN+self.ARENA_SIZE/2+self.ARENA_SIZE*0.3*np.sin(a))
@@ -100,8 +95,9 @@ class VehicleSimulator(object):
 
         for i in range(feed_num):
             body = pymunk.Body(1, 1)
-            body.position = self.DISPLAY_MARGIN + feed_radius + np.random.rand(2) * (self.ARENA_SIZE - feed_radius*2)
-            shape = pymunk.Circle(body, feed_radius)
+            self.__feed_bodies.append(body)
+            #body.position = self.DISPLAY_MARGIN + feed_radius + np.random.rand(2) * (self.ARENA_SIZE - feed_radius*2)
+            shape = pymunk.Circle(body, self.__feed_radius)
             shape.sensor = True
             shape.color = self.FEED_COLOR
             shape.collision_type = self.COLLISION_TYPE.FEED
@@ -111,9 +107,14 @@ class VehicleSimulator(object):
             self.__simulation_space.add(body, shape)
             self.__feed_touch_counter[shape] = 0
 
-    def reset(self):
-        # TODO: implement reset action
-        pass
+        self.reset()
+
+    def reset(self, random_seed=None):
+        np.random.seed(random_seed)
+        self.__vehicle_body.position = self.ARENA_SIZE/2+self.DISPLAY_MARGIN, self.ARENA_SIZE/2+self.DISPLAY_MARGIN
+        self.__vehicle_body.angle = 0
+        for b in self.__feed_bodies:
+            b.position = self.DISPLAY_MARGIN + self.__feed_radius + np.random.rand(2) * (self.ARENA_SIZE - self.__feed_radius*2)
 
     def update(self, action):
         self.__vehicle_body.velocity = (0, 0)
