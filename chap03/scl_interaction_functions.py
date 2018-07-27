@@ -71,7 +71,8 @@ def bonding(particles, x, y,
     if chain_inhibit_bond_flag:
         for mn_x, mn_y in mn_list:
             if len(particles[mn_x,mn_y]['bonds']) >= 2:
-                return
+                if not (x, y) in particles[mn_x,mn_y]['bonds'] and not (n_x, n_y) in particles[mn_x,mn_y]['bonds']:
+                    return
     # Bonding
     if len(p['bonds'])==0 and len(n_p['bonds'])==0:
         prob = chain_initiate_probability
