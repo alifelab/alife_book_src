@@ -64,11 +64,11 @@ def bonding(particles, x, y,
     # 1) moore近傍に膜のチェーンが存在する場合 (chain_inhibit_bond_flag)
     # 2) moore近傍に触媒分子が存在する場合 (catalyst_inhibit_bond_flag)
     mn_list = get_moore_neighborhood(x, y, particles.shape[0]) + get_moore_neighborhood(n_x, n_y, particles.shape[0])
-    if chain_inhibit_bond_flag:
+    if catalyst_inhibit_bond_flag:
         for mn_x, mn_y in mn_list:
             if particles[mn_x,mn_y]['type'] is 'CATALYST':
                 return
-    if catalyst_inhibit_bond_flage:
+    if chain_inhibit_bond_flag:
         for mn_x, mn_y in mn_list:
             if len(particles[mn_x,mn_y]['bonds']) >= 2:
                 return
