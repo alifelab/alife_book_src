@@ -8,7 +8,7 @@
 
 * プログラムの動作がおかしい/バグを発見した場合はこちら &rarr; [バグ報告](https://github.com/alifelab/alife_book_src/wiki/%E3%83%90%E3%82%B0%E5%A0%B1%E5%91%8A)
 
-* サンプルプログラムの変更履歴はこちら &rarr; [リリースノート](https://github.com/alifelab/alife_book_src/releases)
+<!-- * サンプルプログラムの変更履歴はこちら &rarr; [リリースノート](https://github.com/alifelab/alife_book_src/releases) -->
 
 ---
 
