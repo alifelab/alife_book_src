@@ -4,7 +4,6 @@ import numpy as np
 from vispy import app
 from vispy.scene import SceneCanvas, PanZoomCamera, MatrixTransform
 from vispy.scene.visuals import Image, Polygon
-from PIL.Image import open as open_image
 
 ENV_MAP_PATH = path.join(path.dirname(path.abspath(__file__)), 'img')
 
@@ -19,6 +18,7 @@ class AntSimulator(object):
     SENSOR_NOISE = 0.1
 
     def __init__(self, N, width=600, height=600, decay_rate=1.0, hormone_secretion=None):
+        from PIL.Image import open as open_image
         # setup simulation
         self._N = N
         self._INITIAL_FIELD = np.array(open_image(path.join(ENV_MAP_PATH, 'envmap01.png'))).astype(np.float32) / 255.
