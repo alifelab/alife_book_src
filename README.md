@@ -8,9 +8,11 @@
 
 本リポジトリはオライリー・ジャパン発行書籍『[作って動かす ALife](https://www.oreilly.co.jp/books/9784873118475/)』のサポートサイトです。
 
-* 書籍内の記載がおかしい/誤植などを見つけた方はこちら &rarr; [正誤表](https://github.com/alifelab/alife_book_src/wiki/%E6%AD%A3%E8%AA%A4%E8%A1%A8)
+* 書籍内に誤植などを見つけた方はこちら &rarr; [正誤表](https://github.com/alifelab/alife_book_src/wiki/%E6%AD%A3%E8%AA%A4%E8%A1%A8)
 
-* プログラムの動作がおかしい/バグを発見した方はこち &rarr; [バグ報告](https://github.com/alifelab/alife_book_src/wiki/%E3%83%90%E3%82%B0%E5%A0%B1%E5%91%8A)
+* プログラムの動作がおかしい/バグを発見した場合はこちら &rarr; [バグ報告](https://github.com/alifelab/alife_book_src/wiki/%E3%83%90%E3%82%B0%E5%A0%B1%E5%91%8A)
+
+* サンプルプログラムの変更履歴はこちら &rarr; [リリースノート](https://github.com/alifelab/alife_book_src/releases)
 
 ## ファイル構成
 
