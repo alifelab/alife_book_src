@@ -1,8 +1,4 @@
 import numpy as np
-import pyglet
-import pymunk
-import pymunk.pyglet_util
-from pymunk.vec2d import Vec2d
 from enum import IntEnum
 
 
@@ -22,6 +18,8 @@ class VehicleSimulator(object):
     FEED_EATING_TIME = 200
 
     def __init__(self, width=600, height=600, obstacle_num=5, obstacle_radius=30, feed_num=0, feed_radius=5):
+        import pyglet
+        from pymunk import Space, Segment, Body, Circle, moment_for_circle, pyglet_util
         super(VehicleSimulator, self).__init__()
         self.__left_sensor_val = 0
         self.__right_sensor_val = 0
@@ -31,7 +29,7 @@ class VehicleSimulator(object):
         self.__feed_radius = feed_radius
 
         self.__window = pyglet.window.Window(self.ARENA_SIZE+self.DISPLAY_MARGIN*2, self.ARENA_SIZE+self.DISPLAY_MARGIN*2, vsync=False)
-        self.__draw_options = pymunk.pyglet_util.DrawOptions()
+        self.__draw_options = pyglet_util.DrawOptions()
         self.__closed = False
         @self.__window.event
         def on_draw():
@@ -44,14 +42,14 @@ class VehicleSimulator(object):
             pyglet.app.EventLoop().exit()
             self.__closed = True
 
-        self.__simulation_space = pymunk.Space()
+        self.__simulation_space = Space()
         self.__simulation_space.gravity = 0, 0
 
         # arena
-        walls = [pymunk.Segment(self.__simulation_space.static_body, (self.DISPLAY_MARGIN, self.DISPLAY_MARGIN), (self.ARENA_SIZE+self.DISPLAY_MARGIN, self.DISPLAY_MARGIN), 0),
-                 pymunk.Segment(self.__simulation_space.static_body, (self.ARENA_SIZE+self.DISPLAY_MARGIN, self.DISPLAY_MARGIN), (self.ARENA_SIZE+self.DISPLAY_MARGIN, self.ARENA_SIZE+self.DISPLAY_MARGIN), 0),
-                 pymunk.Segment(self.__simulation_space.static_body, (self.ARENA_SIZE+self.DISPLAY_MARGIN, self.ARENA_SIZE+self.DISPLAY_MARGIN), (self.DISPLAY_MARGIN, self.ARENA_SIZE+self.DISPLAY_MARGIN), 0),
-                 pymunk.Segment(self.__simulation_space.static_body, (self.DISPLAY_MARGIN, self.ARENA_SIZE+self.DISPLAY_MARGIN), (self.DISPLAY_MARGIN, self.DISPLAY_MARGIN), 0)]
+        walls = [Segment(self.__simulation_space.static_body, (self.DISPLAY_MARGIN, self.DISPLAY_MARGIN), (self.ARENA_SIZE+self.DISPLAY_MARGIN, self.DISPLAY_MARGIN), 0),
+                 Segment(self.__simulation_space.static_body, (self.ARENA_SIZE+self.DISPLAY_MARGIN, self.DISPLAY_MARGIN), (self.ARENA_SIZE+self.DISPLAY_MARGIN, self.ARENA_SIZE+self.DISPLAY_MARGIN), 0),
+                 Segment(self.__simulation_space.static_body, (self.ARENA_SIZE+self.DISPLAY_MARGIN, self.ARENA_SIZE+self.DISPLAY_MARGIN), (self.DISPLAY_MARGIN, self.ARENA_SIZE+self.DISPLAY_MARGIN), 0),
+                 Segment(self.__simulation_space.static_body, (self.DISPLAY_MARGIN, self.ARENA_SIZE+self.DISPLAY_MARGIN), (self.DISPLAY_MARGIN, self.DISPLAY_MARGIN), 0)]
         for w in walls:
             w.collision_type = self.COLLISION_TYPE.OBJECT
             w.friction = 0.2
@@ -59,14 +57,14 @@ class VehicleSimulator(object):
 
         # vehicle
         mass = 1
-        self.__vehicle_body = pymunk.Body(mass, pymunk.moment_for_circle(mass, 0, self.VEHICLE_RADIUS))
-        self.__vehicle_shape = pymunk.Circle(self.__vehicle_body, self.VEHICLE_RADIUS)
+        self.__vehicle_body = Body(mass, moment_for_circle(mass, 0, self.VEHICLE_RADIUS))
+        self.__vehicle_shape = Circle(self.__vehicle_body, self.VEHICLE_RADIUS)
         self.__vehicle_shape.friction = 0.2
         self.__vehicle_shape.collision_type = self.COLLISION_TYPE.VEHICLE
         self.__simulation_space.add(self.__vehicle_body, self.__vehicle_shape)
 
         # left sensor
-        sensor_l_s = pymunk.Segment(self.__vehicle_body, (0, 0), (self.SENSOR_RANGE * np.cos(self.SENSOR_ANGLE), self.SENSOR_RANGE * np.sin(self.SENSOR_ANGLE)), 0)
+        sensor_l_s = Segment(self.__vehicle_body, (0, 0), (self.SENSOR_RANGE * np.cos(self.SENSOR_ANGLE), self.SENSOR_RANGE * np.sin(self.SENSOR_ANGLE)), 0)
         sensor_l_s.sensor = True
         sensor_l_s.collision_type = self.COLLISION_TYPE.LEFT_SENSOR
         handler_l = self.__simulation_space.add_collision_handler(self.COLLISION_TYPE.LEFT_SENSOR, self.COLLISION_TYPE.OBJECT)
@@ -75,7 +73,7 @@ class VehicleSimulator(object):
         self.__simulation_space.add(sensor_l_s)
 
         # right sensor
-        sensor_r_s = pymunk.Segment(self.__vehicle_body, (0, 0), (self.SENSOR_RANGE * np.cos(-self.SENSOR_ANGLE), self.SENSOR_RANGE * np.sin(-self.SENSOR_ANGLE)), 0)
+        sensor_r_s = Segment(self.__vehicle_body, (0, 0), (self.SENSOR_RANGE * np.cos(-self.SENSOR_ANGLE), self.SENSOR_RANGE * np.sin(-self.SENSOR_ANGLE)), 0)
         sensor_r_s.sensor = True
         sensor_r_s.collision_type = self.COLLISION_TYPE.RIGHT_SENSOR
         handler_r = self.__simulation_space.add_collision_handler(self.COLLISION_TYPE.RIGHT_SENSOR, self.COLLISION_TYPE.OBJECT)
@@ -85,17 +83,17 @@ class VehicleSimulator(object):
 
         # obstacles
         for a in (np.linspace(0, np.pi*2, obstacle_num, endpoint=False) + np.pi/2):
-            body = pymunk.Body(body_type=pymunk.Body.STATIC)
+            body = Body(body_type=Body.STATIC)
             body.position = (self.DISPLAY_MARGIN+self.ARENA_SIZE/2+self.ARENA_SIZE*0.3*np.cos(a), self.DISPLAY_MARGIN+self.ARENA_SIZE/2+self.ARENA_SIZE*0.3*np.sin(a))
-            shape = pymunk.Circle(body, obstacle_radius)
+            shape = Circle(body, obstacle_radius)
             shape.friction = 0.2
             shape.collision_type = self.COLLISION_TYPE.OBJECT
             self.__simulation_space.add(shape)
 
         for i in range(feed_num):
-            body = pymunk.Body(1, 1)
+            body = Body(1, 1)
             self.__feed_bodies.append(body)
-            shape = pymunk.Circle(body, self.__feed_radius)
+            shape = Circle(body, self.__feed_radius)
             shape.sensor = True
             shape.color = self.FEED_COLOR
             shape.collision_type = self.COLLISION_TYPE.FEED
@@ -126,12 +124,12 @@ class VehicleSimulator(object):
         self.__vehicle_body.apply_impulse_at_local_point(-lf, (0,0))
         self.__simulation_space.step(1/100)
 
-        pyglet.clock.tick()
-        for window in pyglet.app.windows:
-            self.__window.switch_to()
-            self.__window.dispatch_events()
-            self.__window.dispatch_event('on_draw')
-            self.__window.flip()
+        from pyglet import clock
+        clock.tick()
+        self.__window.switch_to()
+        self.__window.dispatch_events()
+        self.__window.dispatch_event('on_draw')
+        self.__window.flip()
 
     def get_sensor_data(self):
         sensor_data = {
@@ -184,6 +182,7 @@ class VehicleSimulator(object):
         return True
 
     def __get_lateral_velocity(self):
+        from pymunk.vec2d import Vec2d
         v = self.__vehicle_body.world_to_local(self.__vehicle_body.velocity + self.__vehicle_body.position)
         rn = Vec2d(0, -1)
         return v.dot(rn) * rn
