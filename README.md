@@ -1,7 +1,5 @@
 # 作って動かす ALife - 実装を通した人工生命モデル入門
 
----
-
 ![表紙](https://user-images.githubusercontent.com/1583412/43062946-5a31d5b8-8e95-11e8-802a-53d2e58dc93e.jpeg)
 
 本リポジトリはオライリー・ジャパン発行書籍『[作って動かす ALife](https://www.oreilly.co.jp/books/9784873118475/)』のサポートサイトです。
