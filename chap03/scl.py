@@ -52,7 +52,7 @@ for x in range(SPACE_SIZE):
 for x, y in INITIAL_CATALYST_POSITIONS:
     particles[x, y]['type'] = 'CATALYST'
 
-# 膜がある状態からスタートするには、コメントアウトしてください
+# 膜がある状態からスタートするには、以下のコメントアウトを外してください
 # for x0, y0, x1, y1 in INITIAL_BONDED_LINK_POSITIONS:
 #     particles[x0, y0]['type'] = 'LINK'
 #     particles[x0, y0]['bonds'].append((x1, y1))
