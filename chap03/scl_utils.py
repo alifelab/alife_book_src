@@ -42,7 +42,7 @@ def get_random_2_moore_neighborhood(x, y, space_size):
         n1_x = np.random.choice([(n0_x+1)%space_size, (n0_x-1)%space_size])
         n1_y = n0_y
     elif y == n0_y:
-        n1_x = n0_y
+        n1_x = n0_x
         n1_y = np.random.choice([(n0_y+1)%space_size, (n0_y-1)%space_size])
     else:
         n= [(x, n0_y), (n0_x, y)]

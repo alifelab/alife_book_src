@@ -66,7 +66,7 @@ def bonding(particles, x, y,
     mn_list = get_moore_neighborhood(x, y, particles.shape[0]) + get_moore_neighborhood(n_x, n_y, particles.shape[0])
     if catalyst_inhibit_bond_flag:
         for mn_x, mn_y in mn_list:
-            if particles[mn_x,mn_y]['type'] is 'CATALYST':
+            if particles[mn_x,mn_y]['type'] == 'CATALYST':
                 return
     if chain_inhibit_bond_flag:
         for mn_x, mn_y in mn_list:
